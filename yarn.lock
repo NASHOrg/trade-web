@@ -2329,7 +2329,7 @@
     pkg-types "^1.2.0"
     semver "^7.6.3"
 
-"@nuxtjs/i18n@^8.3.1":
+"@nuxtjs/i18n@^8.5.5":
   version "8.5.5"
   resolved "https://registry.yarnpkg.com/@nuxtjs/i18n/-/i18n-8.5.5.tgz#b0df4d64e3765b601e7ae918ae9ec8f777ad0818"
   integrity sha512-HVXRy61VBACIwmap1WxuhT9nNf6liU9L9LQSB6D7LDJ+8w57Cc6qWHRJ7dNI9sI/IQ2FQWk7PkTWriybAd3MlQ==

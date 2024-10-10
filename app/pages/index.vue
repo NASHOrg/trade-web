@@ -1,7 +1,3 @@
-<script setup lang="ts"></script>
-
-<template>
-  <div class="w-full h-screen">
-    <HomeDemo />
-  </div>
-</template>
+<script setup lang="ts">
+navigateTo('/dashboard');
+</script>

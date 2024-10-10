@@ -4,5 +4,11 @@
   "menu": {
     "home": "Home"
   },
-  "connect": "Connect wallet"
+  "connect": "Connect wallet",
+  "dashboard": "Dashboard",
+  "delegate": "Delegate",
+  "stake": "Stake",
+  "trade": "Trade",
+  "invite": "Invite",
+  "account": "Account"
 }

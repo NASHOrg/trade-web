@@ -11,7 +11,7 @@ export class Api {
   apiProvider: ApiProvider;
 
   setBaseUrl(url: string) {
-    const apiProvider: ApiProvider = {
+    this.apiProvider = {
       fetch: ofetch.create({
         baseURL: url,
         headers: {
@@ -31,7 +31,6 @@ export class Api {
         },
       }),
     };
-    this.apiProvider = apiProvider;
   }
 
   private fetcher<Paths>() {
