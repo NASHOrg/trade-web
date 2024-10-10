@@ -20,7 +20,7 @@ const mainnet = {
   rpcUrl: 'https://betatest-rpc-node-http.bool.network',
 };
 const web3Modal = createWeb3Modal({
-  ethersConfig: defaultConfig({ metadata: walletConfig.metadata }),
+  ethersConfig: defaultConfig({ metadata: walletConfig.metadata, auth: { socials: [], email: false } }),
   themeMode: 'light',
   themeVariables: {
     '--w3m-accent': '#FF5a19',

@@ -4,489 +4,297 @@
  */
 
 export interface paths {
-  '/common/dict': {
-    get: {
-      parameters: {
-        query: {
-          dictCode: string
-        }
-      }
-      responses: {
-        /** successful operation */
-        200: {
-          schema: {
-            code: string
-            msg: string
-            data: {
-              code: string
-              i18nName: string
-              dictType: string
-              description: string
-              sort: string
-              items: string[]
-            }
-            fail: boolean
-          }
-        }
-      }
-    }
-  }
-  '/reward/cross-reward:withdraw': {
-    post: {
-      parameters: {
-        body: {
-          root?: {
-            /** @description evm地址 */
-            address: string
-            /** @description 提现金额 */
-            withdrawAmount: number
-            /** @description 项目方,BITGET、BOOL */
-            from?: string
-          }
-        }
-      }
-      responses: {
-        /** successful operation */
-        200: {
-          schema: {
-            code: string
-            msg: string
-            data: unknown
-            fail: boolean
-          }
-        }
-      }
-    }
-  }
-  '/reward/cross-reward': {
-    get: {
-      parameters: {
-        query: {
-          /** evm 地址 */
-          address: string
-        }
-      }
-      responses: {
-        /** successful operation */
-        200: {
-          schema: {
-            code: string
-            msg: string
-            data: {
-              crossRewardID: string
-              /** @description 奖励地址 */
-              crossRewardAddress: string
-              /** @description 总奖励金额 */
-              crossRewardTotalReward: number
-              /** @description 目前奖励金额 */
-              crossRewardCurrentReward: number
-              /** @description 已提现金额 */
-              crossRewardWithdrawReward: number
-              /** @description 此地址已跨链数量 */
-              totalCrossCount: number
-            }
-            fail: boolean
-          }
-        }
-      }
-    }
-  }
-  '/user/address-integral': {
-    get: {
-      parameters: {}
-      responses: {
-        /** successful operation */
-        200: {
-          schema: {
-            code: string
-            msg: string
-            data: {
-              addressIntegralID: string
-              addressIntegralAddress: string
-              addressIntegralTotalIntegral: number
-              addressIntegralCurrentIntegral: number
-              addressIntegralSpentIntegral: number
-              bridgeIntegral: number
-              stakeIntegral: number
-              socialIntegral: number
-            }
-            fail: boolean
-          }
-        }
-      }
-    }
-  }
-  '/user/integral-records': {
-    get: {
-      parameters: {
-        query: {
-          /** 积分类型 */
-          type?: string
-          pageNo: number
-          pageSize: number
-        }
-      }
-      responses: {
-        /** successful operation */
-        200: {
-          schema: {
-            code: string
-            msg: string
-            data: {
-              items: {
-                integralRecordID: string
-                integralRecordAddress: string
-                integralRecordChangeValue: number
-                integralRecordBeforeIntegral: number
-                integralRecordAfterIntegral: number
-                integralRecordType: string
-                integralRecordSettlementTime: number
-                integralRecordRemark: string
-              }[]
-              pageNo: number
-              pageSize: number
-              totalPage: number
-              totalCount: string
-              hasPrev: boolean
-              hasNext: boolean
-            }
-            fail: boolean
-          }
-        }
-      }
-    }
-  }
-  '/user/invitation-relation': {
-    post: {
-      parameters: {
-        body: {
-          root?: {
-            /** @description 邀请码 */
-            invitationCode: string
-          }
-        }
-      }
-      responses: {
-        /** successful operation */
-        200: {
-          schema: {
-            code: string
-            msg: string
-            data: unknown
-            fail: boolean
-          }
-        }
-      }
-    }
-  }
-  '/user/user:check': {
-    get: {
-      parameters: {
-        query: {
-          address: string
-        }
-      }
-      responses: {
-        /** successful operation */
-        200: {
-          schema: {
-            code: string
-            msg: string
-            data: boolean
-            fail: boolean
-          }
-        }
-      }
-    }
-  }
-  '/user/address-integrals:top': {
-    get: {
-      parameters: {
-        query: {
-          /** 地址筛选 */
-          address?: string
-          pageNo: number
-          pageSize: number
-        }
-      }
-      responses: {
-        /** successful operation */
-        200: {
-          schema: {
-            code: string
-            msg: string
-            data: {
-              items: {
-                address: string
-                inviter: string
-                currentIntegral: number
-                rank?: number
-              }[]
-              pageNo: number
-              pageSize: number
-              totalPage: number
-              totalCount: string
-              hasPrev: boolean
-              hasNext: boolean
-            }
-            fail: boolean
-          }
-        }
-      }
-    }
-  }
-  '/user/user': {
-    get: {
-      parameters: {}
-      responses: {
-        /** successful operation */
-        200: {
-          schema: {
-            code: string
-            msg: string
-            data: {
-              userID: string
-              /** @description 用户地址 */
-              userAddress: string
-              /** @description 用户邀请码 */
-              userInvitationCode: string
-              /** @description 用户邀请者地址 */
-              inviterAddress: string
-              /** @description 用户下级数量 */
-              inviterCount: number
-              /** @description 完成社区任务总数 */
-              completedNum: string
-              /** @description 用户积分排名 */
-              rank: string
-              /** @description 用户是否有邀请资格 */
-              inviterQualified: boolean
-            }
-            fail: boolean
-          }
-        }
-      }
-    }
-  }
-  '/user/user:login': {
-    post: {
-      parameters: {
-        body: {
-          root?: {
-            /** @description 地址 */
-            address: string
-            /** @description msg签名，可以在里面包含邀请码 */
-            signature: string
-            /** @description 邀请码 */
-            invitationCode?: string
-          }
-        }
-      }
-      responses: {
-        /** successful operation */
-        200: {
-          schema: {
-            code: string
-            msg: string
-            data: string
-            fail: boolean
-          }
-        }
-      }
-    }
-  }
-  '/user/dhc-record:sync': {
-    post: {
-      parameters: {}
-      responses: {
-        /** successful operation */
-        200: {
-          schema: {
-            code: string
-            msg: string
-            data: { [key: string]: unknown }
-            fail: boolean
-          }
-        }
-      }
-    }
-  }
-  '/user/task-record:sync': {
-    post: {
-      parameters: {}
-      responses: {
-        /** successful operation */
-        200: {
-          schema: {
-            code: string
-            msg: string
-            data: { [key: string]: unknown }
-            fail: boolean
-          }
-        }
-      }
-    }
-  }
-  '/api/bridge-records': {
-    get: {
-      parameters: {
-        query: {
-          /** evm地址 */
-          address?: string
-          /** 起始链txHash（仅支持EVM） */
-          txHash?: string
-          /** 链标识（起始链或目标链） */
-          network?: string
-          /** 页数 */
-          pageNo: number
-          /** 页码 */
-          pageSize: number
-        }
-      }
-      responses: {
-        /** successful operation */
-        200: {
-          schema: {
-            code: string
-            msg: string
-            data: {
-              items: {
-                /** @description evm地址 */
-                address: string
-                /** @description 起始链 */
-                sourceChain: string
-                /** @description 目标链 */
-                destChain: string
-                /** @description 跨链状态 */
-                crossStatus: string
-                /** @description 跨链桥类型 */
-                crossType: string
-                /** @description 跨链交易时间 */
-                txTime: number
-              }[]
-              pageNo: number
-              pageSize: number
-              totalPage: number
-              totalCount: string
-              hasPrev: boolean
-              hasNext: boolean
-            }
-            fail: boolean
-          }
-        }
-      }
-    }
-  }
-  '/api/bridge-address': {
-    get: {
-      parameters: {
-        query: {
-          /** evm地址 */
-          address: string
-          /** 项目方名称，例BOOL、BITGET */
-          projectName: string
-        }
-      }
-      responses: {
-        /** successful operation */
-        200: {
-          schema: {
-            code: string
-            /** @description 提示信息 */
-            msg: string
-            data: {
-              /** @description 是否使用过bool水龙头 */
-              faucetUsed: boolean
-              /** @description 是否使用过跨链桥 */
-              bridgeUsed: boolean
-            }
-            /** @description 接口是否调用成功 */
-            fail: boolean
-          }
-        }
-      }
-    }
-  }
-  '/api/bridge-statistics': {
-    get: {
-      parameters: {
-        query: {
-          /** evm地址 */
-          address?: string
-          /** 起始链txHash（仅支持EVM） */
-          txHash?: string
-          /** 链标识（起始链或目标链） */
-          network?: string
-          /** 页数 */
-          pageNo: number
-          /** 页码 */
-          pageSize: number
-        }
-      }
-      responses: {
-        /** successful operation */
-        200: {
-          schema: {
-            code: string
-            msg: string
-            data: {
-              items: {
-                /** @description 地址 */
-                address: string
-                /** @description btc跨链交易数量 */
-                btcBridgeCount: number
-                /** @description evm跨链交易数量 */
-                evmBridgeCount: number
-                /** @description 当前奖励tbol */
-                currentReward: number
-                /** @description 已提现tbol */
-                withdrawReward: number
-              }[]
-              pageNo: number
-              pageSize: number
-              totalPage: number
-              totalCount: string
-              hasPrev: boolean
-              hasNext: boolean
-            }
-            fail: boolean
-          }
-        }
-      }
-    }
-  }
+    "/users": {
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * 页码
+                     * 从 1 开始
+                     * 不传默认为第一页
+                     */
+                    pageNo: number;
+                    /**
+                     * 每页个数
+                     * 不传默认为 20
+                     * 最大为 1000
+                     */
+                    pageSize: number;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        /**
+                         * @description 返回消息
+                         * 异常时返回错误信息
+                         */
+                        msg: string;
+                        /**
+                         * @description 返回码
+                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
+                         */
+                        code: string;
+                        /** @description 返回数据 */
+                        data: {
+                            /** @description 是否还有前一页 */
+                            hasPrev: boolean;
+                            /** @description 当前页码 */
+                            pageNo: number;
+                            /** @description 总页数 */
+                            totalPage: number;
+                            /** @description 每页个数 */
+                            pageSize: number;
+                            /** @description 是否还有后一页 */
+                            hasNext: boolean;
+                            /** @description 总数 */
+                            totalCount: number;
+                            /** @description 数据域 */
+                            items: {
+                                /** @description 用户用户地址 */
+                                userAddress?: string;
+                                /** @description 用户唯一邀请码 */
+                                userInvitationCode?: string;
+                                /** @description 用户名称 */
+                                userName?: string;
+                                /** @description 用户ID */
+                                userID?: string;
+                                /** @description 用户邀请人地址 */
+                                userInvitationAddress?: string;
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "/user/user": {
+        get: {
+            parameters: {};
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        code: string;
+                        msg: string;
+                        data: {
+                            userID: string;
+                            userAddress: string;
+                            userInvitationCode: string;
+                            userInvitationAddress: string;
+                        };
+                        fail: boolean;
+                    };
+                };
+            };
+        };
+    };
+    "/user/user:login": {
+        post: {
+            parameters: {
+                body: {
+                    root?: {
+                        address: string;
+                        signature: string;
+                        invitationCode?: string;
+                        message: string;
+                    };
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        code: string;
+                        msg: string;
+                        data: string;
+                        fail: boolean;
+                    };
+                };
+            };
+        };
+    };
+    "/user/msg-to-login": {
+        get: {
+            parameters: {};
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        code: string;
+                        msg: string;
+                        data: string;
+                        fail: boolean;
+                    };
+                };
+            };
+        };
+    };
+    "/user/invitation-relations": {
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * 页码
+                     * 从 1 开始
+                     * 不传默认为第一页
+                     */
+                    pageNo: number;
+                    /**
+                     * 每页个数
+                     * 不传默认为 20
+                     * 最大为 1000
+                     */
+                    pageSize: number;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        /**
+                         * @description 返回消息
+                         * 异常时返回错误信息
+                         */
+                        msg: string;
+                        /**
+                         * @description 返回码
+                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
+                         */
+                        code: string;
+                        /** @description 返回数据 */
+                        data: {
+                            /** @description 是否还有前一页 */
+                            hasPrev: boolean;
+                            /** @description 当前页码 */
+                            pageNo: number;
+                            /** @description 总页数 */
+                            totalPage: number;
+                            /** @description 每页个数 */
+                            pageSize: number;
+                            /** @description 是否还有后一页 */
+                            hasNext: boolean;
+                            /** @description 总数 */
+                            totalCount: number;
+                            /** @description 数据域 */
+                            items: {
+                                /** @description 邀请记录名称 */
+                                invitationRelationName?: string;
+                                /** @description 邀请记录ID */
+                                invitationRelationID?: string;
+                                /** @description 邀请记录被邀请人地址 */
+                                invitationRelationInviteeAddress?: string;
+                                /** @description 邀请记录邀请人地址 */
+                                invitationRelationInviterAddress?: string;
+                                /** @description 邀请记录邀请等级 */
+                                invitationRelationInviterLevel?: string;
+                                /** @description 邀请记录邀请时间 */
+                                invitationRelationInviterTime?: string;
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "/user/invitation-relation": {
+        get: {
+            parameters: {
+                query: {
+                    /** 邀请记录ID */
+                    invitationRelationID: string;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        /**
+                         * @description 返回消息
+                         * 异常时返回错误信息
+                         */
+                        msg: string;
+                        /**
+                         * @description 返回码
+                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
+                         */
+                        code: string;
+                        /** @description 返回数据 */
+                        data: {
+                            /** @description 邀请记录名称 */
+                            invitationRelationName: string;
+                            /** @description 邀请记录ID */
+                            invitationRelationID: string;
+                            /** @description 邀请记录被邀请人地址 */
+                            invitationRelationInviteeAddress: string;
+                            /** @description 邀请记录邀请人地址 */
+                            invitationRelationInviterAddress: string;
+                            /** @description 邀请记录邀请等级 */
+                            invitationRelationInviterLevel: string;
+                            /** @description 邀请记录邀请时间 */
+                            invitationRelationInviterTime: string;
+                        };
+                    };
+                };
+            };
+        };
+        post: {
+            parameters: {
+                body: {
+                    /** 请求参数 */
+                    root?: {
+                        /** @description 名称 */
+                        name: string;
+                        /** @description 被邀请人地址 */
+                        inviteeAddress: string;
+                        /** @description 邀请等级 */
+                        inviterLevel: string;
+                        /** @description 邀请人地址 */
+                        inviterAddress: string;
+                        /** @description 邀请时间 */
+                        inviterTime: string;
+                    };
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        /**
+                         * @description 返回消息
+                         * 异常时返回错误信息
+                         */
+                        msg: string;
+                        /**
+                         * @description 返回码
+                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
+                         */
+                        code: string;
+                        /** @description 返回数据 */
+                        data: { [key: string]: unknown };
+                    };
+                };
+            };
+        };
+    };
 }
 
 export interface operations { }
 
 export interface external { }
 
-export type CommonDictGetParams = paths['/common/dict']['get']['parameters']['query']
-export type CommonDict = paths['/common/dict']['get']['responses'][200]['schema']['data']
-export type RewardCrossRewardWithdrawPostParams = paths['/reward/cross-reward:withdraw']['post']['parameters']['body']['root']
-export type RewardCrossRewardWithdrawPost = paths['/reward/cross-reward:withdraw']['post']['responses'][200]['schema']['data']
-export type RewardCrossRewardGetParams = paths['/reward/cross-reward']['get']['parameters']['query']
-export type RewardCrossReward = paths['/reward/cross-reward']['get']['responses'][200]['schema']['data']
-export type UserAddressIntegralGetParams = paths['/user/address-integral']['get']['parameters']
-export type UserAddressIntegral = paths['/user/address-integral']['get']['responses'][200]['schema']['data']
-export type UserIntegralRecordsGetParams = paths['/user/integral-records']['get']['parameters']['query']
-export type UserIntegralRecords = paths['/user/integral-records']['get']['responses'][200]['schema']['data']
-export type UserInvitationRelationPostParams = paths['/user/invitation-relation']['post']['parameters']['body']['root']
-export type UserInvitationRelationPost = paths['/user/invitation-relation']['post']['responses'][200]['schema']['data']
-export type UserUserCheckGetParams = paths['/user/user:check']['get']['parameters']['query']
-export type UserUserCheck = paths['/user/user:check']['get']['responses'][200]['schema']['data']
-export type UserAddressIntegralsTopGetParams = paths['/user/address-integrals:top']['get']['parameters']['query']
-export type UserAddressIntegralsTop = paths['/user/address-integrals:top']['get']['responses'][200]['schema']['data']
-export type UserUserGetParams = paths['/user/user']['get']['parameters']
-export type UserUser = paths['/user/user']['get']['responses'][200]['schema']['data']
-export type UserUserLoginPostParams = paths['/user/user:login']['post']['parameters']['body']['root']
-export type UserUserLoginPost = paths['/user/user:login']['post']['responses'][200]['schema']['data']
-export type UserDhcRecordSyncPostParams = paths['/user/dhc-record:sync']['post']['parameters']['body']['root']
-export type UserDhcRecordSyncPost = paths['/user/dhc-record:sync']['post']['responses'][200]['schema']['data']
-export type UserTaskRecordSyncPostParams = paths['/user/task-record:sync']['post']['parameters']['body']['root']
-export type UserTaskRecordSyncPost = paths['/user/task-record:sync']['post']['responses'][200]['schema']['data']
-export type ApiBridgeRecordsGetParams = paths['/api/bridge-records']['get']['parameters']['query']
-export type ApiBridgeRecords = paths['/api/bridge-records']['get']['responses'][200]['schema']['data']
-export type ApiBridgeAddressGetParams = paths['/api/bridge-address']['get']['parameters']['query']
-export type ApiBridgeAddress = paths['/api/bridge-address']['get']['responses'][200]['schema']['data']
-export type ApiBridgeStatisticsGetParams = paths['/api/bridge-statistics']['get']['parameters']['query']
-export type ApiBridgeStatistics = paths['/api/bridge-statistics']['get']['responses'][200]['schema']['data']
+export type UsersGetParams = paths["/users"]['get']['parameters']['query'];
+export type Users = paths["/users"]['get']['responses'][200]['schema']['data'];
+export type UserUserGetParams = paths["/user/user"]['get']['parameters'];
+export type UserUser = paths["/user/user"]['get']['responses'][200]['schema']['data'];
+export type UserUserLoginPostParams = paths["/user/user:login"]['post']['parameters']['body']['root'];
+export type UserUserLoginPost = paths["/user/user:login"]['post']['responses'][200]['schema']['data'];
+export type UserMsgToLoginGetParams = paths["/user/msg-to-login"]['get']['parameters'];
+export type UserMsgToLogin = paths["/user/msg-to-login"]['get']['responses'][200]['schema']['data'];
+export type UserInvitationRelationsGetParams = paths["/user/invitation-relations"]['get']['parameters']['query'];
+export type UserInvitationRelations = paths["/user/invitation-relations"]['get']['responses'][200]['schema']['data'];
+export type UserInvitationRelationGetParams = paths["/user/invitation-relation"]['get']['parameters']['query'];
+export type UserInvitationRelation = paths["/user/invitation-relation"]['get']['responses'][200]['schema']['data'];
+export type UserInvitationRelationPostParams = paths["/user/invitation-relation"]['post']['parameters']['body']['root'];
+export type UserInvitationRelationPost = paths["/user/invitation-relation"]['post']['responses'][200]['schema']['data'];

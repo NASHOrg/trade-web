@@ -95,14 +95,14 @@ function createApis(node: InterfaceDeclaration) {
   for (const [index, path] of allKeys.entries()) {
     const typeName = parsePath(path);
     const paramName = parsePath(path, true);
-    const methods = node
+    const methods = node!
       .getProperties()
     // eslint-disable-next-line no-unexpected-multiline
-      [index].getType()
+      [index]!.getType()
       .getProperties()
       .map(p => p.getName());
 
-    const content = node.getProperties()[index].getType().getText();
+    const content = node.getProperties()[index]!.getType().getText();
     for (const method of methods) {
       let typNameWithMethod = typeName;
       if (method !== 'get') {
