@@ -4,6 +4,8 @@ const route = useRoute();
 
 const navigations = ['dashboard', 'delegate', 'stake', 'trade', 'invite', 'account'];
 
+const hoveringOnLangSettingsBtn = ref<boolean>(false);
+
 function languageBtnOnTap() {
 
 }
@@ -29,9 +31,13 @@ function languageBtnOnTap() {
         {{ t(item) }}
       </a>
     </div>
-    <button @click="languageBtnOnTap">
+    <button
+      @click="languageBtnOnTap"
+      @mouseover="hoveringOnLangSettingsBtn = true"
+      @mouseleave="hoveringOnLangSettingsBtn = false"
+    >
       <NuxtImg
-        src="images/icon_globe_white.png"
+        :src="`images/icon_globe_${hoveringOnLangSettingsBtn ? 'primary':'white'}.png`"
         densities="1x 2x"
         width="24"
         height="24"
