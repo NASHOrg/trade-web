@@ -54,7 +54,7 @@ export default defineNuxtConfig({
     ],
   },
 
-  plugins: ['~/plugins/api'],
+  plugins: ['~/plugins/api', '~/plugins/chart.ts'],
 
   modules: [
     '@pinia/nuxt',

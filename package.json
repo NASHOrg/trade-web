@@ -39,6 +39,7 @@
     "bignumber.js": "^9.1.2",
     "bitcore-lib": "^10.0.36",
     "buffer": "^6.0.3",
+    "chart.js": "^4.4.4",
     "dayjs": "^1.11.11",
     "ethers": "^6.12.2",
     "events": "^3.3.0",
@@ -47,6 +48,7 @@
     "tonweb": "^0.0.66",
     "viem": "^2.16.5",
     "vue": "^3.4.27",
+    "vue-chartjs": "^5.3.1",
     "vue-router": "^4.3.2",
     "vue-sonner": "^1.1.2"
   },

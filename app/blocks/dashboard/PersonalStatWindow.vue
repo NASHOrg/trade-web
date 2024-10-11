@@ -13,7 +13,7 @@ function claimBtnOnTap() {
 <template>
   <div class="flex flex-col mt-[28px] window w-full h-[590px] px-[30px] py-[40px]">
     <div
-      class="mb-[40px] flex flex-col items-start bg-gradient-to-r text-[#333] from-[#F6CEA6] to-[#FF623F] rounded-[28px] ps-[30px]"
+      class="mb-[40px] flex flex-col items-start gradient-card ps-[30px]"
     >
       <div class="mt-[20px] bg-[#FFD9C5] rounded-[55px] px-[16px] py-[4px]">
         {{ userName }}
@@ -39,12 +39,15 @@ function claimBtnOnTap() {
         + {{ airDropClaimedAmount.toLocaleString() }}
       </p>
     </div>
-    <div class="mt-[54px] flex-grow flex flex-col bg-[#666] text-center justify-center">
-      CHART AREA
-    </div>
+    <PersonalChart class="mt-[40px]" />
   </div>
 </template>
 
-<style scoped lang="scss">
-
+<style scoped lang="postcss">
+.gradient-card {
+  border-radius: 28px;
+  background: linear-gradient(80deg, #F6CEA6 0%, #FF623F 100%);
+  box-shadow: 0 -3px 0 0 #FFC0B2;
+  color: #333;
+}
 </style>
