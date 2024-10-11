@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import TeamStatWindow from '~/blocks/dashboard/TeamStatWindow.vue';
+import PersonalStatWindow from '~/blocks/dashboard/PersonalStatWindow.vue';
+import RewardHistoryWindow from '~/blocks/dashboard/RewardHistoryWindow.vue';
+
 const { t } = useI18n();
 
 const selectedTab = ref<'team' | 'self'>('team');
@@ -22,8 +26,9 @@ const selectedTab = ref<'team' | 'self'>('team');
         {{ t('personalPower') }}
       </button>
     </div>
-    <div class="mt-[28px] window w-[600px] h-[590px]" />
-    <div class="mt-[28px] window w-[600px] h-[574px]" />
+    <TeamStatWindow v-if="selectedTab === 'team'" />
+    <PersonalStatWindow v-else />
+    <RewardHistoryWindow />
   </div>
 </template>
 

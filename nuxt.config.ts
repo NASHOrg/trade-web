@@ -11,6 +11,9 @@ export default defineNuxtConfig({
   devServer: {
     port: 4000,
   },
+
+  css: ['~/assets/styles/fonts.css'],
+
   nitro: {
     compressPublicAssets: true,
   },

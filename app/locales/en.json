@@ -10,5 +10,16 @@
   "stake": "Stake",
   "trade": "Trade",
   "invite": "Invite",
-  "account": "Account"
+  "account": "Account",
+  "teamPower": "Team Power",
+  "personalPower": "Personal Power",
+  "userNamesTeam": "{userName}'s Team",
+  "myStaking": "My Staking",
+  "teamStaking": "Team Staking",
+  "totalMined": "Total Mined",
+  "claim": "Claim",
+  "airdropClaimed": "Airdrop Claimed",
+  "checkRules": "Check Rules",
+  "rewardsHistory": "Rewards History",
+  "howToUnlockTheRewards": "How to Unlock the Rewards?"
 }

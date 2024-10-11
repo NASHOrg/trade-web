@@ -32,7 +32,7 @@ export default <Partial<Config>>{
         video: '16 / 9',
       },
       fontFamily: {
-        custom: ['Inter'],
+        custom: ['Ark Pixel'],
       },
 
     },
