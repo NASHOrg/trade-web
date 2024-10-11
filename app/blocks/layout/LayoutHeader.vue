@@ -19,7 +19,7 @@ function languageBtnOnTap() {
         width="70"
       />
     </a>
-    <div class="flex space-x-[40px]">
+    <div class="flex space-x-[40px] items-center">
       <a
         v-for="item in navigations"
         :key="item"
