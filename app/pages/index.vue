@@ -4,11 +4,11 @@ import { toast } from 'vue-sonner';
 const { t } = useI18n();
 const { $api } = useNuxtApp();
 const { isConnected, address, signMessage } = useWallet();
-const { token, setToken } = useUserStore();
+const userStore = useUserStore();
 
 const loginAttempted = ref<boolean>(false);
 
-const noPermission = computed(() => loginAttempted.value && !token && isConnected.value);
+const noPermission = computed(() => loginAttempted.value && !userStore.token && isConnected.value);
 
 const approveProcessing = ref<boolean>(false);
 
@@ -42,7 +42,7 @@ function signLoginMessage() {
             .then((res) => {
               if (res) {
                 loginAttempted.value = true;
-                setToken(res);
+                userStore.token = res;
                 navigateTo('/dashboard');
               }
             });

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import TeamChart from '~/blocks/dashboard/TeamChart.client.vue';
+import CheckRulesModal from '~/blocks/dashboard/CheckRulesModal.vue';
 
 const { t } = useI18n();
 const { user } = useUserStore();
@@ -14,7 +15,7 @@ const teamStakingAmount = 350000;
 const totalMinedAmount = 1905;
 
 function checkRulesBtnOnTap() {
-
+  useModal().open(CheckRulesModal);
 }
 </script>
 

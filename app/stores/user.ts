@@ -19,11 +19,11 @@ export const useUserStore = defineStore('user-store', () => {
     router.replace({ query: { network: network.network } });
   }
 
-  const token = ref<string | undefined>(localStorage.getItem('token') ?? undefined);
+  const token = ref<string | undefined>(); // localStorage.getItem('token') ?? undefined
   watch(token, async (value) => {
     if (value) {
       await refreshUserState();
-      localStorage.setItem('token', value);
+      // localStorage.setItem('token', value);
     }
   });
 
