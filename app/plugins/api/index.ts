@@ -16,8 +16,10 @@ const api = defineNuxtPlugin((nuxtApp) => {
       parseResponse: (data) => {
         const response = JSON.parse(data);
         if (response.code !== '000') {
-          if (response.code === '108.bool-reward.UNAUTHENTICATED') {
-            // userStore().logout()
+          if (response.code === '108.bool-stake-reward.UNAUTHENTICATED') {
+            const userStore = useUserStore();
+            if (userStore.token) userStore.token = undefined;
+            navigateTo('/');
           }
           else {
             throw new Error(response.msg);
@@ -31,7 +33,7 @@ const api = defineNuxtPlugin((nuxtApp) => {
   };
   return {
     provide: {
-      yapi: new Yapi(apiProvider),
+      api: new Yapi(apiProvider),
     },
   };
 });

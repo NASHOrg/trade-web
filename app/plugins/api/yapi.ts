@@ -5,10 +5,6 @@
 import { Api } from './api';
 
 export class Yapi extends Api {
-  get users() {
-    return this.ft.path('/users').method('get').create()!;
-  }
-
   get userUser() {
     return this.ft.path('/user/user').method('get').create()!;
   }
@@ -29,7 +25,19 @@ export class Yapi extends Api {
     return this.ft.path('/user/invitation-relation').method('get').create()!;
   }
 
-  get userInvitationRelationPost() {
-    return this.ft.path('/user/invitation-relation').method('post').create()!;
+  get userInviterRebates() {
+    return this.ft.path('/user/inviter-rebates').method('get').create()!;
+  }
+
+  get userRebateWithdrawRecords() {
+    return this.ft.path('/user/rebate-withdraw-records').method('get').create()!;
+  }
+
+  get userRebateWithdrawRecord() {
+    return this.ft.path('/user/rebate-withdraw-record').method('get').create()!;
+  }
+
+  get userRebateWithdrawPost() {
+    return this.ft.path('/user/rebate:withdraw').method('post').create()!;
   }
 }

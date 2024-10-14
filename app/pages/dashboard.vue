@@ -9,7 +9,7 @@ const selectedTab = ref<'team' | 'self'>('team');
 </script>
 
 <template>
-  <div class="flex flex-col items-center pt-[40px] max-w-[600px]">
+  <div class="flex flex-col items-center pt-[40px] w-full">
     <div class="window flex justify-between p-[4px] space-x-[4px]">
       <button
         class="tab"

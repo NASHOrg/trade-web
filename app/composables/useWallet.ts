@@ -105,22 +105,19 @@ export default function useWallet() {
 
   // Sign message
   async function signMessage(message: string) {
-    if (!isConnected) {
-      return;
-    }
+    if (!isConnected) return undefined;
     const provider = new BrowserProvider(walletProvider.value!);
     const signer = await provider.getSigner();
-    const signature = await signer?.signMessage(message);
-    return signature;
+    return signer?.signMessage(message);
   }
 
   /**
-   *
-   * Add the token to wallet
-   *
-   * @param token
-   * @param provider Wallet Provider
-   */
+     *
+     * Add the token to wallet
+     *
+     * @param token
+     * @param provider Wallet Provider
+     */
   async function addTokenToWallet(
     token: {
       address: string;

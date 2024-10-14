@@ -101,8 +101,12 @@ export const errorHandling = (error: any): Error => {
   }
 };
 
-export function formaCurrency(value: string, decimal = 6) {
+export function formatCurrency(value: string, decimal = 6) {
   return BigNumber(value).dp(decimal).toFormat();
+}
+
+export function formatAmount(value: string, decimal = 6) {
+  return BigNumber(value).dp(decimal, 1).toFormat();
 }
 
 export function shortFloatNum(i: number | string, position: number): string {

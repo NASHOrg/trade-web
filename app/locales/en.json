@@ -5,6 +5,7 @@
     "home": "Home"
   },
   "connect": "Connect wallet",
+  "inviteCode": "Invite Code",
   "dashboard": "Dashboard",
   "delegate": "Delegate",
   "stake": "Stake",
@@ -21,5 +22,22 @@
   "airdropClaimed": "Airdrop Claimed",
   "checkRules": "Check Rules",
   "rewardsHistory": "Rewards History",
-  "howToUnlockTheRewards": "How to Unlock the Rewards?"
+  "howToUnlockTheRewards": "How to Unlock the Rewards?",
+  "balance": "Balance",
+  "staking": "Staking",
+  "unstaked": "Unstaked",
+  "totalRewards": "Total Rewards",
+  "retrieve": "Retrieve",
+  "dhcList": "DHC List",
+  "inviteTitle": "Invite to earn more $BOOL rebate",
+  "inviteDesc": "Earn extra rewards from the staking of your friends.",
+  "friends": "Friends",
+  "totalStaking": "Total Staking",
+  "totalRebates": "Total Rebates",
+  "invitationLink": "Invitation Link",
+  "friendsList": "Friends List",
+  "tierOne": "Tier 1",
+  "tierTwo": "Tier 2",
+  "collectableRewards": "Collectable Rewards",
+  "collect": "Collect"
 }

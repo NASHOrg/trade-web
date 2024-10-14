@@ -4,71 +4,6 @@
  */
 
 export interface paths {
-    "/users": {
-        get: {
-            parameters: {
-                query: {
-                    /**
-                     * 页码
-                     * 从 1 开始
-                     * 不传默认为第一页
-                     */
-                    pageNo: number;
-                    /**
-                     * 每页个数
-                     * 不传默认为 20
-                     * 最大为 1000
-                     */
-                    pageSize: number;
-                };
-            };
-            responses: {
-                /** successful operation */
-                200: {
-                    schema: {
-                        /**
-                         * @description 返回消息
-                         * 异常时返回错误信息
-                         */
-                        msg: string;
-                        /**
-                         * @description 返回码
-                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
-                         */
-                        code: string;
-                        /** @description 返回数据 */
-                        data: {
-                            /** @description 是否还有前一页 */
-                            hasPrev: boolean;
-                            /** @description 当前页码 */
-                            pageNo: number;
-                            /** @description 总页数 */
-                            totalPage: number;
-                            /** @description 每页个数 */
-                            pageSize: number;
-                            /** @description 是否还有后一页 */
-                            hasNext: boolean;
-                            /** @description 总数 */
-                            totalCount: number;
-                            /** @description 数据域 */
-                            items: {
-                                /** @description 用户用户地址 */
-                                userAddress?: string;
-                                /** @description 用户唯一邀请码 */
-                                userInvitationCode?: string;
-                                /** @description 用户名称 */
-                                userName?: string;
-                                /** @description 用户ID */
-                                userID?: string;
-                                /** @description 用户邀请人地址 */
-                                userInvitationAddress?: string;
-                            }[];
-                        };
-                    };
-                };
-            };
-        };
-    };
     "/user/user": {
         get: {
             parameters: {};
@@ -81,8 +16,29 @@ export interface paths {
                         data: {
                             userID: string;
                             userAddress: string;
+                            /** @description 用户来源 */
+                            userSource: string;
+                            /** @description 用户邀请码 */
                             userInvitationCode: string;
+                            /** @description 用户上级地址 */
                             userInvitationAddress: string;
+                            /** @description 用户一级邀请数量 */
+                            inviterL1Count: string;
+                            /** @description 用户二级邀请数量 */
+                            inviterL2Count: string;
+                            /** @description 用户一二级昨日质押量 */
+                            inviterStakingAmount: string;
+                            /** @description 用户自身质押量 */
+                            oneselfStakingAmount: string;
+                            /** @description 用户是否达到返佣最小质押量 */
+                            computeTag: boolean;
+                            /** @description 用户返佣提现数量 */
+                            rebateBalanceMap: {
+                                /** @description 一级返佣可提现余额 */
+                                INVITER_L1: string;
+                                /** @description 二级返佣可提现余额 */
+                                INVITER_L2: string;
+                            };
                         };
                         fail: boolean;
                     };
@@ -239,22 +195,82 @@ export interface paths {
                 };
             };
         };
-        post: {
+    };
+    "/user/inviter-rebates": {
+        get: {
             parameters: {
-                body: {
-                    /** 请求参数 */
-                    root?: {
-                        /** @description 名称 */
-                        name: string;
-                        /** @description 被邀请人地址 */
-                        inviteeAddress: string;
-                        /** @description 邀请等级 */
-                        inviterLevel: string;
-                        /** @description 邀请人地址 */
-                        inviterAddress: string;
-                        /** @description 邀请时间 */
-                        inviterTime: string;
+                query: {
+                    /**
+                     * 页码
+                     * 从 1 开始
+                     * 不传默认为第一页
+                     */
+                    pageNo: number;
+                    /**
+                     * 每页个数
+                     * 不传默认为 20
+                     * 最大为 1000
+                     */
+                    pageSize: number;
+                    /** 邀请类型。LEVEL_1、LEVEL_2 */
+                    type: string;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        code: string;
+                        msg: string;
+                        data: {
+                            items: {
+                                /** @description 下级地址 */
+                                inviteeAddress: string;
+                                /** @description 下级返佣金额 */
+                                totalRebateAmount: number;
+                            }[];
+                            pageNo: number;
+                            pageSize: number;
+                            totalPage: number;
+                            totalCount: string;
+                            hasPrev: boolean;
+                            hasNext: boolean;
+                        };
+                        fail: boolean;
                     };
+                };
+            };
+        };
+    };
+    "/user/rebate-withdraw-records": {
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * 页码
+                     * 从 1 开始
+                     * 不传默认为第一页
+                     */
+                    pageNo: number;
+                    /**
+                     * 每页个数
+                     * 不传默认为 20
+                     * 最大为 1000
+                     */
+                    pageSize: number;
+                    /** INVITER_L1、INVITER_L1 */
+                    type?: string;
+                    /**
+                     * // 用户claim
+                     *     CLAIM,
+                     *     // 审核确认提取
+                     *     CONFIRMED,
+                     *     // 上链成功
+                     *     SUCCESS,
+                     *     // 上链失败
+                     *     ERROR
+                     */
+                    status?: string;
                 };
             };
             responses: {
@@ -272,7 +288,103 @@ export interface paths {
                          */
                         code: string;
                         /** @description 返回数据 */
+                        data: {
+                            /** @description 是否还有前一页 */
+                            hasPrev: boolean;
+                            /** @description 当前页码 */
+                            pageNo: number;
+                            /** @description 总页数 */
+                            totalPage: number;
+                            /** @description 每页个数 */
+                            pageSize: number;
+                            /** @description 是否还有后一页 */
+                            hasNext: boolean;
+                            /** @description 总数 */
+                            totalCount: number;
+                            /** @description 数据域 */
+                            items: {
+                                /** @description 返佣提现记录ID */
+                                rebateWithdrawRecordID?: string;
+                                /** @description 返佣提现记录提现类型 */
+                                rebateWithdrawRecordWithdrawType?: string;
+                                /** @description 返佣提现记录提现状态 */
+                                rebateWithdrawRecordWithdrawStatus?: string;
+                                /** @description 返佣提现记录提现时间 */
+                                rebateWithdrawRecordWithdrawTime?: string;
+                                /** @description 返佣提现记录提现地址 */
+                                rebateWithdrawRecordAddress?: string;
+                                /** @description 返佣提现记录提现金额 */
+                                rebateWithdrawRecordWithdrawAmount?: string;
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "/user/rebate-withdraw-record": {
+        get: {
+            parameters: {
+                query: {
+                    /** 返佣提现记录ID */
+                    rebateWithdrawRecordID: string;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        /**
+                         * @description 返回消息
+                         * 异常时返回错误信息
+                         */
+                        msg: string;
+                        /**
+                         * @description 返回码
+                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
+                         */
+                        code: string;
+                        /** @description 返回数据 */
+                        data: {
+                            /** @description 返佣提现记录ID */
+                            rebateWithdrawRecordID: string;
+                            /** @description 返佣提现记录名称 */
+                            rebateWithdrawRecordName: string;
+                            /** @description 返佣提现记录提现类型 */
+                            rebateWithdrawRecordWithdrawType: string;
+                            /** @description 返佣提现记录提现状态 */
+                            rebateWithdrawRecordWithdrawStatus: string;
+                            /** @description 返佣提现记录提现时间 */
+                            rebateWithdrawRecordWithdrawTime: string;
+                            /** @description 返佣提现记录提现地址 */
+                            rebateWithdrawRecordAddress: string;
+                            /** @description 返佣提现记录提现金额 */
+                            rebateWithdrawRecordWithdrawAmount: string;
+                            /** @description 返佣提现记录备注信息，聚合记录返佣记录的id */
+                            rebateWithdrawRecordRemark: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "/user/rebate:withdraw": {
+        post: {
+            parameters: {
+                body: {
+                    root?: {
+                        withdrawType: string;
+                    };
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        code: string;
+                        msg: string;
                         data: { [key: string]: unknown };
+                        fail: boolean;
                     };
                 };
             };
@@ -284,8 +396,6 @@ export interface operations { }
 
 export interface external { }
 
-export type UsersGetParams = paths["/users"]['get']['parameters']['query'];
-export type Users = paths["/users"]['get']['responses'][200]['schema']['data'];
 export type UserUserGetParams = paths["/user/user"]['get']['parameters'];
 export type UserUser = paths["/user/user"]['get']['responses'][200]['schema']['data'];
 export type UserUserLoginPostParams = paths["/user/user:login"]['post']['parameters']['body']['root'];
@@ -296,5 +406,11 @@ export type UserInvitationRelationsGetParams = paths["/user/invitation-relations
 export type UserInvitationRelations = paths["/user/invitation-relations"]['get']['responses'][200]['schema']['data'];
 export type UserInvitationRelationGetParams = paths["/user/invitation-relation"]['get']['parameters']['query'];
 export type UserInvitationRelation = paths["/user/invitation-relation"]['get']['responses'][200]['schema']['data'];
-export type UserInvitationRelationPostParams = paths["/user/invitation-relation"]['post']['parameters']['body']['root'];
-export type UserInvitationRelationPost = paths["/user/invitation-relation"]['post']['responses'][200]['schema']['data'];
+export type UserInviterRebatesGetParams = paths["/user/inviter-rebates"]['get']['parameters']['query'];
+export type UserInviterRebates = paths["/user/inviter-rebates"]['get']['responses'][200]['schema']['data'];
+export type UserRebateWithdrawRecordsGetParams = paths["/user/rebate-withdraw-records"]['get']['parameters']['query'];
+export type UserRebateWithdrawRecords = paths["/user/rebate-withdraw-records"]['get']['responses'][200]['schema']['data'];
+export type UserRebateWithdrawRecordGetParams = paths["/user/rebate-withdraw-record"]['get']['parameters']['query'];
+export type UserRebateWithdrawRecord = paths["/user/rebate-withdraw-record"]['get']['responses'][200]['schema']['data'];
+export type UserRebateWithdrawPostParams = paths["/user/rebate:withdraw"]['post']['parameters']['body']['root'];
+export type UserRebateWithdrawPost = paths["/user/rebate:withdraw"]['post']['responses'][200]['schema']['data'];

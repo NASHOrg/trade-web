@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const { $yapi } = useNuxtApp();
+const { $api } = useNuxtApp();
 const userStore = useUserStore();
 const { networks, changeNetwork } = userStore;
 const currentNetwork = computed(() => {
@@ -12,7 +12,7 @@ const items = computed(() => {
       {
         label: item.name,
         click: () => {
-          $yapi.setBaseUrl(item.baseUrl);
+          $api.setBaseUrl(item.baseUrl);
           changeNetwork(item);
           refreshNuxtData();
         },
