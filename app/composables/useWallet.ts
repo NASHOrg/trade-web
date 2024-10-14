@@ -64,6 +64,13 @@ export default function useWallet() {
     if (!newAddress) {
       store.token = undefined;
       signing = false;
+      const tokens = JSON.parse(localStorage.getItem('tokens') ?? '{}');
+      if (oldAddress) tokens[oldAddress] = undefined;
+      localStorage.setItem('tokens', JSON.stringify(tokens));
+      if (useRoute().path !== '/') {
+        navigateTo('/');
+      }
+      store.user = undefined;
       return;
     }
     try {

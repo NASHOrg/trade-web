@@ -20,6 +20,7 @@ export default defineAppConfig({
     button: {
       default: {
         loadingIcon: 'i-tdesign-loading',
+        size: 'md',
       },
       rounded: 'rounded-[10px]',
       variant: {
@@ -32,6 +33,9 @@ export default defineAppConfig({
         'md': 'text-[16px]',
         'lg': 'text-lg',
         'xl': 'text-xl',
+      },
+      padding: {
+        md: 'px-6 py-2',
       },
     },
     modal: {

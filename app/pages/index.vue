@@ -3,14 +3,11 @@
 
 <template>
   <div class="my-[30px] flex flex-col items-center justify-center">
-    <NuxtImg
-      src="images/shield_shape_lock.png"
-      class="w-[203px] h-[200px]"
-    />
     <p
-      class="mt-[24px]"
+      class="mt-[100px] text-4xl"
     >
-      Connect your wallet to login.
+      Connect your wallet to get started.
     </p>
+    <ConnectWalletButton class="mt-8" />
   </div>
 </template>

@@ -4,7 +4,6 @@ import type { UserUser } from '~/types/swagger';
 export const useUserStore = defineStore('user-store', () => {
   const nuxtApp = useNuxtApp();
   const router = useRouter();
-  // const evmWallet = useWallet();
   const networks = networkApiConfig;
 
   const currentNetwork = computed<(typeof networks)[0]>(() => {
@@ -23,29 +22,38 @@ export const useUserStore = defineStore('user-store', () => {
 
   watch(token, async (value) => {
     if (value) {
-      await refreshUserState();
+      await refreshUser();
     }
   });
 
   const user = ref<UserUser | undefined>(undefined);
-  const userRequestProcessing = ref(false);
-  async function refreshUserState() {
-    userRequestProcessing.value = true;
-    user.value = await nuxtApp.$api.userUser({}, token.value).finally(() => {
-      userRequestProcessing.value = false;
-    });
+  async function refreshUser() {
+    user.value = await nuxtApp.$api.userUser({}, token.value);
     if (useRoute().path === '/') {
       navigateTo('/dashboard');
     }
   }
 
+  function logout() {
+    const { address, disconnect } = useWallet();
+    const tokens = JSON.parse(localStorage.getItem('tokens') ?? '{}');
+    if (address.value) {
+      tokens[address.value] = undefined;
+      localStorage.setItem('tokens', JSON.stringify(tokens));
+      disconnect();
+    }
+    token.value = undefined;
+    user.value = undefined;
+    navigateTo('/');
+  }
+
   return {
     currentNetwork,
     networks,
-    changeNetwork,
     token,
     user,
-    userRequestProcessing,
-    refreshUserState,
+    changeNetwork,
+    refreshUser,
+    logout,
   };
 });

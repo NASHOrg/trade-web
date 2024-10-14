@@ -2,7 +2,7 @@
 import { toast } from 'vue-sonner';
 
 const store = useUserStore();
-const loading = ref(false);
+const isLoading = ref(false);
 const { $api } = useNuxtApp();
 const { signMessage, address, open, disconnect } = useWallet();
 const route = useRoute();
@@ -45,7 +45,7 @@ async function signIn() {
     return;
   }
   try {
-    loading.value = true;
+    isLoading.value = true;
     const tokens = JSON.parse(localStorage.getItem('tokens') ?? '{}');
     const message = await $api.userMsgToLogin({});
     const signature = await signMessage(message);
@@ -80,7 +80,7 @@ async function signIn() {
     }
   }
   finally {
-    loading.value = false;
+    isLoading.value = false;
   }
 }
 
@@ -97,53 +97,38 @@ function cancel() {
   >
     <div class="py-[48px] p-[20px] flex flex-col justify-center">
       <div class="flex flex-row item-center">
-        <span class="text-[24px] font-bold">Sign In</span>
+        <span class="text-[24px] font-bold text-primary">Sign In</span>
         <div
-          class="h-fit rounded-full py-1 px-4 bg-neutral text-center text-[14px] ml-4"
+          class="h-fit rounded-full py-1 px-4 bg-gray-600 text-white text-center text-[14px] ml-4"
         >
           {{ shortAddress(address ?? '') }}
         </div>
       </div>
 
-      <div class="text-[18px]">
+      <div class="mt-2 text-[18px]">
         Verify wallet ownership to access xbit.
       </div>
       <div
-        v-if="!referral && data === false"
-        class="flex flex-col"
+        v-if="!referral && data !== false"
+        class="flex flex-col mt-4"
       >
         <label
           for="referral"
           class="w-full flex flex-row justify-between"
-        ><span>Referral Code</span>
-          <div class="text-[12px]">Optional</div></label>
-        <input
-          id="referral"
+        >
+          <span class="font-semibold">Referral Code</span>
+        </label>
+        <UInput
           v-model="input"
-          class="input input-sm rounded-[8px] px-[10px] py-[5px] mt-[10px] text-white"
+          class="rounded-[8px] mt-[10px] text-white"
           placeholder="Please input the referral code"
-        >
+        />
       </div>
-      <span
-        v-if="referral && data === false"
-        class="text-[16px] text-white flex flex-row items-center"
-      >
-        <input
-          v-model="checked"
-          type="checkbox"
-          class="checkbox mr-2"
-        >
-        <span>
-          Bind the code
-          <span class="text-primary font-bold">{{ referral }}</span> as your
-          invitation.
-        </span>
-      </span>
       <div class="w-full text-center pt-[20px]">
         <div class="grid grid-cols-2 gap-[20px] mt-[16px]">
           <UButton
             block
-            coloe="gray"
+            variant="outline"
             class="rounded-full"
             @click="cancel"
           >
@@ -152,12 +137,9 @@ function cancel() {
           <UButton
             block
             class="rounded-full"
+            :loading="isLoading"
             @click="signIn"
           >
-            <span
-              v-if="loading"
-              class="loading loading-spinner w-[20px]"
-            />
             Sign In
           </UButton>
         </div>
