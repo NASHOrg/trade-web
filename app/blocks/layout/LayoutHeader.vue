@@ -1,11 +1,8 @@
 <script setup lang="ts">
 const { t } = useI18n();
-const route = useRoute();
-const { token, user } = useUserStore();
+const userStore = useUserStore();
 
 const navigations = ['dashboard', 'delegate', 'stake', 'trade', 'invite', 'account'];
-
-const hoveringOnLangSettingsBtn = ref<boolean>(false);
 </script>
 
 <template>
@@ -22,30 +19,24 @@ const hoveringOnLangSettingsBtn = ref<boolean>(false);
       />
     </a>
     <div class="flex space-x-[40px] items-center">
-      <a
+      <ULink
         v-for="item in navigations"
         :key="item"
-        :href="`/${item}`"
-        :class="{ 'text-primary-500': route.path === `/${item}` }"
+        :to="item"
+        active-class="text-primary"
       >
         {{ t(item) }}
-      </a>
+      </ULink>
     </div>
     <div class="absolute right-[26px] flex items-center space-x-[16px]">
-      <a
-        href="/select-language"
-        @mouseover="hoveringOnLangSettingsBtn = true"
-        @mouseleave="hoveringOnLangSettingsBtn = false"
+      <ULink
+        to="/language"
+        class="text-white hover:text-primary"
       >
-        <NuxtImg
-          :src="`images/icon_globe_${hoveringOnLangSettingsBtn ? 'primary':'white'}.png`"
-          densities="1x 2x"
-          width="24"
-          height="24"
-        />
-      </a>
+        <IconLanguage />
+      </ULink>
       <div
-        v-if="token"
+        v-if="userStore.user"
         class="flex border rounded-[8px] p-[8px] space-x-[8px] bg-transparent"
       >
         <NuxtImg

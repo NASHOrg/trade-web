@@ -73,7 +73,7 @@
   </UModal>
 </template>
 
-<style scoped lang="postcss">
+<style scoped>
 th {
   padding: 28px 0;
 }

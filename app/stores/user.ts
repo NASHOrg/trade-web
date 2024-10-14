@@ -20,28 +20,12 @@ export const useUserStore = defineStore('user-store', () => {
   }
 
   const token = ref<string | undefined>(); // localStorage.getItem('token') ?? undefined
+
   watch(token, async (value) => {
     if (value) {
       await refreshUserState();
-      // localStorage.setItem('token', value);
     }
   });
-
-  // const {
-  //   data: user,
-  //   status: userRequestStatus,
-  //   refresh: refreshUserState,
-  // } = useAsyncData(
-  //   'user',
-  //   () => nuxtApp.$api.userUser({}, token.value),
-  //   {
-  //     server: false,
-  //     lazy: true,
-  //     immediate: token !== null,
-  //     watch: [token],
-  //     default: () => <UserUser>{ userAddress: evmWallet.address.value },
-  //   },
-  // );
 
   const user = ref<UserUser | undefined>(undefined);
   const userRequestProcessing = ref(false);
@@ -50,6 +34,9 @@ export const useUserStore = defineStore('user-store', () => {
     user.value = await nuxtApp.$api.userUser({}, token.value).finally(() => {
       userRequestProcessing.value = false;
     });
+    if (useRoute().path === '/') {
+      navigateTo('/dashboard');
+    }
   }
 
   return {

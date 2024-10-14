@@ -4,4 +4,4 @@ ADD . /usr/src/node/server/
 
 WORKDIR /usr/src/node/server/
 
-CMD [ "sh", "-c", "yarn serve" ]
+CMD [ "sh", "-c", "yarn start" ]

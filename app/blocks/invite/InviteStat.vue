@@ -1,15 +1,18 @@
 <script setup lang="ts">
+import { toast } from 'vue-sonner';
+
 const { t } = useI18n();
-const { user, userRequestStatus, refreshUserState } = useUserStore();
+const { user } = useUserStore();
 
-function copyInviteLinkBtnOnTap() {
-
-}
-refreshUserState();
+const onCopy = () => {
+  const { copy } = useClipboard({ source: '', legacy: true });
+  copy();
+  toast.success('Copied');
+};
 </script>
 
 <template>
-  <div class="relative window w-full flex flex-col items-start px-[30px] py-[40px]">
+  <div class="relative card w-full flex flex-col items-start px-[30px] py-[40px]">
     <h1 class="w-[381px] text-[40px]">
       {{ t('inviteTitle') }}
     </h1>
@@ -29,14 +32,7 @@ refreshUserState();
 
       <div class="flex flex-col items-center space-y-[16px]">
         <p>{{ t('totalStaking') }}</p>
-        <USkeleton
-          v-if="userRequestStatus === 'pending'"
-          class="h-[24px] w-[48px]"
-        />
-        <span
-          v-else
-          id="data-text"
-        >{{ Number(user?.inviterStakingAmount).toLocaleString() }}</span>
+        <span>{{ Number(user?.inviterStakingAmount).toLocaleString() }}</span>
       </div>
       <div class="flex flex-col items-center space-y-[16px]">
         <p>{{ t('totalRebates') }}</p>
@@ -61,7 +57,7 @@ refreshUserState();
           variant="outline"
           color="black"
           class="p-[4px]"
-          @click="copyInviteLinkBtnOnTap"
+          @click="onCopy"
         >
           <NuxtImg
             src="images/icon_copy_white.png"
@@ -75,15 +71,7 @@ refreshUserState();
   </div>
 </template>
 
-<style scoped lang="postcss">
-.window {
-  border-radius: 12px;
-  border: 1px solid white;
-  background-color: black;
-  box-shadow: 4px 4px 0 0 white;
-  overflow: hidden;
-}
-
+<style scoped>
 .inner-glowing-box {
   padding: 16px;
   border-radius: 6px;

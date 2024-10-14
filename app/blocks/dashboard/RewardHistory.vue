@@ -53,7 +53,7 @@ useInfiniteScroll(
 </script>
 
 <template>
-  <div class="flex flex-col mt-[28px] window w-full p-[30px]">
+  <div class="card flex flex-col mt-[28px] w-full p-[30px]">
     <div class="flex justify-between">
       <h3 class="text-white text-[24px]">
         {{ t('rewardsHistory') }}
@@ -112,7 +112,3 @@ useInfiniteScroll(
     </div>
   </div>
 </template>
-
-<style scoped lang="scss">
-
-</style>

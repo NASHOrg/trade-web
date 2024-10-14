@@ -21,11 +21,15 @@ export default defineAppConfig({
       default: {
         loadingIcon: 'i-tdesign-loading',
       },
+      rounded: 'rounded-[10px]',
+      variant: {
+        solid: '!text-white ring-[1px] ring-inset ring-white/10',
+      },
       size: {
         '2xs': 'text-base',
         'xs': 'text-base',
         'sm': 'text-sm',
-        'md': 'text-md',
+        'md': 'text-[16px]',
         'lg': 'text-lg',
         'xl': 'text-xl',
       },
@@ -34,6 +38,9 @@ export default defineAppConfig({
       overlay: {
         background: 'bg-black/60',
       },
+      background: '!bg-[#F7FBFF]',
+      rounded: 'rounded-[12px]',
+      base: 'text-[#333]',
     },
     tabs: {
       list: {

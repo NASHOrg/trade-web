@@ -1,1 +1,0 @@
-export const TON_CHAIN_IDS = [2591988700, 4222542658];

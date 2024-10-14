@@ -1,17 +1,19 @@
 import {
-  createWeb3Modal,
-  defaultConfig,
-  useWalletInfo,
-  useWeb3Modal,
   useWeb3ModalAccount,
   useWeb3ModalProvider,
+  createWeb3Modal,
+  defaultConfig,
+  useDisconnect,
+  useWeb3Modal,
 } from '@web3modal/ethers/vue';
+import { toast } from 'vue-sonner';
 import { BrowserProvider } from 'ethers';
-import { walletConfig } from '~/app.config';
-import type { ConnectedWallet } from '~/types/common';
-import { BaseEvmApi } from '~/utils/api/evm/baseEvmApi';
+import { SignInModal } from '#components';
 
-// Set chains
+// 1. Get projectId at https://cloud.walletconnect.com
+const projectId = '07556f4c9346cbd23fa53dde19889e99';
+
+// 2. Set chains
 const mainnet = {
   chainId: 481,
   name: 'Bool Beta Testnet',
@@ -19,138 +21,88 @@ const mainnet = {
   explorerUrl: 'https://beta-testnet.boolscan.com',
   rpcUrl: 'https://betatest-rpc-node-http.bool.network',
 };
-const web3Modal = createWeb3Modal({
-  ethersConfig: defaultConfig({ metadata: walletConfig.metadata, auth: { socials: [], email: false } }),
-  themeMode: 'light',
-  themeVariables: {
-    '--w3m-accent': '#FF5a19',
-    '--w3m-border-radius-master': '1.5px',
-    '--w3m-z-index': 9999,
-    '--w3m-font-family': 'Inter',
-  },
-  chains: [mainnet],
-  chainImages: {
-    481: 'https://bool.network/bool_logo_orange_black.svg',
-  },
-  projectId: walletConfig.projectId,
-});
+
+// 3. Create modal
+const metadata = {
+  name: 'Bool Campaign',
+  description: 'Bool campaign',
+  url: 'https://campaign.bool.network',
+  icons: ['https://bool.network/icon.png'],
+};
+let signing = false;
 
 export default function useWallet() {
-  const colorMode = useColorMode();
-  web3Modal.setThemeMode(colorMode.value === 'dark' ? 'dark' : 'light');
-
-  const { address, isConnected, chainId } = useWeb3ModalAccount();
-  const { walletProvider } = useWeb3ModalProvider();
-  const modal = useWeb3Modal();
-  const _walletInfo = useWalletInfo();
-
-  const walletInfo = computed<ConnectedWallet<'evm'>>(() => {
-    return {
-      label: _walletInfo.walletInfo.value?.name ?? '',
-      icon: _walletInfo.walletInfo.value?.icon ?? '',
-      chain: 'evm',
-      accounts: [{ address: address.value ?? '' }],
-      provider: walletProvider.value,
-      chainId: chainId.value?.toString(),
-    };
+  createWeb3Modal({
+    ethersConfig: defaultConfig({ metadata, auth: { email: false, socials: [] } }),
+    themeMode: 'dark',
+    themeVariables: {
+      '--w3m-accent': '#FF5a19',
+      '--w3m-border-radius-master': '1.5px',
+      '--w3m-z-index': 9999,
+      '--w3m-font-family': 'Roboto',
+    },
+    chains: [mainnet],
+    chainImages: {
+      481: 'https://bool.network/icon.png',
+    },
+    projectId,
   });
-
-  async function switchNetwork(chain: number) {
-    if (chain === Number(chainId.value)) return true;
-    if (!walletProvider.value) {
-      throw new Error('Wallet provider is not available.');
+  const { address, isConnected, chainId } = useWeb3ModalAccount();
+  const { disconnect } = useDisconnect();
+  const { open } = useWeb3Modal();
+  const { walletProvider } = useWeb3ModalProvider();
+  const store = useUserStore();
+  // const { $yapi } = useNuxtApp()
+  watch(address, (newAddress, oldAddress) => {
+    if (oldAddress === newAddress) {
+      return;
     }
-
+    if (signing) {
+      return;
+    }
+    signing = true;
+    if (!newAddress) {
+      store.token = undefined;
+      signing = false;
+      return;
+    }
     try {
-      await walletProvider.value?.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: `0x${chain.toString(16)}` }],
-      });
-      return true;
-    }
-    catch (err: any) {
-      if (err.code === 4902) {
-        const network = BaseEvmApi.chianList.find(
-          item => Number(item.id) === chain,
-        );
-        if (!network) {
-          throw new Error('There is no wallet in the current network.');
-        }
-
-        await walletProvider.value // Or window.ethereum if you don't support EIP-6963.
-          .request({
-            method: 'wallet_addEthereumChain',
-            params: [
-              {
-                chainId: `0x${chain.toString(16)}`,
-                chainName: network.label,
-                rpcUrls: [network.rpcUrl] /* ... */,
-                blockExplorerUrls: [network.scanUrl],
-                nativeCurrency: {
-                  name: network.token,
-                  symbol: network.token,
-                  decimals: 18,
-                },
-              },
-            ],
-          });
-
-        return await switchNetwork(chain);
+      const tokens = JSON.parse(localStorage.getItem('tokens') ?? '{}');
+      const _token = tokens[newAddress];
+      if (!_token) {
+        const modal = useModal();
+        modal.open(SignInModal);
+        return;
       }
-      else {
-        throw err;
+      store.token = _token;
+    }
+    catch (error: any) {
+      disconnect();
+      if ('message' in error && error.message) {
+        handleJsonRpcError(error, toast);
       }
     }
-  }
-
-  // Sign message
+    finally {
+      signing = false;
+    }
+  });
   async function signMessage(message: string) {
-    if (!isConnected) return undefined;
+    if (!isConnected) {
+      return;
+    }
     const provider = new BrowserProvider(walletProvider.value!);
     const signer = await provider.getSigner();
-    return signer?.signMessage(message);
-  }
-
-  /**
-     *
-     * Add the token to wallet
-     *
-     * @param token
-     * @param provider Wallet Provider
-     */
-  async function addTokenToWallet(
-    token: {
-      address: string;
-      symbol: string;
-      decimals: number | string;
-      icon: string;
-    },
-    provider: any,
-  ): Promise<void> {
-    await provider // Or window.ethereum if you don't support EIP-6963.
-      .request({
-        method: 'wallet_watchAsset',
-        params: {
-          type: 'ERC20',
-          options: {
-            address: token.address,
-            symbol: token.symbol,
-            decimals: Number(token.decimals),
-            image: token.icon,
-          },
-        },
-      });
+    const signature = await signer?.signMessage(message);
+    return signature;
   }
 
   return {
-    modal,
-    walletInfo: walletInfo,
     address,
     isConnected,
     walletProvider,
     chainId,
     signMessage,
-    switchNetwork,
-    addTokenToWallet,
+    open,
+    disconnect,
   };
 }

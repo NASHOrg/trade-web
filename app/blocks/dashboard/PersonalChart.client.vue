@@ -42,7 +42,3 @@ const chartOptions: ChartOptions<'bar'> = {
     />
   </div>
 </template>
-
-<style scoped lang="scss">
-
-</style>

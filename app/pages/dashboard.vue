@@ -1,52 +1,33 @@
 <script setup lang="ts">
-import TeamStatWindow from '~/blocks/dashboard/TeamStatWindow.vue';
-import PersonalStatWindow from '~/blocks/dashboard/PersonalStatWindow.vue';
-import RewardHistoryWindow from '~/blocks/dashboard/RewardHistoryWindow.vue';
-
 const { t } = useI18n();
-
-const selectedTab = ref<'team' | 'self'>('team');
+const tabs = [
+  {
+    id: 'team',
+    name: t('teamPower'),
+  },
+  {
+    id: 'self',
+    name: t('personalPower'),
+  },
+];
+const selectedTab = ref('team');
 </script>
 
 <template>
   <div class="flex flex-col items-center pt-[40px] w-full">
-    <div class="window flex justify-between p-[4px] space-x-[4px]">
+    <div class="card flex justify-between p-[4px] space-x-[4px] h-[52px]">
       <button
-        class="tab"
-        :class="selectedTab === 'team' ? 'tab-selected' : ''"
-        @click="selectedTab = 'team'"
+        v-for="item in tabs"
+        :key="item.id"
+        class="px-[12px]"
+        :class="{ 'text-black bg-white rounded-[6px]': selectedTab === item.id }"
+        @click="selectedTab = item.id"
       >
-        {{ t('teamPower') }}
-      </button>
-      <button
-        class="tab"
-        :class="selectedTab === 'self' ? 'tab-selected' : ''"
-        @click="selectedTab = 'self'"
-      >
-        {{ t('personalPower') }}
+        {{ item.name }}
       </button>
     </div>
-    <TeamStatWindow v-if="selectedTab === 'team'" />
-    <PersonalStatWindow v-else />
-    <RewardHistoryWindow />
+    <TeamStat v-if="selectedTab === 'team'" />
+    <PersonalStat v-else />
+    <RewardHistory />
   </div>
 </template>
-
-<style scoped lang="postcss">
-.window {
-  border-radius: 6px;
-  border: 1px solid white;
-  background-color: black;
-  box-shadow: 4px 4px 0 0 white;
-
-  .tab {
-    padding: 12px 35px;
-  }
-
-  .tab-selected {
-    color: black;
-    background-color: white;
-    border-radius: 6px;
-  }
-}
-</style>

@@ -5,21 +5,21 @@ const { $api } = useNuxtApp();
 const selectedTierTab = ref<'LEVEL_1' | 'LEVEL_2'>('LEVEL_1');
 const pageNo = ref(1);
 
-const { token } = useUserStore();
+const { token } = storeToRefs(useUserStore());
 
 const { data, status } = useAsyncData(
   `inviteFriends-${pageNo.value}`,
-  () => $api.userInviterRebates({ pageNo: pageNo.value, pageSize: 10, type: selectedTierTab.value }, token),
+  () => $api.userInviterRebates({ pageNo: pageNo.value, pageSize: 10, type: selectedTierTab.value }, token.value),
   { server: false, watch: [pageNo, selectedTierTab], lazy: true },
 );
 
-function collectBtnOnTap() {
+function onCollect() {
 
 }
 </script>
 
 <template>
-  <div class="window w-full flex flex-col items-center p-[30px]">
+  <div class="card w-full flex flex-col items-center p-[30px]">
     <div class="w-full flex justify-between">
       <h3 class="text-white text-[24px]">
         {{ t('friendsList') }}
@@ -40,14 +40,14 @@ function collectBtnOnTap() {
       <div class="flex space-x-[8px]">
         <button
           class="rounded-full px-[8px] py-[6px] border"
-          :class="selectedTierTab === 'LEVEL_1' ? '' : 'border-transparent text-[#999]'"
+          :class="{ 'border-transparent text-[#999]': selectedTierTab === 'LEVEL_1' }"
           @click="selectedTierTab = 'LEVEL_1'"
         >
           {{ t('tierOne') }}
         </button>
         <button
           class="rounded-full px-[8px] py-[6px] border"
-          :class="selectedTierTab === 'LEVEL_2' ? '' : 'border-transparent text-[#999]'"
+          :class="{ 'border-transparent text-[#999]': selectedTierTab === 'LEVEL_2' }"
           @click="selectedTierTab = 'LEVEL_2'"
         >
           {{ t('tierTwo') }}
@@ -58,7 +58,7 @@ function collectBtnOnTap() {
         <UButton
           color="black"
           class="px-[8px] py-[6px]"
-          @click="collectBtnOnTap"
+          @click="onCollect"
         >
           {{ t('collect') }}
         </UButton>
@@ -104,13 +104,3 @@ function collectBtnOnTap() {
     />
   </div>
 </template>
-
-<style scoped lang="postcss">
-.window {
-  border-radius: 12px;
-  border: 1px solid white;
-  background-color: black;
-  box-shadow: 4px 4px 0 0 white;
-  overflow: hidden;
-}
-</style>

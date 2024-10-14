@@ -1,10 +1,10 @@
 import BigNumber from 'bignumber.js';
-import { toast } from 'vue-sonner';
 import dayjs from 'dayjs';
 
 export function formatDate(at: number, format = 'YYYY/MM/DD HH:mm:ss') {
   return dayjs(at).format(format);
 }
+
 export function shortAddress(address?: string, length: number = 6) {
   if (address == null) return '';
   return (
@@ -12,20 +12,6 @@ export function shortAddress(address?: string, length: number = 6) {
     + '...'
     + address.substring(address.length - length)
   );
-}
-
-export async function copyText(str: string) {
-  document.addEventListener('copy', (e) => {
-    e.clipboardData?.setData('text/plain', str);
-    e.preventDefault();
-  });
-  const isCopy = document.execCommand('copy');
-  if (!isCopy) {
-    if (!navigator.clipboard) throw Error;
-    await navigator.clipboard.writeText(str);
-  }
-  toast.success('Copied');
-  return true;
 }
 
 export function generateRandomNumber() {
@@ -125,13 +111,38 @@ export function shortFloatNum(i: number | string, position: number): string {
   }
 }
 
-export function getBitcoinAddressNetwork(address: string) {
-  if (
-    address.startsWith('bc1')
-    || address.startsWith('3')
-    || address.startsWith('1')
-  ) {
-    return 'livenet';
+export function handleJsonRpcError(error: any, message: any) {
+  if ('message' in error) {
+    if (error.message.includes('user rejected')) {
+      message.error('User rejected the request');
+    }
+    else if (error.message.includes('Already airdrop')) {
+      message.error('You have claimed airdrop already');
+    }
+    else if (error.message === 'withdraw_paused') {
+      message.info('Withdraw is temporarily suspended at the moment.');
+    }
+    else if (
+      error.message.includes(
+        'insufficient funds for intrinsic transaction cost',
+      )
+      || error.message.includes('missing revert data')
+      || error.message === 'insufficient_balance'
+    ) {
+      message.error('Insufficient balance');
+    }
+    else if (
+      error?.data?.message?.includes('gas required exceeds allowance')
+    ) {
+      message.error('Insufficient balance');
+    }
+    else if (
+      error.message.includes('missing revert data in call exception')
+    ) {
+      message.error('JsonRpc error, please try again later');
+    }
+    else {
+      message.error(error.message);
+    }
   }
-  return 'testnet';
 }

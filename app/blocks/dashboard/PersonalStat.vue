@@ -1,24 +1,24 @@
 <script setup lang="ts">
 const { t } = useI18n();
 
-const { user } = useUserStore();
+const userStore = useUserStore();
 
-const userName = computed(() => shortAddress(user.value?.userAddress));
+const userName = computed(() => shortAddress(userStore.user!.userAddress));
 
 const airDropClaimedAmount = 756.88;
 const badgeLevel = 4;
 
-function claimBtnOnTap() {
+function onClaim() {
 
 }
 
-function checkRulesBtnOnTap() {
+function onCheckRules() {
 
 }
 </script>
 
 <template>
-  <div class="flex flex-col mt-[28px] window w-full h-[590px] px-[30px] py-[40px]">
+  <div class="card flex flex-col mt-[28px] w-full h-[590px] px-[30px] py-[40px]">
     <div
       class="relative mb-[40px] flex flex-col items-start gradient-card ps-[30px]"
     >
@@ -34,7 +34,7 @@ function checkRulesBtnOnTap() {
         <UButton
           size="xs"
           color="black"
-          @click="claimBtnOnTap"
+          @click="onClaim"
         >
           {{ t('claim') }}
         </UButton>
@@ -57,7 +57,7 @@ function checkRulesBtnOnTap() {
           color="black"
           class="absolute bottom-[8px] end-[19px] px-[16px] py-[8px] text-[14px]"
           :ui="{ rounded: 'rounded-full' }"
-          @click="checkRulesBtnOnTap"
+          @click="onCheckRules"
         >
           {{ t('checkRules') }}
         </UButton>
@@ -74,12 +74,3 @@ function checkRulesBtnOnTap() {
     <PersonalChart class="mt-[40px]" />
   </div>
 </template>
-
-<style scoped lang="postcss">
-.gradient-card {
-  border-radius: 28px;
-  background: linear-gradient(80deg, #F6CEA6 0%, #FF623F 100%);
-  box-shadow: 0 -3px 0 0 #FFC0B2;
-  color: #333;
-}
-</style>

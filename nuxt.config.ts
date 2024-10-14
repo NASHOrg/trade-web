@@ -12,7 +12,7 @@ export default defineNuxtConfig({
     port: 4000,
   },
 
-  css: ['~/assets/styles/fonts.css'],
+  css: ['~/assets/styles/fonts.css', '~/assets/styles/main.css'],
 
   nitro: {
     compressPublicAssets: true,
@@ -73,6 +73,11 @@ export default defineNuxtConfig({
     componentPrefix: 'icon',
     defaultImport: 'component',
     svgo: false,
+  },
+
+  colorMode: {
+    preference: 'dark',
+    disableTransition: false,
   },
 
   eslint: {
