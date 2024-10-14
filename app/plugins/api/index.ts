@@ -18,8 +18,7 @@ const api = defineNuxtPlugin((nuxtApp) => {
         if (response.code !== '000') {
           if (response.code === '108.bool-stake-reward.UNAUTHENTICATED') {
             const userStore = useUserStore();
-            if (userStore.token) userStore.token = undefined;
-            navigateTo('/');
+            userStore.logout();
           }
           else {
             throw new Error(response.msg);
