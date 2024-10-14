@@ -52,7 +52,7 @@ export default function useWallet() {
   const { open } = useWeb3Modal();
   const { walletProvider } = useWeb3ModalProvider();
   const store = useUserStore();
-  // const { $yapi } = useNuxtApp()
+
   watch(address, (newAddress, oldAddress) => {
     if (oldAddress === newAddress) {
       return;

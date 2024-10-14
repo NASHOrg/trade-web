@@ -6,7 +6,6 @@ const loading = ref(false);
 const { $api } = useNuxtApp();
 const { signMessage, address, open, disconnect } = useWallet();
 const route = useRoute();
-const router = useRouter();
 const checked = ref(true);
 const input = ref('');
 const modal = useModal();
@@ -72,10 +71,6 @@ async function signIn() {
     tokens[address.value!] = response;
     localStorage.setItem('tokens', JSON.stringify(tokens));
     store.token = response;
-    await store.refreshUserState();
-    if (checked.value && referral && data.value === false) {
-      router.replace('/dashboard');
-    }
     modal.close();
   }
   catch (error: any) {
