@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CheckRulesModal from '#components';
+import CheckRulesModal from '~/components/modals/CheckRulesModal.vue';
 
 const { t } = useI18n();
 const { user } = storeToRefs(useUserStore());
@@ -23,7 +23,14 @@ function onCheckRules() {
     <div
       class="gradient-card relative mt-[13px] mb-[32px] flex flex-col items-start ps-[30px] mx-[5px]"
     >
-      <div class="mt-[20px] bg-[#FFD9C5] rounded-[55px] px-[16px] py-[4px]">
+      <USkeleton
+        v-if="!userName"
+        class="mt-[20px] rounded-[55px] h-[26px] w-[150px]"
+      />
+      <div
+        v-else
+        class="mt-[20px] bg-[#FFD9C5] rounded-[55px] px-[16px] py-[4px]"
+      >
         {{ t('userNamesTeam', { userName }) }}
       </div>
       <h1 class="mt-[16px] text-[54px]">

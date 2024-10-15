@@ -27,24 +27,45 @@ const onCopy = () => {
     <div class="mt-[40px] w-full flex justify-around inner-glowing-box text-[16px]">
       <div class="flex flex-col items-center space-y-[16px]">
         <p>T1/T2 {{ t('friends') }}</p>
-        <span id="data-text">{{ user?.inviterL1Count ?? 0 }} / {{ user?.inviterL2Count ?? 0 }}</span>
+        <USkeleton
+          v-if="!user"
+          class="h-[24px] w-[48px]"
+        />
+        <span
+          v-else
+          id="data-text"
+        >{{ user?.inviterL1Count ?? 0 }} / {{ user?.inviterL2Count ?? 0 }}</span>
       </div>
 
       <div class="flex flex-col items-center space-y-[16px]">
         <p>{{ t('totalStaking') }}</p>
-        <span>{{ Number(user?.inviterStakingAmount).toLocaleString() }}</span>
+        <USkeleton
+          v-if="!user"
+          class="h-[24px] w-[48px]"
+        />
+        <span
+          v-else
+          id="data-text"
+        >{{ Number(user?.inviterStakingAmount).toLocaleString() }}</span>
       </div>
       <div class="flex flex-col items-center space-y-[16px]">
         <p>{{ t('totalRebates') }}</p>
-        <span id="data-text">{{ 1000 }}</span>
+        <USkeleton
+          v-if="!user"
+          class="h-[24px] w-[48px]"
+        />
+        <span
+          v-else
+          id="data-text"
+        >{{ 1000 }}</span>
       </div>
     </div>
     <div class="mt-[28px] w-full flex justify-between items-center px-[10px] py-[5px] border rounded-[4px] text-[14px]">
       <p>{{ t('invitationLink') }}: </p>
       <div class="flex items-center space-x-[8px]">
         <USkeleton
-          v-if="userRequestStatus === 'pending'"
-          class="h-[24px] w-[48px]"
+          v-if="!user"
+          class="h-[24px] w-[350px]"
         />
         <a
           v-else

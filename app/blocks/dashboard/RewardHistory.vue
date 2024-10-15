@@ -2,6 +2,8 @@
 const { t } = useI18n();
 // const { $api } = useNuxtApp();
 
+defineProps<{ mode: 'team' | 'self' }>();
+
 const rewardsHistoryListState = reactive<{
   pageNo: number;
 }>({
@@ -46,40 +48,68 @@ useInfiniteScroll(
       // return rewardsData?.value?.pages !== undefined
       //   ? rewardsHistoryListState.pageNo < rewardsData?.value!.pages
       //   : true;
-      return true;
+      return false;
     },
   },
 );
 </script>
 
 <template>
-  <div class="card flex flex-col mt-[28px] w-full p-[30px]">
+  <div class="card flex flex-col my-[28px] w-full p-[30px]">
     <div class="flex justify-between">
       <h3 class="text-white text-[24px]">
         {{ t('rewardsHistory') }}
       </h3>
       <div class="flex items-center space-x-[8px]">
-        <NuxtImg
-          src="images/icon_questionmmark_circle_grey.png"
-          densities="1x 2x"
-          height="14"
-          width="14"
-        />
+        <UTooltip
+          :popper="{ placement: 'top', arrow: true }"
+          :ui="{
+            width: 'max-w-max',
+            rounded: 'rounded-[8px]',
+            base: 'h-auto py-[16px] ps-[32px] pe-[16px]',
+            background: 'bg-white dark:bg-white',
+            arrow: { background: 'before:bg-white before:dark:bg-white' },
+            ring: 'ring-0',
+          }"
+        >
+          <template #text>
+            <ul class="list-disc space-y-[10px]">
+              <li class="text-[#666] text-[16px]">
+                <div class="flex justify-between">
+                  <span>{{ t('unlockRewardsCondition1') }}</span>
+                  <NuxtImg src="images/icon_checkmark_circle_green.png" />
+                </div>
+              </li>
+              <li class="justify-between text-[#666] text-[16px]">
+                <div class="flex justify-between">
+                  <span class="me-[16px]">{{ t('unlockRewardsCondition2') }}</span>
+                  <NuxtImg src="images/icon_xmark_circle_red.png" />
+                </div>
+              </li>
+            </ul>
+          </template>
+          <NuxtImg
+            src="images/icon_questionmmark_circle_grey.png"
+            densities="1x 2x"
+            height="14"
+            width="14"
+          />
+        </UTooltip>
         <p class="text-[#999] text-[14px]">
           {{ t('howToUnlockTheRewards') }}
         </p>
       </div>
     </div>
     <div class="mt-[28px] flex text-center text-[#999] text-[16px] mb-2">
-      <p>Rank</p>
+      <p>{{ mode === 'team' ? t('rank') : t('agency') }}</p>
       <p class="grow">
-        Time
+        {{ t('time') }}
       </p>
       <p class="grow">
-        Power
+        {{ t('power') }}
       </p>
       <p class="grow">
-        Power
+        {{ t('reward') }}
       </p>
     </div>
     <div class="flex flex-col divide-[#2E2E2E] divide-y">
@@ -103,7 +133,7 @@ useInfiniteScroll(
           </p>
           <UButton
             color="black"
-            class="px-[8px] py-[6px] text-[16px] text-[#333]"
+            class="px-[8px] py-[6px] text-[16px] text-[#333] rounded-[4px]"
           >
             {{ t('claim') }}
           </UButton>

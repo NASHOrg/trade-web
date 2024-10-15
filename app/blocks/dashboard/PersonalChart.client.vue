@@ -5,12 +5,24 @@ import type { ChartData, ChartOptions } from 'chart.js';
 const chartData: ChartData<'bar', (number | [number, number] | null)[], unknown> = {
   labels: ['< 500', '500-1k', '1k-2k', '2k-4k', '4k-7k', '7k-10k', '> 10k'],
   datasets: [{
-    data: [3500, 800, 1000, 800, 1900, 1100, 2800],
+    data: [2500, 1200, null, 2900, 3500, 2000, 900],
+    backgroundColor: '#563D38',
+    borderRadius: 8,
+    pointStyle: false,
+    borderSkipped: false,
+    barThickness: 28,
+    stack: 'Stack 0',
+  },
+  {
+    data: [null, null, 2600, null, null, null, null],
     backgroundColor: '#FF623F',
     borderRadius: 8,
-    borderWidth: 2,
     pointStyle: false,
-  }],
+    borderSkipped: false,
+    barThickness: 28,
+    stack: 'Stack 0',
+  },
+  ],
 };
 const chartOptions: ChartOptions<'bar'> = {
   maintainAspectRatio: false,
@@ -20,6 +32,7 @@ const chartOptions: ChartOptions<'bar'> = {
   scales: {
     x: { type: 'category', ticks: { padding: 10 } },
     y: {
+      stacked: true,
       type: 'linear',
       min: 0,
       ticks: {

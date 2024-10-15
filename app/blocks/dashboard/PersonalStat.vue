@@ -3,7 +3,7 @@ const { t } = useI18n();
 
 const userStore = useUserStore();
 
-const userName = computed(() => shortAddress(userStore.user!.userAddress));
+const userName = computed(() => shortAddress(userStore.user?.userAddress));
 
 const airDropClaimedAmount = 756.88;
 const badgeLevel = 4;
@@ -22,10 +22,15 @@ function onCheckRules() {
     <div
       class="relative mb-[40px] flex flex-col items-start gradient-card ps-[30px]"
     >
+      <USkeleton
+        v-if="!userName"
+        class="mt-[20px] rounded-[55px] h-[26px] w-[150px]"
+      />
       <div
-        class="mt-[20px] bg-[#FFD9C5] rounded-[55px] px-[16px] py-[4px]"
+        v-else
+        class="mt-[20px] bg-[#FFD9C5] rounded-[55px] px-[16px] py-[4px] text-[18px]"
       >
-        {{ userName ?? 'name' }}
+        {{ userName }}
       </div>
       <div class="mt-[20px] mb-[54px] flex items-center space-x-[16px]">
         <h1 class="text-[54px]">

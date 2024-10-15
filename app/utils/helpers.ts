@@ -1,5 +1,12 @@
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
+import Decimal from 'decimal.js';
+
+Decimal.set({ precision: 50 });
+
+export function d(input: string | number) {
+  return new Decimal(input);
+}
 
 export function formatDate(at: number, format = 'YYYY/MM/DD HH:mm:ss') {
   return dayjs(at).format(format);

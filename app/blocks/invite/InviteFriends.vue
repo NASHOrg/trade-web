@@ -9,8 +9,11 @@ const { token } = storeToRefs(useUserStore());
 
 const { data, status } = useAsyncData(
   `inviteFriends-${pageNo.value}`,
-  () => $api.userInviterRebates({ pageNo: pageNo.value, pageSize: 10, type: selectedTierTab.value }, token.value),
-  { server: false, watch: [pageNo, selectedTierTab], lazy: true },
+  () => {
+    if (!token.value) return Promise.resolve(undefined);
+    return $api.userInviterRebates({ pageNo: pageNo.value, pageSize: 10, type: selectedTierTab.value }, token.value);
+  },
+  { server: false, watch: [pageNo, selectedTierTab, token] },
 );
 
 function onCollect() {
@@ -25,12 +28,30 @@ function onCollect() {
         {{ t('friendsList') }}
       </h3>
       <div class="flex items-center space-x-[8px]">
-        <NuxtImg
-          src="images/icon_questionmmark_circle_grey.png"
-          densities="1x 2x"
-          height="14"
-          width="14"
-        />
+        <UTooltip
+          :popper="{ placement: 'top', arrow: true }"
+          :ui="{
+            width: 'max-w-max',
+            rounded: 'rounded-[8px]',
+            base: 'h-auto py-[16px] ps-[16px] pe-[16px]',
+            background: 'bg-white dark:bg-white',
+            arrow: { background: 'before:bg-white before:dark:bg-white' },
+            ring: 'ring-0',
+          }"
+        >
+          <template #text>
+            <div class="flex justify-between text-[#666] text-[16px] space-x-[16px]">
+              <span>{{ t('unlockRewardsCondition1') }}</span>
+              <NuxtImg src="images/icon_checkmark_circle_green.png" />
+            </div>
+          </template>
+          <NuxtImg
+            src="images/icon_questionmmark_circle_grey.png"
+            densities="1x 2x"
+            height="14"
+            width="14"
+          />
+        </UTooltip>
         <p class="text-[#999] text-[14px]">
           {{ t('howToUnlockTheRewards') }}
         </p>
@@ -40,24 +61,31 @@ function onCollect() {
       <div class="flex space-x-[8px]">
         <button
           class="rounded-full px-[8px] py-[6px] border"
-          :class="{ 'border-transparent text-[#999]': selectedTierTab === 'LEVEL_1' }"
+          :class="{ 'border-transparent text-[#999]': selectedTierTab !== 'LEVEL_1' }"
           @click="selectedTierTab = 'LEVEL_1'"
         >
           {{ t('tierOne') }}
         </button>
         <button
           class="rounded-full px-[8px] py-[6px] border"
-          :class="{ 'border-transparent text-[#999]': selectedTierTab === 'LEVEL_2' }"
+          :class="{ 'border-transparent text-[#999]': selectedTierTab !== 'LEVEL_2' }"
           @click="selectedTierTab = 'LEVEL_2'"
         >
           {{ t('tierTwo') }}
         </button>
       </div>
       <div class="flex space-x-[8px] items-center">
-        <p>{{ t('collectableRewards') }}: 466.14 BOOL</p>
+        <USkeleton
+          v-if="!data"
+          class="h-[24px] w-[48px]"
+        />
+        <p v-else>
+          {{ t('collectableRewards') }}: 466.14 BOOL
+        </p>
         <UButton
           color="black"
           class="px-[8px] py-[6px]"
+          :disabled="status === 'pending'"
           @click="onCollect"
         >
           {{ t('collect') }}

@@ -27,6 +27,7 @@
     "bignumber.js": "^9.1.2",
     "chart.js": "^4.4.4",
     "dayjs": "^1.11.11",
+    "decimal.js": "^10.4.3",
     "ethers": "^6.12.2",
     "nuxt": "^3.13.2",
     "nuxt-svgo": "^4.0.1",

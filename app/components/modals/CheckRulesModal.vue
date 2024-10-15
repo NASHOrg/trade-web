@@ -15,13 +15,17 @@
 <template>
   <UModal
     :ui="{
-      background: 'bg-[url(\'images/check_rules_window_bg_black.png\')] bg-contain bg-no-repeat bg-transparent dark:bg-transparent',
+      background: 'bg-no-repeat bg-transparent dark:bg-transparent',
       base: 'flex flex-col items-start relative flex-1 w-full focus:outline-none text-start rounded-[12px]',
       width: 'min-w-[804px] w-[804px] max-w-[804px]',
       height: 'min-h-[613px] h-[613px] max-h-[613px]',
       overlay: { background: 'bg-black/70 dark:bg-gray-800/70' },
     }"
   >
+    <NuxtImg
+      src="images/check_rules_window_bg_black.png"
+      densities="1x 2x"
+    />
     <!--    <h2 class="text-[30px] ms-[40px] mt-[116px] mb-[10px]"> -->
     <!--      {{ t('checkRules') }} -->
     <!--    </h2> -->
