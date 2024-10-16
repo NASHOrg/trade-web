@@ -671,6 +671,271 @@ export interface paths {
             };
         };
     };
+    "/blockchain/trade-history": {
+        get: {
+            parameters: {
+                query: {
+                    /** 交易记录ID */
+                    tradeHistoryID: string;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        /**
+                         * @description 返回消息
+                         * 异常时返回错误信息
+                         */
+                        msg: string;
+                        /**
+                         * @description 返回码
+                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
+                         */
+                        code: string;
+                        /** @description 返回数据 */
+                        data: {
+                            /** @description 交易记录value */
+                            tradeHistoryTokenValue: string;
+                            /** @description 交易记录maker */
+                            tradeHistoryMaker: string;
+                            /** @description 交易记录xAmount */
+                            tradeHistoryXAmount: string;
+                            /** @description 交易记录名称 */
+                            tradeHistoryName: string;
+                            /** @description 交易记录hash */
+                            tradeHistoryHash: string;
+                            /** @description 交易记录fee */
+                            tradeHistoryFee: string;
+                            /** @description 交易记录yAmount */
+                            tradeHistoryYAmount: string;
+                            /** @description 交易记录ID */
+                            tradeHistoryID: string;
+                            /** @description 交易记录0  x2y   1 y2x */
+                            tradeHistoryType: string;
+                            /** @description 交易记录tokenX/tokenY */
+                            tradeHistoryPrice: string;
+                            /** @description 交易记录orderId */
+                            tradeHistoryOrderId: string;
+                            /** @description 交易记录time */
+                            tradeHistoryTradeTime: string;
+                        };
+                    };
+                };
+            };
+        };
+        put: {
+            parameters: {
+                body: {
+                    /** 请求参数 */
+                    root?: {
+                        /** @description yAmount */
+                        yAmount: string;
+                        /** @description time */
+                        tradeTime: string;
+                        /** @description orderId */
+                        orderId: string;
+                        /** @description tokenX/tokenY */
+                        price: string;
+                        /** @description fee */
+                        fee: string;
+                        /** @description 名称 */
+                        name: string;
+                        /** @description 交易记录ID */
+                        tradeHistoryID: string;
+                        /** @description maker */
+                        maker: string;
+                        /** @description xAmount */
+                        xAmount: string;
+                        /** @description 0  x2y   1 y2x */
+                        type: string;
+                        /** @description value */
+                        tokenValue: string;
+                        /** @description hash */
+                        hash: string;
+                    };
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        /**
+                         * @description 返回消息
+                         * 异常时返回错误信息
+                         */
+                        msg: string;
+                        /**
+                         * @description 返回码
+                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
+                         */
+                        code: string;
+                        /** @description 返回数据 */
+                        data: { [key: string]: unknown };
+                    };
+                };
+            };
+        };
+        post: {
+            parameters: {
+                body: {
+                    /** 请求参数 */
+                    root?: {
+                        /** @description yAmount */
+                        yAmount: string;
+                        /** @description time */
+                        tradeTime: string;
+                        /** @description orderId */
+                        orderId: string;
+                        /** @description tokenX/tokenY */
+                        price: string;
+                        /** @description fee */
+                        fee: string;
+                        /** @description 名称 */
+                        name: string;
+                        /** @description maker */
+                        maker: string;
+                        /** @description xAmount */
+                        xAmount: string;
+                        /** @description 0  x2y   1 y2x */
+                        type: string;
+                        /** @description value */
+                        tokenValue: string;
+                        /** @description hash */
+                        hash: string;
+                    };
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        /**
+                         * @description 返回消息
+                         * 异常时返回错误信息
+                         */
+                        msg: string;
+                        /**
+                         * @description 返回码
+                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
+                         */
+                        code: string;
+                        /** @description 返回数据 */
+                        data: { [key: string]: unknown };
+                    };
+                };
+            };
+        };
+        delete: {
+            parameters: {
+                body: {
+                    /** 请求参数 */
+                    root?: {
+                        /** @description 交易记录ID */
+                        tradeHistoryID: string;
+                    };
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        /**
+                         * @description 返回消息
+                         * 异常时返回错误信息
+                         */
+                        msg: string;
+                        /**
+                         * @description 返回码
+                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
+                         */
+                        code: string;
+                        /** @description 返回数据 */
+                        data: { [key: string]: unknown };
+                    };
+                };
+            };
+        };
+    };
+    "/blockchain/trade-historys": {
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * 页码
+                     * 从 1 开始
+                     * 不传默认为第一页
+                     */
+                    pageNo: number;
+                    /**
+                     * 每页个数
+                     * 不传默认为 20
+                     * 最大为 1000
+                     */
+                    pageSize: number;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        /**
+                         * @description 返回消息
+                         * 异常时返回错误信息
+                         */
+                        msg: string;
+                        /**
+                         * @description 返回码
+                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
+                         */
+                        code: string;
+                        /** @description 返回数据 */
+                        data: {
+                            /** @description 是否还有前一页 */
+                            hasPrev: boolean;
+                            /** @description 当前页码 */
+                            pageNo: number;
+                            /** @description 总页数 */
+                            totalPage: number;
+                            /** @description 每页个数 */
+                            pageSize: number;
+                            /** @description 是否还有后一页 */
+                            hasNext: boolean;
+                            /** @description 总数 */
+                            totalCount: number;
+                            /** @description 数据域 */
+                            items: {
+                                /** @description 交易记录tokenX/tokenY */
+                                tradeHistoryPrice?: string;
+                                /** @description 交易记录value */
+                                tradeHistoryTokenValue?: string;
+                                /** @description 交易记录maker */
+                                tradeHistoryMaker?: string;
+                                /** @description 交易记录xAmount */
+                                tradeHistoryXAmount?: string;
+                                /** @description 交易记录名称 */
+                                tradeHistoryName?: string;
+                                /** @description 交易记录hash */
+                                tradeHistoryHash?: string;
+                                /** @description 交易记录fee */
+                                tradeHistoryFee?: string;
+                                /** @description 交易记录yAmount */
+                                tradeHistoryYAmount?: string;
+                                /** @description 交易记录ID */
+                                tradeHistoryID?: string;
+                                /** @description 交易记录0  x2y   1 y2x */
+                                tradeHistoryType?: string;
+                                /** @description 交易记录orderId */
+                                tradeHistoryOrderId?: string;
+                                /** @description 交易记录time */
+                                tradeHistoryTradeTime?: string;
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
 }
 
 export interface operations {
@@ -705,3 +970,11 @@ export type BlockchainOrderBookPost = paths["/blockchain/order-book"]['post']['r
 export type BlockchainOrderBookDeleteParams = paths["/blockchain/order-book"]['delete']['parameters']['body']['root'];
 export type BlockchainOrderBooksGetParams = paths["/blockchain/order-books"]['get']['parameters']['query'];
 export type BlockchainOrderBooks = paths["/blockchain/order-books"]['get']['responses'][200]['schema']['data'];
+export type BlockchainTradeHistoryGetParams = paths["/blockchain/trade-history"]['get']['parameters']['query'];
+export type BlockchainTradeHistory = paths["/blockchain/trade-history"]['get']['responses'][200]['schema']['data'];
+export type BlockchainTradeHistoryPutParams = paths["/blockchain/trade-history"]['put']['parameters']['body']['root'];
+export type BlockchainTradeHistoryPostParams = paths["/blockchain/trade-history"]['post']['parameters']['body']['root'];
+export type BlockchainTradeHistoryPost = paths["/blockchain/trade-history"]['post']['responses'][200]['schema']['data'];
+export type BlockchainTradeHistoryDeleteParams = paths["/blockchain/trade-history"]['delete']['parameters']['body']['root'];
+export type BlockchainTradeHistorysGetParams = paths["/blockchain/trade-historys"]['get']['parameters']['query'];
+export type BlockchainTradeHistorys = paths["/blockchain/trade-historys"]['get']['responses'][200]['schema']['data'];

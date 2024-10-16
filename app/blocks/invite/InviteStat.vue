@@ -4,6 +4,11 @@ import { toast } from 'vue-sonner';
 const { t } = useI18n();
 const { user } = storeToRefs(useUserStore());
 
+const userTotalRebates = computed(() => (
+  Number(user?.rebateBalanceMap?.INVITER_L1 ?? 0)
+  + Number(user?.rebateBalanceMap?.INVITER_L2 ?? 0))
+  .toLocaleString());
+
 const onCopy = () => {
   const { copy } = useClipboard({ source: '', legacy: true });
   copy();
@@ -57,7 +62,9 @@ const onCopy = () => {
         <span
           v-else
           id="data-text"
-        >{{ 1000 }}</span>
+        >
+          {{ userTotalRebates }}
+        </span>
       </div>
     </div>
     <div class="mt-[28px] w-full flex justify-between items-center px-[10px] py-[5px] border rounded-[4px] text-[14px]">

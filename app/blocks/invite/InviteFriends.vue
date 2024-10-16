@@ -1,23 +1,44 @@
 <script setup lang="ts">
+import { shortAddress } from '~/utils/helpers';
+
 const { t } = useI18n();
 const { $api } = useNuxtApp();
 
 const selectedTierTab = ref<'LEVEL_1' | 'LEVEL_2'>('LEVEL_1');
 const pageNo = ref(1);
 
-const { token } = storeToRefs(useUserStore());
+const { token, user } = storeToRefs(useUserStore());
 
-const { data, status } = useAsyncData(
+const { data, status, refresh } = useAsyncData(
   `inviteFriends-${pageNo.value}`,
   () => {
     if (!token.value) return Promise.resolve(undefined);
-    return $api.userInviterRebates({ pageNo: pageNo.value, pageSize: 10, type: selectedTierTab.value }, token.value);
+    return $api.userInviterRebates({
+      pageNo: pageNo.value,
+      pageSize: 10,
+      type: selectedTierTab.value,
+    }, token.value);
   },
   { server: false, watch: [pageNo, selectedTierTab, token] },
 );
 
-function onCollect() {
+const collecting = ref<boolean>(false);
 
+async function onCollect() {
+  collecting.value = true;
+  $api
+    .userRebateWithdrawPost({ withdrawType: '' }, token.value)
+    .then(() => {
+      if (pageNo.value !== 1) {
+        pageNo.value = 1;
+      }
+      else {
+        refresh();
+      }
+    })
+    .finally(() => {
+      collecting.value = false;
+    });
 }
 </script>
 
@@ -42,7 +63,12 @@ function onCollect() {
           <template #text>
             <div class="flex justify-between text-[#666] text-[16px] space-x-[16px]">
               <span>{{ t('unlockRewardsCondition1') }}</span>
-              <NuxtImg src="images/icon_checkmark_circle_green.png" />
+              <NuxtImg
+                :src="`images/${user?.computeTag?'icon_checkmark_circle_green':'icon_xmark_circle_red'}.png`"
+                densities="1x 2x"
+                height="16"
+                width="16"
+              />
             </div>
           </template>
           <NuxtImg
@@ -84,8 +110,9 @@ function onCollect() {
         </p>
         <UButton
           color="black"
-          class="px-[8px] py-[6px]"
-          :disabled="status === 'pending'"
+          class="px-[8px] py-[6px] text-[16px]"
+          :disabled="!data || status === 'pending'"
+          :loading="collecting"
           @click="onCollect"
         >
           {{ t('collect') }}

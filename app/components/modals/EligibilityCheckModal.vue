@@ -49,7 +49,15 @@ function closeBtnOnTap() {
 }
 
 function nextBtnOnTap() {
-  status.value = 'success';
+  switch (status.value) {
+    case 'success':
+    case 'fail':
+      useModal().close();
+      break;
+    default:
+      status.value = 'success';
+      break;
+  }
 }
 </script>
 

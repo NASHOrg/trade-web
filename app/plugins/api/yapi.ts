@@ -60,4 +60,24 @@ export class Yapi extends Api {
   get blockchainOrderBooks() {
     return this.ft.path('/blockchain/order-books').method('get').create()!;
   }
+
+  get blockchainTradeHistory() {
+    return this.ft.path('/blockchain/trade-history').method('get').create()!;
+  }
+
+  get blockchainTradeHistoryPut() {
+    return this.ft.path('/blockchain/trade-history').method('put').create()!;
+  }
+
+  get blockchainTradeHistoryPost() {
+    return this.ft.path('/blockchain/trade-history').method('post').create()!;
+  }
+
+  get blockchainTradeHistoryDelete() {
+    return this.ft.path('/blockchain/trade-history').method('delete').create()!;
+  }
+
+  get blockchainTradeHistorys() {
+    return this.ft.path('/blockchain/trade-historys').method('get').create()!;
+  }
 }

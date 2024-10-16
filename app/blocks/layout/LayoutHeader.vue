@@ -1,7 +1,14 @@
 <script setup lang="ts">
 const { t } = useI18n();
 
-const navigations = ['dashboard', 'delegate', 'stake', 'trade', 'invite', 'account'];
+const navigations = [
+  'dashboard',
+  // 'delegate',
+  'stake',
+  // 'trade',
+  'invite',
+  'account',
+];
 </script>
 
 <template>
