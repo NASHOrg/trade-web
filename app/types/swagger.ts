@@ -4,6 +4,29 @@
  */
 
 export interface paths {
+    "/user/bot:login": {
+        post: {
+            parameters: {
+                body: {
+                    root?: {
+                        data: string;
+                        hash: string;
+                    };
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        code: string;
+                        msg: string;
+                        data: string;
+                        fail: boolean;
+                    };
+                };
+            };
+        };
+    };
     "/user/user": {
         get: {
             parameters: {};
@@ -32,6 +55,8 @@ export interface paths {
                             oneselfStakingAmount: string;
                             /** @description 用户是否达到返佣最小质押量 */
                             computeTag: boolean;
+                            /** @description 返佣已提现金额 */
+                            rebateWithdrawAmount: number;
                             /** @description 用户返佣提现数量 */
                             rebateBalanceMap: {
                                 /** @description 一级返佣可提现余额 */
@@ -40,6 +65,26 @@ export interface paths {
                                 INVITER_L2: string;
                             };
                         };
+                        fail: boolean;
+                    };
+                };
+            };
+        };
+    };
+    "/user/check": {
+        get: {
+            parameters: {
+                query: {
+                    address: string;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        code: string;
+                        msg: string;
+                        data: boolean;
                         fail: boolean;
                     };
                 };
@@ -373,6 +418,7 @@ export interface paths {
             parameters: {
                 body: {
                     root?: {
+                        /** @description INVITER_L1: 1级邀请返佣分润,INVITER_L2: 2级邀请返佣分润 */
                         withdrawType: string;
                     };
                 };
@@ -944,8 +990,12 @@ export interface operations {
 export interface external {
 }
 
+export type UserBotLoginPostParams = paths["/user/bot:login"]['post']['parameters']['body']['root'];
+export type UserBotLoginPost = paths["/user/bot:login"]['post']['responses'][200]['schema']['data'];
 export type UserUserGetParams = paths["/user/user"]['get']['parameters'];
 export type UserUser = paths["/user/user"]['get']['responses'][200]['schema']['data'];
+export type UserCheckGetParams = paths["/user/check"]['get']['parameters']['query'];
+export type UserCheck = paths["/user/check"]['get']['responses'][200]['schema']['data'];
 export type UserUserLoginPostParams = paths["/user/user:login"]['post']['parameters']['body']['root'];
 export type UserUserLoginPost = paths["/user/user:login"]['post']['responses'][200]['schema']['data'];
 export type UserMsgToLoginGetParams = paths["/user/msg-to-login"]['get']['parameters'];

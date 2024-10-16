@@ -9,6 +9,10 @@ const pageNo = ref(1);
 
 const { token, user } = storeToRefs(useUserStore());
 
+const userCollectableRewardsAmount = computed(() => (
+  Number(user.value?.rebateBalanceMap?.INVITER_L1 ?? 0)
+  + Number(user.value?.rebateBalanceMap?.INVITER_L2 ?? 0)));
+
 const { data, status, refresh } = useAsyncData(
   `inviteFriends-${pageNo.value}`,
   () => {
@@ -27,7 +31,7 @@ const collecting = ref<boolean>(false);
 async function onCollect() {
   collecting.value = true;
   $api
-    .userRebateWithdrawPost({ withdrawType: '' }, token.value)
+    .userRebateWithdrawPost({ withdrawType: selectedTierTab.value }, token.value)
     .then(() => {
       if (pageNo.value !== 1) {
         pageNo.value = 1;
@@ -106,12 +110,13 @@ async function onCollect() {
           class="h-[24px] w-[48px]"
         />
         <p v-else>
-          {{ t('collectableRewards') }}: 466.14 BOOL
+          {{ t('collectableRewards') }}:
+          {{ userCollectableRewardsAmount.toLocaleString() }} BOOL
         </p>
         <UButton
           color="black"
           class="px-[8px] py-[6px] text-[16px] rounded-[4px]"
-          :disabled="!data || status === 'pending'"
+          :disabled="userCollectableRewardsAmount <= 0 || status === 'pending'"
           :loading="collecting"
           @click="onCollect"
         >

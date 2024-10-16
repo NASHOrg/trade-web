@@ -9,7 +9,6 @@ const btpAmount = computed(() => stakingAmount * 1.4);
 const stakingAmount = 23900;
 const badgeLevel = 6;
 
-const myStakingAmount = 2390;
 const teamStakingAmount = 350000;
 const totalMinedAmount = 1905;
 
@@ -67,7 +66,7 @@ function onCheckRules() {
     <div class="flex justify-between mx-[5px] text-[16px]">
       <div class="flex flex-col text-center space-y-[16px]">
         <p id="number">
-          {{ myStakingAmount.toLocaleString() }}
+          {{ Number(user?.oneselfStakingAmount).toLocaleString() }}
         </p>
         <p>{{ t('myStaking') }}</p>
       </div>

@@ -5,8 +5,16 @@
 import { Api } from './api';
 
 export class Yapi extends Api {
+  get userBotLoginPost() {
+    return this.ft.path('/user/bot:login').method('post').create()!;
+  }
+
   get userUser() {
     return this.ft.path('/user/user').method('get').create()!;
+  }
+
+  get userCheck() {
+    return this.ft.path('/user/check').method('get').create()!;
   }
 
   get userUserLoginPost() {

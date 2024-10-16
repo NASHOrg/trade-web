@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { CheckRulesModal } from '#components';
+import EligibilityCheckModal from '~/components/modals/EligibilityCheckModal.vue';
 
 const { t } = useI18n();
 
@@ -11,7 +12,7 @@ const airDropClaimedAmount = 756.88;
 const badgeLevel = 4;
 const modal = useModal();
 function onClaim() {
-
+  modal.open(EligibilityCheckModal);
 }
 
 function onCheckRules() {
