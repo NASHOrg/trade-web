@@ -51,7 +51,7 @@ function bppOfferBtnOnTap() {
         </div>
         <UButton
           color="black"
-          class="p-[6px] min-w-[72px] justify-center"
+          class="p-[6px] min-w-[72px] justify-center text-[16px] rounded-[4px]"
           @click="boolSwapBtnOnTap"
         >
           {{ t('swap') }}
@@ -82,7 +82,7 @@ function bppOfferBtnOnTap() {
         </div>
         <UButton
           color="black"
-          class="p-[6px] min-w-[72px] justify-center"
+          class="p-[6px] min-w-[72px] justify-center text-[16px] rounded-[4px]"
           to="https://test.hellobtu.com/borrow"
         >
           {{ t('borrow') }}
@@ -108,7 +108,7 @@ function bppOfferBtnOnTap() {
         </p>
         <UButton
           color="black"
-          class="p-[6px] min-w-[72px] justify-center"
+          class="p-[6px] min-w-[72px] justify-center text-[16px] rounded-[4px]"
           @click="btpStakeBtnOnTap"
         >
           {{ t('stake') }}
@@ -136,14 +136,14 @@ function bppOfferBtnOnTap() {
         <div class="absolute -end-0 flex space-x-[8px]">
           <UButton
             color="black"
-            class="p-[6px] min-w-[72px] justify-center"
+            class="p-[6px] min-w-[72px] justify-center text-[16px] rounded-[4px]"
             @click="bppListBtnOnTap"
           >
             {{ t('list') }}
           </UButton>
           <UButton
             color="primary"
-            class="p-[6px] min-w-[72px] justify-center"
+            class="p-[6px] min-w-[72px] justify-center text-[16px] rounded-[4px]"
             @click="bppOfferBtnOnTap"
           >
             {{ t('offer') }}

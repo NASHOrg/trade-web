@@ -41,6 +41,7 @@ function onCheckRules() {
         <UButton
           size="xs"
           color="black"
+          class="rounded-[4px]"
           @click="onClaim"
         >
           {{ t('claim') }}

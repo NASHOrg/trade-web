@@ -84,7 +84,7 @@ const onCopy = () => {
         <UButton
           variant="outline"
           color="black"
-          class="p-[4px]"
+          class="p-[4px] rounded-[4px]"
           @click="onCopy"
         >
           <NuxtImg

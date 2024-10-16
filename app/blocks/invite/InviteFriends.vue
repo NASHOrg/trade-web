@@ -110,7 +110,7 @@ async function onCollect() {
         </p>
         <UButton
           color="black"
-          class="px-[8px] py-[6px] text-[16px]"
+          class="px-[8px] py-[6px] text-[16px] rounded-[4px]"
           :disabled="!data || status === 'pending'"
           :loading="collecting"
           @click="onCollect"
