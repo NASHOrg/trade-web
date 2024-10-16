@@ -88,4 +88,16 @@ export class Yapi extends Api {
   get blockchainTradeHistorys() {
     return this.ft.path('/blockchain/trade-historys').method('get').create()!;
   }
+
+  get userDevices() {
+    return this.ft.path('/user/devices').method('get').create()!;
+  }
+
+  get userCrowdfundingDevices() {
+    return this.ft.path('/user/crowdfunding-devices').method('get').create()!;
+  }
+
+  get userVoteDevices() {
+    return this.ft.path('/user/vote-devices').method('get').create()!;
+  }
 }

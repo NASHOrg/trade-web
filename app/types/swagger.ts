@@ -982,6 +982,137 @@ export interface paths {
             };
         };
     };
+    "/user/devices": {
+        get: {
+            parameters: {
+                query: {
+                    pageNo: number;
+                    pageSize: number;
+                    /** 1：由高到低；0：由低到高 */
+                    voters?: string;
+                    /** 1：由高到低；0：由低到高 */
+                    totalStake?: string;
+                    /** 1：由高到低；0：由低到高 */
+                    yield?: string;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        msg?: string;
+                        code?: string;
+                        data?: {
+                            hasPrev?: boolean;
+                            pageNo?: number;
+                            totalPage?: number;
+                            pageSize?: number;
+                            hasNext?: boolean;
+                            totalCount?: number;
+                            items?: {
+                                deviceStateTimeOnChain: string;
+                                deviceState: string;
+                                deviceID: string;
+                                deviceOwnerAddress: string;
+                                deviceRegisterTimeOnChain: string;
+                                deviceTotalStake: string;
+                                deviceOwnerStake: string;
+                                voterCount: string;
+                                deviceMyStake: string;
+                                lastHeartBeat: string;
+                                perBill: string;
+                                currentStake: string;
+                                nextStake: string;
+                                yield: string;
+                                allowVote: number;
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "/user/crowdfunding-devices": {
+        get: {
+            parameters: {
+                query: {
+                    /** type=0众筹未满，type=1众筹已满 */
+                    type: string;
+                    pageNo: number;
+                    pageSize: number;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        msg?: string;
+                        code?: string;
+                        data?: {
+                            hasPrev?: boolean;
+                            pageNo?: number;
+                            totalPage?: number;
+                            pageSize?: number;
+                            hasNext?: boolean;
+                            totalCount?: number;
+                            items?: {
+                                deviceStake: number;
+                                deviceId: string;
+                                deviceOwnerStake: string;
+                                voterCount: number;
+                                progress: number;
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "/user/vote-devices": {
+        get: {
+            parameters: {
+                query: {
+                    address: string;
+                    pageNo: number;
+                    pageSize: number;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        msg?: string;
+                        code?: string;
+                        data?: {
+                            hasPrev?: boolean;
+                            pageNo?: number;
+                            totalPage?: number;
+                            pageSize?: number;
+                            hasNext?: boolean;
+                            totalCount?: number;
+                            items?: {
+                                deviceStateTimeOnChain: string;
+                                deviceState: string;
+                                deviceID: string;
+                                deviceOwnerAddress: string;
+                                deviceRegisterTimeOnChain: string;
+                                deviceTotalStake: string;
+                                deviceOwnerStake: string;
+                                voterCount: string;
+                                deviceMyStake: string;
+                                lastHeartBeat: string;
+                                perBill: string;
+                                currentStake: string;
+                                nextStake: string;
+                                yield: string;
+                                allowVote: number;
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
 }
 
 export interface operations {
@@ -1028,3 +1159,9 @@ export type BlockchainTradeHistoryPost = paths["/blockchain/trade-history"]['pos
 export type BlockchainTradeHistoryDeleteParams = paths["/blockchain/trade-history"]['delete']['parameters']['body']['root'];
 export type BlockchainTradeHistorysGetParams = paths["/blockchain/trade-historys"]['get']['parameters']['query'];
 export type BlockchainTradeHistorys = paths["/blockchain/trade-historys"]['get']['responses'][200]['schema']['data'];
+export type UserDevicesGetParams = paths["/user/devices"]['get']['parameters']['query'];
+export type UserDevices = paths["/user/devices"]['get']['responses'][200]['schema']['data'];
+export type UserCrowdfundingDevicesGetParams = paths["/user/crowdfunding-devices"]['get']['parameters']['query'];
+export type UserCrowdfundingDevices = paths["/user/crowdfunding-devices"]['get']['responses'][200]['schema']['data'];
+export type UserVoteDevicesGetParams = paths["/user/vote-devices"]['get']['parameters']['query'];
+export type UserVoteDevices = paths["/user/vote-devices"]['get']['responses'][200]['schema']['data'];

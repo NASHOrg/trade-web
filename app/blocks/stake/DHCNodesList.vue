@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { useStorage } from '@vueuse/core';
 import { formatEther } from 'ethers';
+import { formatAmount } from '~/utils/helpers';
+import type { UserVoteDevices } from '~/types/swagger';
+
+type DHCListItem = UserVoteDevices['items'][0] & { allowVote?: boolean };
+
+const { $api } = useNuxtApp();
+
+const { user } = storeToRefs(useUserStore());
 
 const { accountInfos } = defineProps<{
   accountInfos: {
@@ -13,25 +21,6 @@ const { accountInfos } = defineProps<{
   } | null;
 }>();
 
-type DHCListItem = {
-  deviceStateTimeOnChain: string;
-  deviceState: string;
-  deviceID: string;
-  deviceOwnerAddress: string;
-  deviceRegisterTimeOnChain: string;
-  deviceTotalStake: string;
-  deviceOwnerStake: string;
-  voterCount: number;
-  nextVoterCount: number;
-  deviceMyStake: string;
-  lastHeartBeat: string;
-  perBill: string;
-  currentStake: string;
-  nextStake: string;
-  yield: string;
-  allowVote?: boolean;
-};
-
 const { t } = useI18n();
 const router = useRouter();
 
@@ -41,9 +30,14 @@ const dropdownItems = ['APR', 'Voters', 'TotalStaking'].map(item => ({
 }));
 
 const orderBy = useStorage('hdc-orderby', 'APR');
-const stakedFilter = useStorage('hdc-staked-filter', false);
+const stakedFilter = useStorage<boolean>('hdc-staked-filter', false);
 
 const nodesFilter = ref<'crowdfunding' | 'mining'>('crowdfunding');
+
+watch(() => nodesFilter.value, () => {
+  dhcList.value = [];
+  dhcListState.pageNo = 1;
+});
 
 const dhcList = ref<DHCListItem[]>([]);
 
@@ -66,22 +60,108 @@ const dhcListState = reactive<{
   pageNo: number;
   stakedFilter: boolean;
 }>({
-  orderBy: orderBy.value as 'APR' | 'Voters' | 'TotalStaking',
+  orderBy: orderBy.value,
   pageNo: 1,
-  stakedFilter: stakedFilter.value as boolean,
+  stakedFilter: stakedFilter.value,
 });
 
-// const { data: stakedData, status: stakedStatus } = useAsyncData(
-//     `staked-list-${dhcListState.orderBy}-${dhcListState.pageNo}`,
-//     () =>
-//         $api.userUserVoteDevices({
-//           address: user.value!.evmAddress!,
-//           pageNo: 1,
-//           pageSize: 100,
-//           ...getOrderByValue(),
-//         }),
-//     { watch: [dhcListState, user], server: false },
-// );
+useInfiniteScroll(
+  document,
+  (state) => {
+    if (state.arrivedState.bottom) dhcListState.pageNo++;
+  },
+  {
+    canLoadMore() {
+      if (dhcList.value.length === 0 && dhcListState.pageNo === 1) return false;
+      if (allStakeListStatus.value !== 'success') return false;
+      if (crowdfundingStatus.value !== 'success') return false;
+      if (dhcListState.stakedFilter) return false;
+      return data?.value?.totalPage !== undefined
+        ? dhcListState.pageNo < data?.value?.totalPage
+        : true;
+    },
+    distance: 20,
+  },
+);
+
+function getOrderByValue() {
+  switch (dhcListState.orderBy) {
+    case 'APR':
+      return { yield: '1' };
+    case 'APRDesc':
+      return { yield: '0' };
+    case 'Voters':
+      return { voters: '1' };
+    case 'VotersDesc':
+      return { voters: '0' };
+    case 'TotalStaking':
+      return { totalStake: '1' };
+    case 'TotalStakingDesc':
+      return { totalStake: '0' };
+    default:
+      return {};
+  }
+}
+
+const { data, status: allStakeListStatus } = useAsyncData(
+  `stake-list-${dhcListState.orderBy}-${dhcListState.pageNo}`,
+  () => {
+    if (nodesFilter.value !== 'mining') return Promise.resolve(undefined);
+    return $api.userDevices({
+      pageNo: dhcListState.pageNo,
+      pageSize: 20,
+      ...getOrderByValue(),
+    });
+  },
+  { watch: [dhcListState, nodesFilter], immediate: false, server: false },
+);
+
+watch(data, () => {
+  if (data.value?.items && !dhcListState.stakedFilter) {
+    dhcList.value = [...dhcList.value, ...data.value.items];
+  }
+});
+
+const { data: crowdfundingData, status: crowdfundingStatus } = useAsyncData(
+  `crowdfunding-list-${dhcListState.orderBy}-${dhcListState.pageNo}`,
+  () => {
+    if (nodesFilter.value !== 'crowdfunding') return Promise.resolve(undefined);
+    return $api.userCrowdfundingDevices({
+      type: '0',
+      pageNo: dhcListState.pageNo,
+      pageSize: 20,
+    });
+  },
+  { watch: [dhcListState, nodesFilter], immediate: true, server: false },
+);
+
+watch(crowdfundingData, () => {
+  if (data.value?.items && !dhcListState.stakedFilter) {
+    dhcList.value = [...dhcList.value, ...data.value.items];
+  }
+});
+
+const { data: stakedData, status: stakedStatus } = useAsyncData(
+  `staked-list-${dhcListState.orderBy}-${dhcListState.pageNo}`,
+  () =>
+    $api.userVoteDevices({
+      address: user.value!.userAddress,
+      pageNo: 1,
+      pageSize: 100,
+      ...getOrderByValue(),
+    }),
+  { watch: [dhcListState, user], server: false },
+);
+
+watch(stakedData, () => {
+  if (stakedData.value?.items && dhcListState.stakedFilter) {
+    dhcList.value = stakedData.value.items.map(({ voterCount, ...rest }) => ({
+      ...rest,
+      voterCount: Number(voterCount),
+      nextVoterCount: 0,
+    }));
+  }
+});
 
 const toggleStakedOnly = computed({
   get: () => dhcListState.stakedFilter,
@@ -94,18 +174,18 @@ const toggleStakedOnly = computed({
 });
 
 function dhcListItemOnTap(item: DHCListItem) {
-  const stakingData = accountInfos?.staking;
+  // const stakingData = accountInfos?.staking;
   const balance = accountInfos?.myBalance;
-  if (!stakingData || !balance) return;
+  // if (!stakingData || !balance) return;
   const query = {
     dhcDID: item.deviceID,
     totalStaking: item.deviceTotalStake,
     totalVoters: item.voterCount,
     annualYield: item.yield,
-    currentStaking: stakingData[item.deviceID] ?? undefined,
+    // currentStaking: stakingData[item.deviceID] ?? undefined,
     availableBalance: balance,
-    devices: Object.keys(stakingData),
-    stakeAmountList: Object.values(stakingData),
+    // devices: Object.keys(stakingData),
+    // stakeAmountList: Object.values(stakingData),
     allowVote: item.allowVote?.toString(),
   };
   router.push({ path: '/stake/edit', query });
@@ -146,7 +226,7 @@ function dhcListItemStateDisplay(deviceState: string) {
 </script>
 
 <template>
-  <div class="mt-[28px] card w-[600px] h-[574px] flex flex-col p-[30px]">
+  <div class="my-[28px] card w-full flex flex-col p-[30px]">
     <div class="flex justify-around text-[28px] text-[#999]">
       <h1
         class="cursor-pointer"
@@ -186,11 +266,12 @@ function dhcListItemStateDisplay(deviceState: string) {
       </div>
       <div class="flex flex-row items-center justify-center">
         <p class="font-normal text-xs leading-3 me-[8px]">
-          {{ t("stakedOnly") }}
+          {{ t(nodesFilter === 'crowdfunding' ? "joinedOnly" : "stakedOnly") }}
         </p>
         <ClientOnly>
           <UToggle
             v-model="toggleStakedOnly"
+            :disabled="stakedStatus === 'pending' || allStakeListStatus === 'pending'"
             :ui="{
               base: '  border-[1px]',
               size: {
@@ -209,7 +290,7 @@ function dhcListItemStateDisplay(deviceState: string) {
         </ClientOnly>
       </div>
     </div>
-    <div class="px-4 w-full flex flex-col items-center gap-6">
+    <div class="w-full flex flex-col items-center gap-6">
       <div
         v-for="(item, index) in dhcList"
         :key="index"
@@ -258,17 +339,17 @@ function dhcListItemStateDisplay(deviceState: string) {
           />
         </div>
       </div>
-      <!--      <div -->
-      <!--        v-if="stakedStatus === 'pending' || allStakeListStatus === 'pending'" -->
-      <!--        class="flex justify-center my-auto" -->
-      <!--      > -->
-      <!--        <UIcon -->
-      <!--          class="animate-spin text-primary-500 w-6 h-6" -->
-      <!--          name="quill:loading-spin" -->
-      <!--        /> -->
-      <!--      </div> -->
       <div
-        v-if="dhcList.length === 0"
+        v-if="stakedStatus === 'pending' || allStakeListStatus === 'pending'"
+        class="flex justify-center my-auto"
+      >
+        <UIcon
+          class="animate-spin text-primary-500 w-6 h-6"
+          name="quill:loading-spin"
+        />
+      </div>
+      <div
+        v-else-if="dhcList.length === 0"
         class="grow flex items-center justify-center pt-8"
       >
         <NuxtPicture

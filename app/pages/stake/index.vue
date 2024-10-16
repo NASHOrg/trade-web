@@ -21,6 +21,6 @@ const accountInfos = ref<{
 <template>
   <div class="flex flex-col items-center w-full">
     <StakeStat v-model:value="accountInfos" />
-    <DHCNodesList v-model:value="accountInfos" />
+    <DHCNodesList :account-infos="accountInfos" />
   </div>
 </template>

@@ -1,36 +1,36 @@
 <script lang="ts" setup>
-// import Decimal from 'decimal.js';
+import Decimal from 'decimal.js';
 import { formatEther } from 'ethers';
 // import { toast } from 'vue-sonner';
-// import { d, formatAmount } from '~/utils/helpers';
+import { d, formatAmount } from '~/utils/helpers';
 
-// const { query } = useRoute();
+const { query } = useRoute();
 const router = useRouter();
 // const { $api } = useNuxtApp();
 const { t } = useI18n();
 
-// const {
-//   dhcDID,
-//   totalStaking,
-//   totalVoters,
-//   annualYield,
-//   currentStaking,
-//   availableBalance,
-//   devices,
-//   stakeAmountList,
-// } = query as {
-//   dhcDID: string;
-//   totalStaking: string;
-//   totalVoters: string;
-//   annualYield: string;
-//   currentStaking?: string;
-//   availableBalance: string;
-//   devices: string[];
-//   stakeAmountList: string[];
-//   allowVote?: string;
-// };
+const {
+  dhcDID,
+  totalStaking,
+  totalVoters,
+  annualYield,
+  currentStaking,
+  availableBalance,
+  // devices,
+  // stakeAmountList,
+} = query as {
+  dhcDID: string;
+  totalStaking: string;
+  totalVoters: string;
+  annualYield: string;
+  currentStaking?: string;
+  availableBalance: string;
+  devices: string[];
+  stakeAmountList: string[];
+  allowVote?: string;
+};
 
-const currentStaking = 0;
+// const currentStaking = 0;
 
 const amountField = ref<string | undefined>(currentStaking ? formatEther(currentStaking) : undefined);
 const removeStake = ref(false);
@@ -38,10 +38,10 @@ const removeStake = ref(false);
 const stakeProcessing = ref(false);
 
 function stakeAll() {
-  // amountField.value = d(availableBalance)
-  //   .add(d(formatEther(currentStaking ?? '0')))
-  //   .toDP(2, Decimal.ROUND_DOWN)
-  //   .toString();
+  amountField.value = d(availableBalance)
+    .add(d(formatEther(currentStaking ?? '0')))
+    .toDP(2, Decimal.ROUND_DOWN)
+    .toString();
 }
 
 async function confirmBtnOnTap() {
@@ -155,8 +155,7 @@ async function confirmBtnOnTap() {
         <p
           class="text-[14px] leading-[16px] text-[#333] dark:text-white overflow-ellipsis"
         >
-          <!--          {{ dhcDID?.slice(0, 6) }}...{{ dhcDID?.slice(-6) }} -->
-          0x2c00...03fc77
+          {{ dhcDID?.slice(0, 6) }}...{{ dhcDID?.slice(-6) }}
         </p>
       </div>
       <div class="flex flex-row justify-between py-[8px]">
@@ -166,8 +165,7 @@ async function confirmBtnOnTap() {
           {{ t("totalStaking") }}:
         </p>
         <p class="text-[14px] leading-[16px] text-[#333] dark:text-white">
-          <!--          {{ formatAmount(formatEther(totalStaking ?? "0")) }} -->
-          7,289,388 tBOL
+          {{ formatAmount(formatEther(totalStaking ?? "0")) }}
         </p>
       </div>
       <div class="flex flex-row justify-between py-[8px]">
@@ -177,8 +175,7 @@ async function confirmBtnOnTap() {
           {{ t("totalVoters") }}:
         </p>
         <p class="text-[14px] leading-[16px] text-[#333] dark:text-white">
-          <!--          {{ totalVoters }} -->
-          184
+          {{ totalVoters }}
         </p>
       </div>
       <div class="flex flex-row justify-between pt-[0px] items-center">
@@ -199,16 +196,11 @@ async function confirmBtnOnTap() {
               </div>
             </template>
           </UPopover>
-          <!--          <p -->
-          <!--            v-if="annualYield" -->
-          <!--            class="ms-[5px] text-[14px] leading-[14px] text-[#333] dark:text-white" -->
-          <!--          > -->
-          <!--            {{ (Number(annualYield) * 100).toFixed(2) }}% -->
-          <!--          </p> -->
           <p
+            v-if="annualYield"
             class="ms-[5px] text-[14px] leading-[14px] text-[#333] dark:text-white"
           >
-            {{ 31.08 }}%
+            {{ (Number(annualYield) * 100).toFixed(2) }}%
           </p>
         </div>
       </div>
@@ -223,8 +215,7 @@ async function confirmBtnOnTap() {
           {{ t("myStaking") }}:
         </p>
         <p class="font-normal text-[14px] leading-[16px] text-primary-500">
-          <!--          {{ formatAmount(formatEther(currentStaking ?? "0"), 2) }} tBOL -->
-          50,000.01 tBOL
+          {{ formatAmount(formatEther(currentStaking ?? "0"), 2) }} tBOL
         </p>
       </div>
       <div class="mt-[16px] flex flex-row justify-between">
@@ -234,8 +225,7 @@ async function confirmBtnOnTap() {
           {{ t("availableBalance") }}:
         </p>
         <p class="font-normal text-[14px] leading-[16px] text-primary-500">
-          <!--          {{ formatAmount(availableBalance ?? "0", 2) }} tBOL -->
-          1,456.57 tBOL
+          {{ formatAmount(availableBalance ?? "0", 2) }} tBOL
         </p>
       </div>
     </div>
@@ -267,30 +257,6 @@ async function confirmBtnOnTap() {
         </template>
       </button>
     </div>
-    <!--    <UInput -->
-    <!--      v-if="!removeStake" -->
-    <!--      v-model="amountField" -->
-    <!--      v-number="{ -->
-    <!--        decimal: '.', -->
-    <!--        separator: ',', -->
-    <!--        prefix: '', -->
-    <!--        precision: 2, -->
-    <!--        min: '0', -->
-    <!--      }" -->
-    <!--      color="white" -->
-    <!--      :ui="{ -->
-    <!--        rounded: 'rounded-[6px]', -->
-    <!--        color: { -->
-    <!--          white: { -->
-    <!--            outline: -->
-    <!--              'dark:bg-white bg-white dark:text-black  text-black ring-0', -->
-    <!--          }, -->
-    <!--        }, -->
-    <!--      }" -->
-    <!--      :placeholder="t('numOfTBOLAtLeastHint', { num: 200 })" -->
-    <!--      :disabled="query.allowVote === 'false'" -->
-    <!--      class="mt-[8px]" -->
-    <!--    /> -->
     <UInput
       v-if="!removeStake"
       v-model="amountField"
@@ -312,6 +278,7 @@ async function confirmBtnOnTap() {
         },
       }"
       :placeholder="t('mustBiggerTanNumOfTBOL', { num: 200 })"
+      :disabled="query.allowVote === 'false'"
       class="mt-[8px]"
     />
     <div
@@ -321,22 +288,8 @@ async function confirmBtnOnTap() {
       <IconDisable class="me-[8px]" />
       {{ t("unstakeTheDHC") }}
     </div>
-    <!--    <div -->
-    <!--      v-if="query.allowVote === 'false' || removeStake" -->
-    <!--      class="mt-[8px] flex items-center" -->
-    <!--    > -->
-    <!--      <NuxtImg -->
-    <!--        src="images/info_icon.png" -->
-    <!--        densities="1x 2x" -->
-    <!--        width="16" -->
-    <!--        height="16" -->
-    <!--      /> -->
-    <!--      <p class="mx-[6px] text-[12px] text-[#999] dark:text-white"> -->
-    <!--        {{ t(removeStake ? 'unstakeHint' : 'votedNodeHasClosed') }} -->
-    <!--      </p> -->
-    <!--    </div> -->
     <div
-      v-if="removeStake"
+      v-if="query.allowVote === 'false' || removeStake"
       class="mt-[8px] flex items-center"
     >
       <NuxtImg

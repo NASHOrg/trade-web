@@ -153,7 +153,7 @@ const retrieveBtnOnTap = async () => {
               </div>
               <UButton
                 :ui="{ rounded: 'rounded-full', color: { primary: 'dark:bg-primary-500' } }"
-                class="px-[10px] py-[7px]"
+                class="px-[10px] py-[8px] text-[18px]"
                 :loading="retrieveProcessing"
                 :disabled="Number(data?.unstaked) === 0"
                 @click="retrieveBtnOnTap"
