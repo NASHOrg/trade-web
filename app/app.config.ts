@@ -67,11 +67,13 @@ export default defineAppConfig({
     },
     table: {
       base: '!bg-transparent rounded-lg',
+      divide: '!divide-none',
+      tbody: '!divide-none',
       th: {
         color: 'text-gray-500 dark:text-[#999]',
       },
       td: {
-        color: 'text-white dark:text-white',
+        color: 'text-white',
         size: 'text-[16px]',
       },
     },

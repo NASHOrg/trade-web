@@ -15,6 +15,8 @@ const modes = [
   },
 ];
 const selectedMode = ref('limit');
+
+const amountPercent = ref(0);
 </script>
 
 <template>
@@ -72,6 +74,7 @@ const selectedMode = ref('limit');
         BOOL</span>
     </div>
   </div>
+  <AmountSlider v-model="amountPercent" />
   <div class="form-item">
     <span>Value</span>
     <div class="flex justify-end items-center space-x-[10px]">
@@ -81,6 +84,17 @@ const selectedMode = ref('limit');
       >
         USDT</span>
     </div>
+  </div>
+  <div class="flex justify-between items-center mt-[6px]">
+    <span class="text-white text-[14px]">Balance: 440.3456 USDT</span>
+    <UButton
+      to=""
+      variant="outline"
+      size="xs"
+      class="mt-[6px] rounded-[4px] h-[22px] text-[12px]"
+    >
+      Add Fund
+    </UButton>
   </div>
   <UButton
     color="sell"

@@ -14,6 +14,7 @@ const modes = [
     label: 'Market',
   },
 ];
+const amountPercent = ref(0);
 const selectedMode = ref('limit');
 </script>
 
@@ -71,6 +72,9 @@ const selectedMode = ref('limit');
       >
         BOOL</span>
     </div>
+  </div>
+  <div class="pb-[16px]">
+    <AmountSlider v-model="amountPercent" />
   </div>
   <div class="form-item">
     <span>Value</span>

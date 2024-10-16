@@ -16,13 +16,13 @@ const selected = ref('orders');
 
 <template>
   <div class="card w-full p-[20px] pt-[30px]">
-    <div class="flex justify-start space-x-[30px] mb-[20px]">
+    <div class="flex justify-start space-x-[30px]">
       <div
         v-for="item in tabs"
         :key="item.value"
         class="relative text-[#999] hover:text-white text-[24px] pb-[10px] cursor-pointer"
         :class="{ 'text-white selected after:bg-white': selected === item.value }"
-        @click="() => selected = item.value"
+        @click="selected = item.value"
       >
         {{ item.label }}
       </div>

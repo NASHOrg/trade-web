@@ -62,7 +62,7 @@ const columns = [
       v-for="(item, i) in data"
       :key="i"
     >
-      <div class="grid grid-cols-3 md-[10px] text-[14px] first:mt-[14px]">
+      <div class="grid grid-cols-3 mt-[10px] text-[14px] first:mt-[14px]">
         <span :class="item.type === 'sell' ? 'text-sell' : 'text-buy'">{{ item.price }}</span>
         <span>{{ item.qtl }}</span>
         <span>{{ item.time }}</span>

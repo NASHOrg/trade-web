@@ -14,22 +14,24 @@ const selectedTab = ref('buy');
 
 <template>
   <div class="w-full flex flex-col space-y-[16px]">
-    <div class="form-item text-[24px] relative">
+    <div class="form-item text-[24px] !p-0 overflow-hidden space-x-[20px]">
       <span
         v-for="item in tabs"
         :key="item.value"
-        class="z-10 cursor-pointer w-full flex justify-center"
-        :class="{ 'text-white': selectedTab === item.value }"
+        class="relative cursor-pointer w-full flex justify-center items-center h-full"
+        :class="{ 'text-white': selectedTab === item.value, 'bg-sell': (selectedTab === 'sell' && item.value === 'sell'), 'bg-buy': (selectedTab === 'buy' && item.value === 'buy') }"
         @click="selectedTab = item.value"
-      >{{ item.label }}</span>
-      <IconBuyArraw
-        v-if="selectedTab === 'buy'"
-        class="absolute start-0"
-      />
-      <IconSellArraw
-        v-else
-        class="absolute end-0"
-      />
+      >
+        <span class="z-10">{{ item.label }}</span>
+        <IconBuyArraw
+          v-if="item.value === 'buy' && selectedTab === 'buy'"
+          class="absolute -end-4"
+        />
+        <IconSellArraw
+          v-if="item.value === 'sell' && selectedTab === 'sell'"
+          class="absolute -start-4"
+        />
+      </span>
     </div>
     <TradePanelBuyForm v-if="selectedTab === 'buy'" />
     <TradePanelSellForm v-else />

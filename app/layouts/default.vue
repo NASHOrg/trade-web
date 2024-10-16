@@ -13,7 +13,7 @@ const backgroundStyles = computed(() => {
   >
     <NuxtLoadingIndicator color="#FF7800FF" />
     <LayoutHeader />
-    <div class="w-[600px] mt-[40px]">
+    <div class="w-[calc(100%-20px)] mx-[10px] md:mx-0 md:w-[600px] mt-[40px]">
       <slot />
     </div>
   </div>

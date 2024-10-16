@@ -1,12 +1,5 @@
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
-import Decimal from 'decimal.js';
-
-Decimal.set({ precision: 50 });
-
-export function d(input: string | number) {
-  return new Decimal(input);
-}
 
 export function formatDate(at: number, format = 'YYYY/MM/DD HH:mm:ss') {
   return dayjs(at).format(format);
@@ -93,10 +86,6 @@ export const errorHandling = (error: any): Error => {
     }
   }
 };
-
-export function formatCurrency(value: string, decimal = 6) {
-  return BigNumber(value).dp(decimal).toFormat();
-}
 
 export function formatAmount(value: string, decimal = 6) {
   return BigNumber(value).dp(decimal, 1).toFormat();

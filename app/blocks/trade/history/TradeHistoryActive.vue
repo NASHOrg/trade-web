@@ -1,62 +1,63 @@
 <script setup lang="ts">
+const { t } = useI18n();
 const columns = [{
-  key: 'id',
-  label: 'ID',
+  key: 'pair',
+  label: 'Pair',
 }, {
-  key: 'name',
-  label: 'User name',
+  key: 'side',
+  label: 'Side',
 }, {
-  key: 'title',
-  label: 'Job position',
+  key: 'targetPrice',
+  label: 'TargetPrice',
 }, {
-  key: 'email',
-  label: 'Email',
+  key: 'filledQty',
+  label: 'Filled Qty',
 }, {
-  key: 'role',
+  key: 'totalQty',
+  label: 'Filled Qty',
+}, {
+  key: 'action',
+  label: 'Action',
 }];
 
 const people = [{
   id: 1,
-  name: 'Lindsay Walton',
-  title: 'Front-end Developer',
-  email: 'lindsay.walton@example.com',
-  role: 'Member',
-}, {
+  pair: 'BTC/USDT',
+  side: 'Sell',
+  targetPrice: '0.4577',
+  filledQty: '1200',
+  totalQty: '2000',
+},
+{
   id: 2,
-  name: 'Courtney Henry',
-  title: 'Designer',
-  email: 'courtney.henry@example.com',
-  role: 'Admin',
-}, {
-  id: 3,
-  name: 'Tom Cook',
-  title: 'Director of Product',
-  email: 'tom.cook@example.com',
-  role: 'Member',
-}, {
-  id: 4,
-  name: 'Whitney Francis',
-  title: 'Copywriter',
-  email: 'whitney.francis@example.com',
-  role: 'Admin',
-}, {
-  id: 5,
-  name: 'Leonard Krasner',
-  title: 'Senior Designer',
-  email: 'leonard.krasner@example.com',
-  role: 'Owner',
-}, {
-  id: 6,
-  name: 'Floyd Miles',
-  title: 'Principal Designer',
-  email: 'floyd.miles@example.com',
-  role: 'Member',
-}];
+  pair: 'BTC/USDT',
+  side: 'Sell',
+  targetPrice: '0.4577',
+  filledQty: '1200',
+  totalQty: '2000',
+},
+];
 </script>
 
 <template>
-  <UTable
-    :columns="columns"
-    :rows="people"
-  />
+  <div class="w-full flex flex-col items-center">
+    <UTable
+      class="w-full"
+      :columns="columns"
+      :rows="people"
+    >
+      <template #action-data>
+        <UButton
+          :label="t('cancel')"
+          class="rounded-[4px]"
+          size="sm"
+        />
+      </template>
+    </UTable>
+    <TablePagination
+      class="mt-[30px]"
+      :total="10"
+      :current="1"
+    />
+  </div>
 </template>

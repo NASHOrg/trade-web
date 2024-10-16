@@ -55,8 +55,16 @@ const people = [{
 </script>
 
 <template>
-  <UTable
-    :columns="columns"
-    :rows="people"
-  />
+  <div class="w-full flex flex-col items-center">
+    <UTable
+      class="w-full"
+      :columns="columns"
+      :rows="people"
+    />
+    <TablePagination
+      class="mt-[30px]"
+      :total="10"
+      :current="1"
+    />
+  </div>
 </template>

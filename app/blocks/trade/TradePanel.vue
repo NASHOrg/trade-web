@@ -50,7 +50,7 @@ const selectedOrderType = ref('orderBook');
           Trade BOOL
         </UButton>
       </div>
-      <div class="grid grid-cols-2 gap-[30px]">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-[30px]">
         <TradePanelForm />
         <div class="flex flex-col">
           <div class="flex justify-start space-x-[30px] mb-[20px] border-b border-[#2e2e2e]">
@@ -64,7 +64,7 @@ const selectedOrderType = ref('orderBook');
               {{ item.label }}
             </div>
           </div>
-          <TradePanelOrders v-show="selectedOrderType === 'latestTrade'" />
+          <TradePanelOrders v-show="selectedOrderType === 'latestTrades'" />
           <TradePanelBook v-show="selectedOrderType === 'orderBook'" />
         </div>
       </div>

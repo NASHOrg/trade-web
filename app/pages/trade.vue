@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="flex flex-col items-center py-[40px] w-full">
+  <div class="flex flex-col items-center pb-[40px] w-full">
     <TradeTokens />
     <TradePanel class="mt-[40px]" />
     <TradeHistory class="mt-[28px]" />

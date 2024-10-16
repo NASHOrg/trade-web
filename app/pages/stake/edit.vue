@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import Decimal from 'decimal.js';
 import { formatEther } from 'ethers';
 // import { toast } from 'vue-sonner';
 import { d, formatAmount } from '~/utils/helpers';
