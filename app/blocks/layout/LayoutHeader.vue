@@ -9,11 +9,6 @@ const navigations = [
     label: t('dashboard'),
   },
   {
-    id: 'delegate',
-    href: '/delegate',
-    label: t('delegate'),
-  },
-  {
     id: 'stake',
     href: '/stake',
     label: t('stake'),
