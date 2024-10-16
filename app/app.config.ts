@@ -22,25 +22,35 @@ export default defineAppConfig({
         loadingIcon: 'i-tdesign-loading',
         size: 'md',
       },
-      rounded: 'rounded-[4px]',
+      rounded: 'rounded-full',
       variant: {
         solid: '!text-white ring-[1px] ring-inset ring-white/10',
+      },
+      color: {
+        sell: {
+          solid: 'shadow-sm ring-1 ring-inset ring-sell-300 dark:ring-sell-700 text-white bg-sell-400 hover:bg-sell-500 disabled:bg-gray-900 aria-disabled:bg-white dark:disabled:bg-gray-900 dark:aria-disabled:bg-gray-900 focus-visible:ring-2 focus-visible:ring-sell-500 dark:focus-visible:ring-sell-400',
+        },
+        buy: {
+          solid: 'shadow-sm ring-1 ring-inset ring-buy-300 dark:ring-buy-700 text-white bg-buy-400 hover:bg-buy-500 disabled:bg-white aria-disabled:bg-white  dark:disabled:bg-gray-900 dark:aria-disabled:bg-gray-900 focus-visible:ring-2 focus-visible:ring-buy-500 dark:focus-visible:ring-pbuy-400',
+        },
       },
       size: {
         '2xs': 'text-base',
         'xs': 'text-base',
         'sm': 'text-sm',
-        'md': 'text-[16px]',
+        'md': 'text-[20px]',
         'lg': 'text-lg',
         'xl': 'text-xl',
       },
       padding: {
-        md: 'px-6 py-2',
+        md: 'p-[12px]',
       },
     },
     modal: {
-      overlay: { background: 'bg-black/60' },
-      background: 'bg-[#F7FBFF] dark:bg-[#F7FBFF]',
+      overlay: {
+        background: 'bg-black/60',
+      },
+      background: 'bg-[#F7FBFF] dark:bg-[#f7fbff]',
       rounded: 'rounded-[12px]',
       base: 'text-[#333]',
     },
@@ -56,9 +66,13 @@ export default defineAppConfig({
       },
     },
     table: {
-      base: 'bg-white dark:bg-gray-800 rounded-lg',
+      base: '!bg-transparent rounded-lg',
       th: {
-        color: 'text-gray-500 dark:text-gray-400',
+        color: 'text-gray-500 dark:text-[#999]',
+      },
+      td: {
+        color: 'text-white dark:text-white',
+        size: 'text-[16px]',
       },
     },
     progress: {

@@ -38,6 +38,8 @@ export default defineNuxtConfig({
     langDir: 'locales',
     lazy: true,
     defaultLocale: 'en',
+    detectBrowserLanguage: false,
+    strategy: 'no_prefix',
     locales: [
       {
         code: 'en',

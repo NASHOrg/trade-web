@@ -25,9 +25,10 @@ const userStore = useUserStore();
   <UButton
     v-else
     class="h-[40px]"
+    :ui="{ rounded: 'rounded-[10px]' }"
     @click="open"
   >
-    Connect Wallet
+    {{ $t('connect') }}
   </UButton>
 </template>
 

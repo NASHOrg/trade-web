@@ -2,7 +2,7 @@
 import { toast } from 'vue-sonner';
 
 const { t } = useI18n();
-const { user } = useUserStore();
+const { user } = storeToRefs(useUserStore());
 
 const onCopy = () => {
   const { copy } = useClipboard({ source: '', legacy: true });

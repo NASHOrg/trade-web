@@ -3,9 +3,13 @@
 </script>
 
 <template>
-  <div />
+  <div class="flex flex-col items-center py-[40px] w-full">
+    <TradeTokens />
+    <TradePanel class="mt-[40px]" />
+    <TradeHistory class="mt-[28px]" />
+  </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 
 </style>

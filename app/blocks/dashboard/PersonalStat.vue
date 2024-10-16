@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { CheckRulesModal } from '#components';
+
 const { t } = useI18n();
 
 const userStore = useUserStore();
@@ -7,13 +9,13 @@ const userName = computed(() => shortAddress(userStore.user?.userAddress));
 
 const airDropClaimedAmount = 756.88;
 const badgeLevel = 4;
-
+const modal = useModal();
 function onClaim() {
 
 }
 
 function onCheckRules() {
-
+  modal.open(CheckRulesModal);
 }
 </script>
 
@@ -61,7 +63,6 @@ function onCheckRules() {
         <UButton
           color="black"
           class="absolute bottom-[8px] end-[19px] px-[16px] py-[8px] text-[14px]"
-          :ui="{ rounded: 'rounded-full' }"
           @click="onCheckRules"
         >
           {{ t('checkRules') }}

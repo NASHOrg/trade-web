@@ -5,19 +5,11 @@ const navigations = ['dashboard', 'delegate', 'stake', 'trade', 'invite', 'accou
 </script>
 
 <template>
-  <div class="fixed top-0 flex justify-center items-center w-full bg-[#0E0E0E] h-[80px] z-10">
-    <a
-      href="/"
+  <div class="sticky top-0 flex justify-center items-center w-full bg-[#0E0E0E] h-[80px] z-10">
+    <IconBool
       class="absolute left-[26px]"
-    >
-      <NuxtImg
-        src="images/bool_network_white.png"
-        densities="1x 2x"
-        height="27"
-        width="70"
-      />
-    </a>
-    <div class="flex space-x-[40px] items-center">
+    />
+    <div class="flex space-x-[40px] items-center text-[20px]">
       <ULink
         v-for="item in navigations"
         :key="item"

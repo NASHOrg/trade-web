@@ -1,9 +1,6 @@
 {
   "hello": "Hello, {name}!",
   "language": "Language",
-  "menu": {
-    "home": "Home"
-  },
   "connect": "Connect wallet",
   "inviteCode": "Invite Code",
   "dashboard": "Dashboard",
@@ -100,5 +97,10 @@
   "tierOne": "Tier 1",
   "tierTwo": "Tier 2",
   "collectableRewards": "Collectable Rewards",
-  "collect": "Collect"
+  "collect": "Collect",
+  "orders": "Orders",
+  "history": "History",
+  "charts": "Charts",
+  "orderBook": "Order Book",
+  "latestTrades": "Latest Trades"
 }

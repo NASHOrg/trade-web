@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CheckRulesModal from '~/components/modals/CheckRulesModal.vue';
+import { CheckRulesModal } from '#components';
 
 const { t } = useI18n();
 const { user } = storeToRefs(useUserStore());
@@ -13,8 +13,9 @@ const myStakingAmount = 2390;
 const teamStakingAmount = 350000;
 const totalMinedAmount = 1905;
 
+const modal = useModal();
 function onCheckRules() {
-  useModal().open(CheckRulesModal);
+  modal.open(CheckRulesModal);
 }
 </script>
 

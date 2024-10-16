@@ -24,10 +24,10 @@ const mainnet = {
 
 // 3. Create modal
 const metadata = {
-  name: 'Bool Campaign',
+  name: 'XBIT',
   description: 'Bool campaign',
-  url: 'https://campaign.bool.network',
-  icons: ['https://bool.network/icon.png'],
+  url: 'https://xbit.finance',
+  icons: ['https://xbit.finance/favicon.png'],
 };
 let signing = false;
 
@@ -43,7 +43,7 @@ export default function useWallet() {
     },
     chains: [mainnet],
     chainImages: {
-      481: 'https://bool.network/icon.png',
+      481: 'https://bool.network/favicon.png',
     },
     projectId,
   });

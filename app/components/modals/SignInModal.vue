@@ -121,6 +121,7 @@ function cancel() {
         <UInput
           v-model="input"
           class="rounded-[8px] mt-[10px] text-white"
+          size="md"
           placeholder="Please input the referral code"
         />
       </div>
@@ -130,6 +131,7 @@ function cancel() {
             block
             variant="outline"
             class="rounded-full"
+            color="white"
             @click="cancel"
           >
             Change Wallet
@@ -137,6 +139,7 @@ function cancel() {
           <UButton
             block
             class="rounded-full"
+            color="white"
             :loading="isLoading"
             @click="signIn"
           >
