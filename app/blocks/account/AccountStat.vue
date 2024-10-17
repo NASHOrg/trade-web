@@ -9,6 +9,26 @@ const { t } = useI18n();
 const { $api } = useNuxtApp();
 const { user, token } = useUserStore();
 
+const rank = computed(() => {
+  switch (data.value?.level) {
+    case 2:
+      return 'bronze';
+    case 3:
+      return 'silver';
+    case 4:
+      return 'gold';
+    case 5:
+      return 'platinum';
+    case 6:
+      return 'diamond';
+    case 7:
+      return 'master';
+    case 1:
+    default:
+      return 'iron';
+  }
+});
+
 const powerMultiplier = computed(() => {
   switch (data.value?.level) {
     case 2:
@@ -82,7 +102,7 @@ const { data } = useAsyncData(
           </button>
         </div>
         <h1 class="mt-[30px] text-[40px] text-primary-500">
-          {{ mode === 'team' ? 'Master Troops' : 'Gold Miner' }}
+          {{ mode === 'team' ? `${t(rank)} ${t('troops')}` : `${t(rank)} ${t('miner')}` }}
         </h1>
       </div>
       <div
