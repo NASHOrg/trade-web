@@ -1,21 +1,5 @@
 <script setup lang="ts">
 const { t } = useI18n();
-
-function boolSwapBtnOnTap() {
-
-}
-
-function btpStakeBtnOnTap() {
-
-}
-
-function bppListBtnOnTap() {
-
-}
-
-function bppOfferBtnOnTap() {
-
-}
 </script>
 
 <template>
@@ -52,7 +36,7 @@ function bppOfferBtnOnTap() {
         <UButton
           color="black"
           class="p-[6px] min-w-[72px] justify-center text-[16px] rounded-[4px]"
-          @click="boolSwapBtnOnTap"
+          to="/trade"
         >
           {{ t('swap') }}
         </UButton>
@@ -109,7 +93,7 @@ function bppOfferBtnOnTap() {
         <UButton
           color="black"
           class="p-[6px] min-w-[72px] justify-center text-[16px] rounded-[4px]"
-          @click="btpStakeBtnOnTap"
+          to="/stake"
         >
           {{ t('stake') }}
         </UButton>
@@ -134,20 +118,20 @@ function bppOfferBtnOnTap() {
         </p>
         <div class="w-[72px]" />
         <div class="absolute -end-0 flex space-x-[8px]">
-          <UButton
-            color="black"
-            class="p-[6px] min-w-[72px] justify-center text-[16px] rounded-[4px]"
-            @click="bppListBtnOnTap"
-          >
-            {{ t('list') }}
-          </UButton>
-          <UButton
-            color="primary"
-            class="p-[6px] min-w-[72px] justify-center text-[16px] rounded-[4px]"
-            @click="bppOfferBtnOnTap"
-          >
-            {{ t('offer') }}
-          </UButton>
+          <!--          <UButton -->
+          <!--            color="black" -->
+          <!--            class="p-[6px] min-w-[72px] justify-center text-[16px] rounded-[4px]" -->
+          <!--            @click="bppListBtnOnTap" -->
+          <!--          > -->
+          <!--            {{ t('list') }} -->
+          <!--          </UButton> -->
+          <!--          <UButton -->
+          <!--            color="primary" -->
+          <!--            class="p-[6px] min-w-[72px] justify-center text-[16px] rounded-[4px]" -->
+          <!--            @click="bppOfferBtnOnTap" -->
+          <!--          > -->
+          <!--            {{ t('offer') }} -->
+          <!--          </UButton> -->
         </div>
       </div>
     </div>

@@ -1,21 +1,45 @@
 <script setup lang="ts">
 import { CheckRulesModal } from '#components';
 
+const { $api } = useNuxtApp();
 const { t } = useI18n();
-const { user } = storeToRefs(useUserStore());
+const { user, token } = useUserStore();
 
-const userName = computed(() => shortAddress(user.value?.userAddress));
-const btpAmount = computed(() => stakingAmount * 1.4);
-const stakingAmount = 23900;
-const badgeLevel = 6;
-
-const teamStakingAmount = 350000;
-const totalMinedAmount = 1905;
+const userName = computed(() => shortAddress(user?.userAddress));
+const powerMultiplier = computed<number>(() => {
+  switch (data.value?.level) {
+    case 2:
+      return 1;
+    case 3:
+      return 1.1;
+    case 4:
+      return 1.2;
+    case 5:
+      return 1.3;
+    case 6:
+      return 1.4;
+    case 7:
+      return 1.5;
+    case 1:
+    default:
+      return 0;
+  }
+});
 
 const modal = useModal();
+
 function onCheckRules() {
   modal.open(CheckRulesModal);
 }
+
+const { data } = useAsyncData(
+  `power-single-team`,
+  () => $api.powerSingle(
+    { address: user!.userAddress, type: '0' },
+    token,
+  ),
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -34,10 +58,10 @@ function onCheckRules() {
         {{ t('userNamesTeam', { userName }) }}
       </div>
       <h1 class="mt-[16px] text-[54px]">
-        {{ btpAmount.toLocaleString() }} BTP
+        {{ (Number(data?.teamStake ?? 0) * powerMultiplier).toLocaleString() }} BTP
       </h1>
       <p class="mt-[8px] mb-[30px] text-[16px] text-[#666]">
-        = {{ stakingAmount.toLocaleString() }} * 1.4 Staking BOOL
+        = {{ Number(data?.teamStake ?? 0).toLocaleString() }} * {{ powerMultiplier }} Staking BOOL
       </p>
       <div class="absolute right-[25px] bottom-0">
         <NuxtPicture
@@ -48,7 +72,7 @@ function onCheckRules() {
         />
         <NuxtPicture
           class="absolute -top-[57px]"
-          :src="`images/badge_rank_${badgeLevel}.png`"
+          :src="`images/badge_rank_${data?.level ?? 1}.png`"
           densities="1x 2x"
           height="148"
           width="196"
@@ -66,19 +90,19 @@ function onCheckRules() {
     <div class="flex justify-between mx-[5px] text-[16px]">
       <div class="flex flex-col text-center space-y-[16px]">
         <p id="number">
-          {{ Number(user?.oneselfStakingAmount).toLocaleString() }}
+          {{ Number(data?.pesonalStake ?? 0).toLocaleString() }}
         </p>
         <p>{{ t('myStaking') }}</p>
       </div>
       <div class="flex flex-col text-center space-y-[16px]">
         <p id="number">
-          {{ teamStakingAmount.toLocaleString() }}
+          {{ Number(data?.teamStake ?? 0).toLocaleString() }}
         </p>
         <p>{{ t('teamStaking') }}</p>
       </div>
       <div class="flex flex-col text-center space-y-[16px]">
         <p id="number">
-          {{ totalMinedAmount.toLocaleString(undefined, { minimumFractionDigits: 2 }) }}
+          {{ Number(data?.reward ?? 0).toLocaleString() }}
         </p>
         <p>{{ t('totalMined') }}</p>
       </div>

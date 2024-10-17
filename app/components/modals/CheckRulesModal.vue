@@ -45,7 +45,8 @@ const rows = [
               {{ t('teamTotalStaking') }}
             </th>
             <th>
-              {{ t('powerPackageCalculationColumnHead') }}
+              <p>{{ t('powerPackageCalculation') }}</p>
+              <p>{{ t('leaderTotalStakingBiggerThanNum', { num: 500 }) }}</p>
             </th>
           </tr>
         </thead>

@@ -1,54 +1,44 @@
 <script setup lang="ts">
-const { t } = useI18n();
-// const { $api } = useNuxtApp();
+import type { PowerList } from '~/types/swagger';
 
-defineProps<{ mode: 'team' | 'self' }>();
+const { t } = useI18n();
+const { $api } = useNuxtApp();
+const { user, token } = useUserStore();
+
+const props = defineProps<{ mode: 'team' | 'self' }>();
 
 const rewardsHistoryListState = reactive<{
   pageNo: number;
-}>({
-  pageNo: 1,
-});
+}>({ pageNo: 1 });
 
-const rewardsHistoryList = ref([
-  { id: 1, rank: 34, time: '2024/10/28', power: 2390, reward: 105 },
-  { id: 2, rank: 31, time: '2024/10/27', power: 2390, reward: 105 },
-  { id: 3, rank: 80, time: '2024/10/26', power: 2330, reward: 90 },
-  { id: 4, rank: 81, time: '2024/10/25', power: 2330, reward: 90 },
-  { id: 5, rank: 81, time: '2024/10/24', power: 2330, reward: 90 },
-  { id: 6, rank: 80, time: '2024/10/23', power: 2330, reward: 90 },
-]);
+type PowerListItem = PowerList['items'][0] & { rank: string };
 
-// const { data: rewardsData, status: rewardsStatus } = useAsyncData(
-//   `rewards-history-${rewardsHistoryListState.pageNo}`,
-//   () => $api.userRewardsHistory({
-//     pageNo: rewardsHistoryListState.pageNo,
-//     pageSize: 20,
-//   }),
-//   { watch: [rewardsHistoryListState], immediate: true, server: false },
-// );
+const rewardsHistoryList = ref<PowerListItem[]>([]);
+
+const { data: rewardsData, status: rewardsStatus } = useAsyncData(
+  `rewards-history-${rewardsHistoryListState.pageNo}`,
+  () => $api.powerList({
+    address: user!.userAddress,
+    type: props.mode === 'team' ? '0' : '1',
+    pageNumber: rewardsHistoryListState.pageNo.toString(),
+    pageSize: 20,
+  }, token),
+  { watch: [rewardsHistoryListState], immediate: true, server: false },
+);
 
 useInfiniteScroll(
   document,
   (state) => {
-    // if (state.arrivedState.bottom) rewardsHistoryListState.pageNo++;
-    if (state.arrivedState.bottom) rewardsHistoryList.value = rewardsHistoryList.value.concat([
-      { id: 1, rank: 34, time: '2024/10/28', power: 2390, reward: 105 },
-      { id: 2, rank: 31, time: '2024/10/27', power: 2390, reward: 105 },
-      { id: 3, rank: 80, time: '2024/10/26', power: 2330, reward: 90 },
-      { id: 4, rank: 81, time: '2024/10/25', power: 2330, reward: 90 },
-      { id: 5, rank: 81, time: '2024/10/24', power: 2330, reward: 90 },
-      { id: 6, rank: 80, time: '2024/10/23', power: 2330, reward: 90 },
-    ]);
+    if (state.arrivedState.bottom) rewardsHistoryListState.pageNo++;
   },
   {
     canLoadMore: () => {
-      if (rewardsHistoryList.value.length === 0 && rewardsHistoryListState.pageNo === 1) return false;
-      // if (rewardsStatus.value !== 'success') return false;
-      // return rewardsData?.value?.pages !== undefined
-      //   ? rewardsHistoryListState.pageNo < rewardsData?.value!.pages
-      //   : true;
-      return false;
+      // if (rewardsHistoryList.value.length === 0 && rewardsHistoryListState.pageNo === 1) return false;
+      if (rewardsStatus.value !== 'success') return false;
+      return rewardsData?.value?.totalPage !== undefined
+        ? rewardsHistoryListState.pageNo < rewardsData?.value!.totalPage
+        : true;
+      // return false;
     },
   },
 );
@@ -77,7 +67,14 @@ useInfiniteScroll(
               <li class="text-[#666] text-[16px]">
                 <div class="flex justify-between">
                   <span>{{ t('unlockRewardsCondition1') }}</span>
-                  <NuxtImg src="images/icon_checkmark_circle_green.png" />
+                  <NuxtImg
+                    v-if="Number(user?.oneselfStakingAmount ?? 0) >= 500"
+                    src="images/icon_checkmark_circle_green.png"
+                  />
+                  <NuxtImg
+                    v-else
+                    src="images/icon_xmark_circle_red.png"
+                  />
                 </div>
               </li>
               <li class="justify-between text-[#666] text-[16px]">
@@ -114,22 +111,22 @@ useInfiniteScroll(
     </div>
     <div class="flex flex-col divide-[#2E2E2E] divide-y">
       <div
-        v-for="item in rewardsHistoryList"
-        :key="item.id"
+        v-for="(item, index) in rewardsHistoryList"
+        :key="index"
         class="flex justify-between items-center py-[20px]"
       >
         <div class="flex space-x-[16px] items-center">
           <UAvatar
             size="md"
-            :text="item.rank.toString()"
+            :text="item.rank"
             :ui="{ background: 'dark:bg-white', text: 'dark:text-[#333]' }"
           />
-          <p>{{ item.time }}</p>
+          <p>{{ item.businDateStr }}</p>
         </div>
         <p>{{ item.power }} BTP</p>
         <div class="flex space-x-[8px] items-center">
           <p class="text-primary-500">
-            + {{ item.reward.toLocaleString(undefined, { minimumFractionDigits: 2 }) }} BOOL
+            + {{ Number(item.reward).toLocaleString(undefined, { minimumFractionDigits: 2 }) }} BOOL
           </p>
           <UButton
             color="black"

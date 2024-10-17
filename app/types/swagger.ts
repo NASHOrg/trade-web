@@ -287,6 +287,37 @@ export interface paths {
             };
         };
     };
+    "/user/invite-stake-rebates": {
+        get: {
+            parameters: {
+                query: {
+                    /** 用户地址 */
+                    address: string;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        msg?: string;
+                        code?: string;
+                        data?: {
+                            /** @description 一级邀请人数量 */
+                            levelOneCount?: number;
+                            /** @description 一级邀请人总质押量 */
+                            levelOneStake?: number;
+                            /** @description 二级邀请人数量 */
+                            levelTwoCount?: number;
+                            /** @description 二级邀请人总质押量 */
+                            levelTwoStake?: number;
+                            /** @description 返佣提现数量 */
+                            rebate?: number;
+                        };
+                    };
+                };
+            };
+        };
+    };
     "/user/rebate-withdraw-records": {
         get: {
             parameters: {
@@ -436,220 +467,14 @@ export interface paths {
             };
         };
     };
-    "/blockchain/order-book": {
-        get: {
-            parameters: {
-                query: {
-                    /** 订单簿ID */
-                    orderBookID: string;
-                };
-            };
-            responses: {
-                /** successful operation */
-                200: {
-                    schema: {
-                        /**
-                         * @description 返回消息
-                         * 异常时返回错误信息
-                         */
-                        msg: string;
-                        /**
-                         * @description 返回码
-                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
-                         */
-                        code: string;
-                        /** @description 返回数据 */
-                        data: {
-                            /** @description 订单簿status 0 active  1 pending  2  success -1 cancel */
-                            orderBookStatus: string;
-                            /** @description 订单簿slippage */
-                            orderBookSlippage: string;
-                            /** @description 订单簿名称 */
-                            orderBookName: string;
-                            /** @description 订单簿tokenYAmount */
-                            orderBookTokenYAmount: string;
-                            /** @description 订单簿orderId */
-                            orderBookOrderId: string;
-                            /** @description 订单簿orderHash */
-                            orderBookOrderHash: string;
-                            /** @description 订单簿tokenXAmount */
-                            orderBookTokenXAmount: string;
-                            /** @description 订单簿ID */
-                            orderBookID: string;
-                            /** @description 订单簿tokenY */
-                            orderBookTokenY: string;
-                            /** @description 订单簿tokenX/tokenY */
-                            orderBookPrice: string;
-                            /** @description 订单簿tokenX */
-                            orderBookTokenX: string;
-                            /** @description 订单簿0  x2y   1 y2x */
-                            orderBookType: string;
-                            /** @description 订单簿orderCreateTime */
-                            orderBookOrderCreateTime: string;
-                            /** @description 订单簿maker */
-                            orderBookMaker: string;
-                        };
-                    };
-                };
-            };
-        };
-        put: {
-            parameters: {
-                body: {
-                    /** 请求参数 */
-                    root?: {
-                        /** @description tokenY */
-                        tokenY: string;
-                        /** @description orderId */
-                        orderId: string;
-                        /** @description orderCreateTime */
-                        orderCreateTime: string;
-                        /** @description tokenXAmount */
-                        tokenXAmount: string;
-                        /** @description maker */
-                        maker: string;
-                        /** @description 0  x2y   1 y2x */
-                        type: string;
-                        /** @description 订单簿ID */
-                        orderBookID: string;
-                        /** @description tokenX/tokenY */
-                        price: string;
-                        /** @description 名称 */
-                        name: string;
-                        /** @description slippage */
-                        slippage: string;
-                        /** @description tokenYAmount */
-                        tokenYAmount: string;
-                        /** @description orderHash */
-                        orderHash: string;
-                        /** @description tokenX */
-                        tokenX: string;
-                        /** @description status 0 active  1 pending  2  success -1 cancel */
-                        status: string;
-                    };
-                };
-            };
-            responses: {
-                /** successful operation */
-                200: {
-                    schema: {
-                        /**
-                         * @description 返回消息
-                         * 异常时返回错误信息
-                         */
-                        msg: string;
-                        /**
-                         * @description 返回码
-                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
-                         */
-                        code: string;
-                        /** @description 返回数据 */
-                        data: { [key: string]: unknown };
-                    };
-                };
-            };
-        };
-        post: {
-            parameters: {
-                body: {
-                    /** 请求参数 */
-                    root?: {
-                        /** @description tokenY */
-                        tokenY: string;
-                        /** @description orderId */
-                        orderId: string;
-                        /** @description orderCreateTime */
-                        orderCreateTime: string;
-                        /** @description tokenXAmount */
-                        tokenXAmount: string;
-                        /** @description maker */
-                        maker: string;
-                        /** @description 0  x2y   1 y2x */
-                        type: string;
-                        /** @description tokenX/tokenY */
-                        price: string;
-                        /** @description 名称 */
-                        name: string;
-                        /** @description slippage */
-                        slippage: string;
-                        /** @description tokenYAmount */
-                        tokenYAmount: string;
-                        /** @description orderHash */
-                        orderHash: string;
-                        /** @description tokenX */
-                        tokenX: string;
-                        /** @description status 0 active  1 pending  2  success -1 cancel */
-                        status: string;
-                    };
-                };
-            };
-            responses: {
-                /** successful operation */
-                200: {
-                    schema: {
-                        /**
-                         * @description 返回消息
-                         * 异常时返回错误信息
-                         */
-                        msg: string;
-                        /**
-                         * @description 返回码
-                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
-                         */
-                        code: string;
-                        /** @description 返回数据 */
-                        data: { [key: string]: unknown };
-                    };
-                };
-            };
-        };
-        delete: {
-            parameters: {
-                body: {
-                    /** 请求参数 */
-                    root?: {
-                        /** @description 订单簿ID */
-                        orderBookID: string;
-                    };
-                };
-            };
-            responses: {
-                /** successful operation */
-                200: {
-                    schema: {
-                        /**
-                         * @description 返回消息
-                         * 异常时返回错误信息
-                         */
-                        msg: string;
-                        /**
-                         * @description 返回码
-                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
-                         */
-                        code: string;
-                        /** @description 返回数据 */
-                        data: { [key: string]: unknown };
-                    };
-                };
-            };
-        };
-    };
     "/blockchain/order-books": {
         get: {
             parameters: {
                 query: {
-                    /**
-                     * 页码
-                     * 从 1 开始
-                     * 不传默认为第一页
-                     */
-                    pageNo: number;
-                    /**
-                     * 每页个数
-                     * 不传默认为 20
-                     * 最大为 1000
-                     */
-                    pageSize: number;
+                    /** 不填默认10 */
+                    size?: string;
+                    /** 不填默认BOOL/USDT */
+                    pair?: string;
                 };
             };
             responses: {
@@ -668,236 +493,18 @@ export interface paths {
                         code: string;
                         /** @description 返回数据 */
                         data: {
-                            /** @description 是否还有前一页 */
-                            hasPrev: boolean;
-                            /** @description 当前页码 */
-                            pageNo: number;
-                            /** @description 总页数 */
-                            totalPage: number;
-                            /** @description 每页个数 */
-                            pageSize: number;
-                            /** @description 是否还有后一页 */
-                            hasNext: boolean;
-                            /** @description 总数 */
-                            totalCount: number;
-                            /** @description 数据域 */
-                            items: {
-                                /** @description 订单簿status 0 active  1 pending  2  success -1 cancel */
-                                orderBookStatus?: string;
-                                /** @description 订单簿slippage */
-                                orderBookSlippage?: string;
-                                /** @description 订单簿名称 */
-                                orderBookName?: string;
-                                /** @description 订单簿tokenYAmount */
-                                orderBookTokenYAmount?: string;
-                                /** @description 订单簿orderId */
-                                orderBookOrderId?: string;
-                                /** @description 订单簿orderHash */
-                                orderBookOrderHash?: string;
-                                /** @description 订单簿tokenXAmount */
-                                orderBookTokenXAmount?: string;
-                                /** @description 订单簿ID */
-                                orderBookID?: string;
-                                /** @description 订单簿tokenY */
-                                orderBookTokenY?: string;
-                                /** @description 订单簿tokenX/tokenY */
-                                orderBookPrice?: string;
-                                /** @description 订单簿tokenX */
-                                orderBookTokenX?: string;
-                                /** @description 订单簿0  x2y   1 y2x */
-                                orderBookType?: string;
-                                /** @description 订单簿orderCreateTime */
-                                orderBookOrderCreateTime?: string;
-                                /** @description 订单簿maker */
-                                orderBookMaker?: string;
+                            oderRecvBList: {
+                                price: string;
+                                qty: string;
+                                value: string;
                             }[];
+                            orderRecvAList: {
+                                price: string;
+                                qty: string;
+                                value: string;
+                            }[];
+                            latestPrice: string;
                         };
-                    };
-                };
-            };
-        };
-    };
-    "/blockchain/trade-history": {
-        get: {
-            parameters: {
-                query: {
-                    /** 交易记录ID */
-                    tradeHistoryID: string;
-                };
-            };
-            responses: {
-                /** successful operation */
-                200: {
-                    schema: {
-                        /**
-                         * @description 返回消息
-                         * 异常时返回错误信息
-                         */
-                        msg: string;
-                        /**
-                         * @description 返回码
-                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
-                         */
-                        code: string;
-                        /** @description 返回数据 */
-                        data: {
-                            /** @description 交易记录value */
-                            tradeHistoryTokenValue: string;
-                            /** @description 交易记录maker */
-                            tradeHistoryMaker: string;
-                            /** @description 交易记录xAmount */
-                            tradeHistoryXAmount: string;
-                            /** @description 交易记录名称 */
-                            tradeHistoryName: string;
-                            /** @description 交易记录hash */
-                            tradeHistoryHash: string;
-                            /** @description 交易记录fee */
-                            tradeHistoryFee: string;
-                            /** @description 交易记录yAmount */
-                            tradeHistoryYAmount: string;
-                            /** @description 交易记录ID */
-                            tradeHistoryID: string;
-                            /** @description 交易记录0  x2y   1 y2x */
-                            tradeHistoryType: string;
-                            /** @description 交易记录tokenX/tokenY */
-                            tradeHistoryPrice: string;
-                            /** @description 交易记录orderId */
-                            tradeHistoryOrderId: string;
-                            /** @description 交易记录time */
-                            tradeHistoryTradeTime: string;
-                        };
-                    };
-                };
-            };
-        };
-        put: {
-            parameters: {
-                body: {
-                    /** 请求参数 */
-                    root?: {
-                        /** @description yAmount */
-                        yAmount: string;
-                        /** @description time */
-                        tradeTime: string;
-                        /** @description orderId */
-                        orderId: string;
-                        /** @description tokenX/tokenY */
-                        price: string;
-                        /** @description fee */
-                        fee: string;
-                        /** @description 名称 */
-                        name: string;
-                        /** @description 交易记录ID */
-                        tradeHistoryID: string;
-                        /** @description maker */
-                        maker: string;
-                        /** @description xAmount */
-                        xAmount: string;
-                        /** @description 0  x2y   1 y2x */
-                        type: string;
-                        /** @description value */
-                        tokenValue: string;
-                        /** @description hash */
-                        hash: string;
-                    };
-                };
-            };
-            responses: {
-                /** successful operation */
-                200: {
-                    schema: {
-                        /**
-                         * @description 返回消息
-                         * 异常时返回错误信息
-                         */
-                        msg: string;
-                        /**
-                         * @description 返回码
-                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
-                         */
-                        code: string;
-                        /** @description 返回数据 */
-                        data: { [key: string]: unknown };
-                    };
-                };
-            };
-        };
-        post: {
-            parameters: {
-                body: {
-                    /** 请求参数 */
-                    root?: {
-                        /** @description yAmount */
-                        yAmount: string;
-                        /** @description time */
-                        tradeTime: string;
-                        /** @description orderId */
-                        orderId: string;
-                        /** @description tokenX/tokenY */
-                        price: string;
-                        /** @description fee */
-                        fee: string;
-                        /** @description 名称 */
-                        name: string;
-                        /** @description maker */
-                        maker: string;
-                        /** @description xAmount */
-                        xAmount: string;
-                        /** @description 0  x2y   1 y2x */
-                        type: string;
-                        /** @description value */
-                        tokenValue: string;
-                        /** @description hash */
-                        hash: string;
-                    };
-                };
-            };
-            responses: {
-                /** successful operation */
-                200: {
-                    schema: {
-                        /**
-                         * @description 返回消息
-                         * 异常时返回错误信息
-                         */
-                        msg: string;
-                        /**
-                         * @description 返回码
-                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
-                         */
-                        code: string;
-                        /** @description 返回数据 */
-                        data: { [key: string]: unknown };
-                    };
-                };
-            };
-        };
-        delete: {
-            parameters: {
-                body: {
-                    /** 请求参数 */
-                    root?: {
-                        /** @description 交易记录ID */
-                        tradeHistoryID: string;
-                    };
-                };
-            };
-            responses: {
-                /** successful operation */
-                200: {
-                    schema: {
-                        /**
-                         * @description 返回消息
-                         * 异常时返回错误信息
-                         */
-                        msg: string;
-                        /**
-                         * @description 返回码
-                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
-                         */
-                        code: string;
-                        /** @description 返回数据 */
-                        data: { [key: string]: unknown };
                     };
                 };
             };
@@ -919,6 +526,9 @@ export interface paths {
                      * 最大为 1000
                      */
                     pageSize: number;
+                    address?: string;
+                    /** 不传查所有pair */
+                    pair?: string;
                 };
             };
             responses: {
@@ -951,30 +561,11 @@ export interface paths {
                             totalCount: number;
                             /** @description 数据域 */
                             items: {
-                                /** @description 交易记录tokenX/tokenY */
-                                tradeHistoryPrice?: string;
-                                /** @description 交易记录value */
-                                tradeHistoryTokenValue?: string;
-                                /** @description 交易记录maker */
-                                tradeHistoryMaker?: string;
-                                /** @description 交易记录xAmount */
-                                tradeHistoryXAmount?: string;
-                                /** @description 交易记录名称 */
-                                tradeHistoryName?: string;
-                                /** @description 交易记录hash */
-                                tradeHistoryHash?: string;
-                                /** @description 交易记录fee */
-                                tradeHistoryFee?: string;
-                                /** @description 交易记录yAmount */
-                                tradeHistoryYAmount?: string;
-                                /** @description 交易记录ID */
-                                tradeHistoryID?: string;
-                                /** @description 交易记录0  x2y   1 y2x */
-                                tradeHistoryType?: string;
-                                /** @description 交易记录orderId */
-                                tradeHistoryOrderId?: string;
                                 /** @description 交易记录time */
-                                tradeHistoryTradeTime?: string;
+                                price?: string;
+                                qty: string;
+                                tradeTime: string;
+                                type: string;
                             }[];
                         };
                     };
@@ -1036,8 +627,6 @@ export interface paths {
         get: {
             parameters: {
                 query: {
-                    /** type=0众筹未满，type=1众筹已满 */
-                    type: string;
                     pageNo: number;
                     pageSize: number;
                 };
@@ -1113,13 +702,87 @@ export interface paths {
             };
         };
     };
+    "/power/single": {
+        get: {
+            parameters: {
+                query: {
+                    /** 用户地址 */
+                    address: string;
+                    /** 类别(0 团队 1个人) */
+                    type: string;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        code: string;
+                        msg: string;
+                        data: {
+                            /** 算力 */
+                            power: string;
+                            /** 个人质押 */
+                            pesonalStake: string;
+                            /** 团队质押 */
+                            teamStake: string;
+                            /** 总奖励 */
+                            reward: string;
+                            /** 业务日期 */
+                            businDateStr: string;
+                            /** 等级 */
+                            level: number;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "/power/list": {
+        get: {
+            parameters: {
+                query: {
+                    /** 地址 */
+                    address: string;
+                    /** 类别(0 团队 1个人) */
+                    type: string;
+                    pageNumber: string;
+                    pageSize: number;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        code: string;
+                        msg: string;
+                        data: {
+                            pageNo: number;
+                            pageSize: number;
+                            totalPage: number;
+                            totalCount: number;
+                            items: {
+                                /** 算力 */
+                                power: string;
+                                /** 个人质押 */
+                                pesonalStake: string;
+                                /** 团队质押 */
+                                teamStake: string;
+                                /** 奖励 */
+                                reward: string;
+                                /** 业务日期 */
+                                businDateStr: string;
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
 }
 
-export interface operations {
-}
+export interface operations { }
 
-export interface external {
-}
+export interface external { }
 
 export type UserBotLoginPostParams = paths["/user/bot:login"]['post']['parameters']['body']['root'];
 export type UserBotLoginPost = paths["/user/bot:login"]['post']['responses'][200]['schema']['data'];
@@ -1137,26 +800,16 @@ export type UserInvitationRelationGetParams = paths["/user/invitation-relation"]
 export type UserInvitationRelation = paths["/user/invitation-relation"]['get']['responses'][200]['schema']['data'];
 export type UserInviterRebatesGetParams = paths["/user/inviter-rebates"]['get']['parameters']['query'];
 export type UserInviterRebates = paths["/user/inviter-rebates"]['get']['responses'][200]['schema']['data'];
+export type UserInviteStakeRebatesGetParams = paths["/user/invite-stake-rebates"]['get']['parameters']['query'];
+export type UserInviteStakeRebates = paths["/user/invite-stake-rebates"]['get']['responses'][200]['schema']['data'];
 export type UserRebateWithdrawRecordsGetParams = paths["/user/rebate-withdraw-records"]['get']['parameters']['query'];
 export type UserRebateWithdrawRecords = paths["/user/rebate-withdraw-records"]['get']['responses'][200]['schema']['data'];
 export type UserRebateWithdrawRecordGetParams = paths["/user/rebate-withdraw-record"]['get']['parameters']['query'];
 export type UserRebateWithdrawRecord = paths["/user/rebate-withdraw-record"]['get']['responses'][200]['schema']['data'];
 export type UserRebateWithdrawPostParams = paths["/user/rebate:withdraw"]['post']['parameters']['body']['root'];
 export type UserRebateWithdrawPost = paths["/user/rebate:withdraw"]['post']['responses'][200]['schema']['data'];
-export type BlockchainOrderBookGetParams = paths["/blockchain/order-book"]['get']['parameters']['query'];
-export type BlockchainOrderBook = paths["/blockchain/order-book"]['get']['responses'][200]['schema']['data'];
-export type BlockchainOrderBookPutParams = paths["/blockchain/order-book"]['put']['parameters']['body']['root'];
-export type BlockchainOrderBookPostParams = paths["/blockchain/order-book"]['post']['parameters']['body']['root'];
-export type BlockchainOrderBookPost = paths["/blockchain/order-book"]['post']['responses'][200]['schema']['data'];
-export type BlockchainOrderBookDeleteParams = paths["/blockchain/order-book"]['delete']['parameters']['body']['root'];
 export type BlockchainOrderBooksGetParams = paths["/blockchain/order-books"]['get']['parameters']['query'];
 export type BlockchainOrderBooks = paths["/blockchain/order-books"]['get']['responses'][200]['schema']['data'];
-export type BlockchainTradeHistoryGetParams = paths["/blockchain/trade-history"]['get']['parameters']['query'];
-export type BlockchainTradeHistory = paths["/blockchain/trade-history"]['get']['responses'][200]['schema']['data'];
-export type BlockchainTradeHistoryPutParams = paths["/blockchain/trade-history"]['put']['parameters']['body']['root'];
-export type BlockchainTradeHistoryPostParams = paths["/blockchain/trade-history"]['post']['parameters']['body']['root'];
-export type BlockchainTradeHistoryPost = paths["/blockchain/trade-history"]['post']['responses'][200]['schema']['data'];
-export type BlockchainTradeHistoryDeleteParams = paths["/blockchain/trade-history"]['delete']['parameters']['body']['root'];
 export type BlockchainTradeHistorysGetParams = paths["/blockchain/trade-historys"]['get']['parameters']['query'];
 export type BlockchainTradeHistorys = paths["/blockchain/trade-historys"]['get']['responses'][200]['schema']['data'];
 export type UserDevicesGetParams = paths["/user/devices"]['get']['parameters']['query'];
@@ -1165,3 +818,7 @@ export type UserCrowdfundingDevicesGetParams = paths["/user/crowdfunding-devices
 export type UserCrowdfundingDevices = paths["/user/crowdfunding-devices"]['get']['responses'][200]['schema']['data'];
 export type UserVoteDevicesGetParams = paths["/user/vote-devices"]['get']['parameters']['query'];
 export type UserVoteDevices = paths["/user/vote-devices"]['get']['responses'][200]['schema']['data'];
+export type PowerSingleGetParams = paths["/power/single"]['get']['parameters']['query'];
+export type PowerSingle = paths["/power/single"]['get']['responses'][200]['schema']['data'];
+export type PowerListGetParams = paths["/power/list"]['get']['parameters']['query'];
+export type PowerList = paths["/power/list"]['get']['responses'][200]['schema']['data'];

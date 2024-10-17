@@ -37,6 +37,10 @@ export class Yapi extends Api {
     return this.ft.path('/user/inviter-rebates').method('get').create()!;
   }
 
+  get userInviteStakeRebates() {
+    return this.ft.path('/user/invite-stake-rebates').method('get').create()!;
+  }
+
   get userRebateWithdrawRecords() {
     return this.ft.path('/user/rebate-withdraw-records').method('get').create()!;
   }
@@ -49,40 +53,8 @@ export class Yapi extends Api {
     return this.ft.path('/user/rebate:withdraw').method('post').create()!;
   }
 
-  get blockchainOrderBook() {
-    return this.ft.path('/blockchain/order-book').method('get').create()!;
-  }
-
-  get blockchainOrderBookPut() {
-    return this.ft.path('/blockchain/order-book').method('put').create()!;
-  }
-
-  get blockchainOrderBookPost() {
-    return this.ft.path('/blockchain/order-book').method('post').create()!;
-  }
-
-  get blockchainOrderBookDelete() {
-    return this.ft.path('/blockchain/order-book').method('delete').create()!;
-  }
-
   get blockchainOrderBooks() {
     return this.ft.path('/blockchain/order-books').method('get').create()!;
-  }
-
-  get blockchainTradeHistory() {
-    return this.ft.path('/blockchain/trade-history').method('get').create()!;
-  }
-
-  get blockchainTradeHistoryPut() {
-    return this.ft.path('/blockchain/trade-history').method('put').create()!;
-  }
-
-  get blockchainTradeHistoryPost() {
-    return this.ft.path('/blockchain/trade-history').method('post').create()!;
-  }
-
-  get blockchainTradeHistoryDelete() {
-    return this.ft.path('/blockchain/trade-history').method('delete').create()!;
   }
 
   get blockchainTradeHistorys() {
@@ -99,5 +71,13 @@ export class Yapi extends Api {
 
   get userVoteDevices() {
     return this.ft.path('/user/vote-devices').method('get').create()!;
+  }
+
+  get powerSingle() {
+    return this.ft.path('/power/single').method('get').create()!;
+  }
+
+  get powerList() {
+    return this.ft.path('/power/list').method('get').create()!;
   }
 }
