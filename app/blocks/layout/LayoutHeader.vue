@@ -43,12 +43,13 @@ function toggleMenu() {
     <IconBool
       class="absolute left-[26px]"
     />
-    <div class="hidden md:flex space-x-[40px] items-center text-[20px]">
+    <div class="hidden lg:flex space-x-[40px] items-center text-[20px]">
       <ULink
         v-for="item in navigations"
         :key="item.id"
         :to="item.href"
         active-class="text-primary"
+        :exact="false"
       >
         {{ item.label }}
       </ULink>
@@ -62,7 +63,7 @@ function toggleMenu() {
       </ULink>
       <ConnectWalletButton />
       <div
-        class="w-5 h-5 block md:hidden relative text-white mx-2 cursor-pointer"
+        class="w-5 h-5 block lg:hidden relative text-white mx-2 cursor-pointer"
         @click="toggleMenu"
       >
         <div

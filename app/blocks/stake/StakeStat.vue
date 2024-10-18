@@ -1,187 +1,280 @@
 <script setup lang="ts">
+import BN from 'bignumber.js';
 import { formatEther } from 'ethers';
-import { formatAmount } from '~/utils/helpers';
+import { toast } from 'vue-sonner';
+import type { AccountInfo } from '~/types/common';
+import { network, stakeApi } from '~/utils/contracts';
 
-const emits = defineEmits<{
+const { $botApi } = useNuxtApp();
+const { t } = useI18n();
+const { address, open, chainId, switchNetwork } = useWallet();
+
+const emit = defineEmits<{
   (
-    e: 'update:value',
-    value?: null | {
-      myRewards: string;
-      myBalance: string;
-      releaseBalance: string;
-      staking?: { [key: string]: string };
-    },
+    e: 'update',
+    value?: AccountInfo,
   ): void;
 }>();
 
-const { t } = useI18n();
+async function getBalance() {
+  if (!address.value)
+    return {
+      balance: '0',
+    };
+  const balance = await stakeApi.getBalance({ address: address.value });
+  return {
+    balance: formatEther(balance || '0'),
+  };
+}
 
-const data = reactive({
-  myBalance: '300.13',
-  releaseBalance: '500',
-  myRewards: '8390000000000000000',
-  unstaked: '50.00',
-  incommingUnstaked: '100',
+async function getStaking(): Promise<{ [key: string]: string }> {
+  if (!address.value) return {};
+  const result = await stakeApi.accountVotesForNextEpoch(address.value!);
+  return Object.fromEntries(result.ids.map((id, i) => [id, result.amounts[i]!.toString()]));
+}
+
+async function getUnstaked() {
+  if (!address.value) return {};
+  const [currentBlockHeight, numberOfBlocksWaitingBeforeUnlocking, waitingUnlockAmounts] = await Promise.all([
+    stakeApi.getBlockNumber(),
+    stakeApi.numberOfBlocksWaitingBeforeUnlocking(),
+    stakeApi.balanceWaitingUnlockForAccount(address.value),
+  ]);
+
+  let unstaked = 0n;
+  let incommingUnstaked = 0n;
+
+  waitingUnlockAmounts?.amounts.forEach((amount, index) => {
+    const block = waitingUnlockAmounts?.blocks[index];
+    if (block && block + numberOfBlocksWaitingBeforeUnlocking! < BigInt(currentBlockHeight)) {
+      unstaked += amount;
+    }
+    else {
+      incommingUnstaked += amount;
+    }
+  });
+
+  return {
+    unstaked: formatAmount(formatEther(unstaked), 2),
+    incommingUnstaked: formatAmount(formatEther(incommingUnstaked), 2),
+  };
+}
+
+const { data } = useAsyncData(
+  'stake-account-info',
+  async () => {
+    if (!address.value) return;
+    const infos: AccountInfo = {
+      myRewards: '0',
+      myBalance: '0',
+      staking: undefined as { [key: string]: string } | undefined,
+      unstaked: '0',
+      incommingUnstaked: '0',
+      releaseBalance: '0',
+    };
+    const myRewards = await $botApi.userUserReward({
+      ownerAddress: address.value!,
+    });
+    const { balance } = await getBalance();
+    const staking = await getStaking();
+    const unstaked = await getUnstaked();
+
+    infos.myRewards = myRewards ?? '0';
+    infos.myBalance = balance;
+    infos.staking = staking;
+    infos.unstaked = unstaked.unstaked ?? '0';
+    infos.incommingUnstaked = unstaked.incommingUnstaked ?? '0';
+    return infos;
+  }, {
+    watch: [address],
+    immediate: true,
+    server: false,
+  },
+);
+
+const { data: stakedData } = useAsyncData(
+  `staked-list-${address.value}`,
+  () =>
+    $botApi.userUserVoteDevices({
+      address: address.value!,
+      pageNo: 1,
+      pageSize: 100,
+    }),
+  { watch: [address], server: false },
+);
+
+watch(data, () => {
+  if (data.value) emit('update', data.value);
 });
 
-watch(data, () => emits('update:value', data));
+const totalStaking = computed(() => {
+  const staking = data.value?.staking;
+  if (!staking || !stakedData.value) return undefined;
+  const total = Object.values(staking).reduce(
+    (acc, cur) => acc.plus(BN(formatEther(cur))),
+    BN(0),
+  );
+  const totalCurrentStake = stakedData.value.records!.reduce(
+    (acc, cur) => acc.plus(BN(formatEther(cur.deviceMyStake))),
+    BN(0),
+  );
+  const diff = total.minus(totalCurrentStake);
+  return {
+    total: formatAmount(totalCurrentStake.toString(), 2),
+    pending:
+        diff.gt(0)
+          ? `+${formatAmount(diff.toString(), 2)}`
+          : diff.lt(0)
+            ? `${formatAmount(diff.toString(), 2)}`
+            : '',
+  };
+});
 
-const totalStaking = {
-  total: '50,000.01',
-  pending: '+400',
-};
-
-const retrieveProcessing = ref(false);
-const retrieveBtnOnTap = async () => {
-  retrieveProcessing.value = true;
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  retrieveProcessing.value = false;
-};
+const isRetrieveing = ref<boolean>(false);
+async function onRetrieve() {
+  isRetrieveing.value = true;
+  try {
+    const provider = useWallet().provider();
+    if (!address.value) {
+      return open();
+    }
+    if (chainId.value !== Number(network.chainId)) {
+      const result = await switchNetwork(Number(network.chainId));
+      if (!result) return;
+    }
+    await stakeApi.unlockBalance(provider);
+    toast.success(t('transactionSuccess'));
+  }
+  catch (error) {
+    handleJsonRpcError(error, toast);
+  }
+  finally {
+    isRetrieveing.value = false;
+  }
+}
 </script>
 
 <template>
   <div class="card w-full">
-    <table
-      id="statTable"
-    >
-      <tbody>
-        <tr>
-          <td class="flex items-start justify-start">
-            <!--            <IconCoinsBalance v-if="isLight" /> -->
-            <IconCoinsBalanceDark />
-            <div class="ms-[8px] flex flex-col">
-              <p>{{ t('balance') }}</p>
-              <!--              <USkeleton -->
-              <!--                v-if="status === 'pending' || !data" -->
-              <!--                class="mt-[10px] h-[16px] w-[80px]" -->
-              <!--              /> -->
-              <p
-                class="mt-[10px] text-[16px]"
-              >
-                <span class="text-primary-500">{{ formatAmount(data.myBalance ?? "0", 2) }}</span>
-                <span v-if="data.releaseBalance && Number(data.releaseBalance) !== 0"> / </span>
-                <span
-                  v-if="data.releaseBalance && Number(data.releaseBalance) !== 0"
-                  class="text-[#0AC491]"
-                >
-                  {{ Number(data.releaseBalance) >= 0 ? '+' : '-' }}{{ formatAmount(data.releaseBalance, 2) }}
-                </span>
-              </p>
-            </div>
-          </td>
-          <td
-            rowspan="2"
-            class="relative w-1/2 border-s border-[#EAEAEA] dark:border-[#2E2E2E]"
+    <div class="grid grid-cols-2 gird-flow-col gap-[2px] bg-[#2e2e2e]">
+      <div class="col-span-1 px-[50px] flex items-center justify-start bg-black">
+        <IconCoinsBalance />
+        <div class="ms-[8px] flex flex-col">
+          <p>{{ t('balance') }}</p>
+          <USkeleton
+            v-if="!data"
+            class="mt-[10px] h-[16px] w-[80px]"
+          />
+          <p
+            v-else
+            class="mt-[10px] text-[16px]"
           >
-            <!--            <NuxtImg -->
-            <!--              class="absolute top-[20px] end-[16px] cursor-pointer" -->
-            <!--              src="images/info_icon.png" -->
-            <!--              densities="1x 2x" -->
-            <!--              width="16" -->
-            <!--              height="16" -->
-            <!--              @click="toast.info(t('stakeTip'))" -->
-            <!--            /> -->
-            <!--            <IconCoinsRewards v-if="isLight" /> -->
-            <IconCoinsRewardsDark />
-            <p class="mt-[8px] text-[18px] leading-[20px]">
-              {{ t('totalRewards') }}
-            </p>
-            <!--            <USkeleton -->
-            <!--              v-if="status === 'pending' || !data" -->
-            <!--              class="mt-[16px] h-[20px] w-[80px]" -->
-            <!--            /> -->
-            <p
-              class="mt-[16px] text-primary-500 text-[20px]"
-            >
-              {{ formatAmount(formatEther(data!.myRewards), 4) }} tBOL
-            </p>
-          </td>
-        </tr>
-        <tr>
-          <td class="flex items-start justify-start">
-            <!--            <IconCoinsStaking v-if="isLight" /> -->
-            <IconCoinsStakingDark />
-            <div
-              class="ms-[8px] flex flex-col"
-            >
-              <p>{{ t('staking') }}</p>
-              <!--              <USkeleton -->
-              <!--                v-if="status === 'pending' || !data" -->
-              <!--                class="mt-[10px] h-[16px] w-[80px]" -->
-              <!--              /> -->
-              <p
-                class="mt-[10px] text-[16px]"
-              >
-                <span class="text-primary-500">{{ totalStaking?.total ?? "0" }}</span>
-                <span v-if="totalStaking?.pending"> / </span>
-                <span
-                  v-if="totalStaking?.pending"
-                  class="text-[#0AC491]"
-                >
-                  {{ totalStaking?.pending }}
-                </span>
+            <span class="text-primary-500">{{ formatAmount(data.myBalance ?? "0", 2) }}</span>
+          </p>
+        </div>
+      </div>
+      <div
+        class="min-h-[176px] row-span-2 px-[50px] flex flex-col justify-center relative bg-black"
+      >
+        <div class="flex w-full justify-between">
+          <IconCoinsRewards />
+          <UPopover
+            mode="hover"
+            :popper="{ placement: 'top' }"
+          >
+            <IconInfo />
+            <template #panel>
+              <p class="p-2">
+                {{ t('stakeTip') }}
               </p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="2">
-            <div class="flex justify-between items-center">
-              <div class="flex items-start justify-start">
-                <!--                <IconDocumentSearch v-if="isLight" /> -->
-                <IconDocumentSearchDark />
-                <div
-                  class="ms-[8px] flex flex-col text-[16px]"
-                >
-                  <p>{{ t('unstaked') }}</p>
-                  <!--                  <USkeleton -->
-                  <!--                    v-if="status === 'pending' || !data" -->
-                  <!--                    class="mt-[10px] h-[16px] w-[80px]" -->
-                  <!--                  /> -->
-                  <p
-                    class="mt-[10px]"
-                  >
-                    <span class="text-primary-500">{{ data.unstaked }}</span>
-                    <span v-if="data.incommingUnstaked !== '0'"> / </span>
-                    <span
-                      v-if="data.incommingUnstaked !== '0'"
-                      class="text-[#0AC491]"
-                    >{{ `+${data.incommingUnstaked}` }}</span>
-                  </p>
-                </div>
-              </div>
-              <UButton
-                :ui="{ rounded: 'rounded-full', color: { primary: 'dark:bg-primary-500' } }"
-                class="px-[10px] py-[8px] text-[18px]"
-                :loading="retrieveProcessing"
-                :disabled="Number(data?.unstaked) === 0"
-                @click="retrieveBtnOnTap"
+            </template>
+          </UPopover>
+        </div>
+        <p class="mt-[8px] text-[18px] leading-[20px]">
+          {{ t('totalRewards') }}
+        </p>
+        <USkeleton
+          v-if="!data"
+          class="mt-[16px] h-[20px] w-[80px]"
+        />
+        <p
+          v-else
+          class="mt-[16px] text-primary-500 text-[20px]"
+        >
+          {{ formatAmount(formatEther(data!.myRewards), 4) }} tBOL
+        </p>
+      </div>
+      <div class="px-[50px] flex items-center justify-start bg-black">
+        <IconCoinsStaking />
+        <div
+          class="ms-[8px] flex flex-col"
+        >
+          <p>{{ t('staking') }}</p>
+          <USkeleton
+            v-if="!data"
+            class="mt-[10px] h-[16px] w-[80px]"
+          />
+          <p
+            v-else
+            class="mt-[10px] text-[16px]"
+          >
+            <span class="text-primary-500">{{ totalStaking?.total ?? "0" }}</span>
+            <span v-if="totalStaking?.pending"> / </span>
+            <span
+              v-if="totalStaking?.pending"
+              class="text-[#0AC491]"
+            >
+              {{ totalStaking?.pending }}
+            </span>
+          </p>
+        </div>
+      </div>
+      <div class="px-[50px] py-[20px] flex justify-between items-center bg-black col-span-2">
+        <div class="flex items-start justify-start">
+          <IconDocumentSearch />
+          <div
+            class="ms-[8px] flex flex-col text-[16px]"
+          >
+            <div class="flex space-x-2">
+              <p>{{ t('unstaked') }}</p>
+              <UPopover
+                mode="hover"
+                :popper="{ placement: 'top' }"
               >
-                {{ t(retrieveProcessing ? 'retrieving' : 'retrieve') }}
-              </UButton>
+                <IconInfo />
+                <template #panel>
+                  <p class="p-2">
+                    {{ t('unstakeTip') }}
+                  </p>
+                </template>
+              </UPopover>
             </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            <USkeleton
+              v-if="!data"
+              class="mt-[10px] h-[16px] w-[80px]"
+            />
+            <p
+              v-else
+              class="mt-[10px]"
+            >
+              <span class="text-primary">{{ data.unstaked }}</span>
+              <span v-if="data.incommingUnstaked !== '0'"> / </span>
+              <span
+                v-if="data.incommingUnstaked !== '0'"
+                class="text-[#0AC491]"
+              >{{ `+${data.incommingUnstaked}` }}</span>
+            </p>
+          </div>
+        </div>
+        <UButton
+          class="text-[18px]"
+          :loading="isRetrieveing"
+          :disabled="Number(data?.unstaked ?? 0) === 0"
+          @click="onRetrieve"
+        >
+          {{ t('retrieve') }}
+        </UButton>
+      </div>
+    </div>
   </div>
 </template>
-
-<style scoped lang="postcss">
-#statTable {
-  @apply text-[#333] dark:text-white;
-  width: 100%;
-
-  font-size: 16px;
-  line-height: 1;
-
-  tr {
-    @apply dark:border-[#2E2E2E];
-    border: 1px solid #EAEAEA;
-  }
-
-  td {
-    padding: 14px 16px;
-  }
-}
-</style>

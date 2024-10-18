@@ -9,6 +9,7 @@ import {
 import { toast } from 'vue-sonner';
 import { BrowserProvider } from 'ethers';
 import { SignInModal } from '#components';
+import { network } from '~/utils/contracts';
 
 // 1. Get projectId at https://cloud.walletconnect.com
 const projectId = '07556f4c9346cbd23fa53dde19889e99';
@@ -93,6 +94,46 @@ export default function useWallet() {
       signing = false;
     }
   });
+  async function switchNetwork(chain: number) {
+    if (chain === Number(chainId.value)) return true;
+    if (!walletProvider.value) {
+      throw new Error('Wallet provider is not available.');
+    }
+
+    try {
+      await walletProvider.value?.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: `0x${chain.toString(16)}` }],
+      });
+      return true;
+    }
+    catch (err: any) {
+      if (err.code === 4902) {
+        await walletProvider.value // Or window.ethereum if you don't support EIP-6963.
+          .request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: `0x${chain.toString(16)}`,
+                chainName: network.name,
+                rpcUrls: [network.rpc] /* ... */,
+                blockExplorerUrls: [network.explorer] /* ... */,
+                nativeCurrency: {
+                  name: network.symbol,
+                  symbol: network.symbol,
+                  decimals: 18,
+                },
+              },
+            ],
+          });
+
+        return await switchNetwork(chain);
+      }
+      else {
+        throw err;
+      }
+    }
+  }
   async function signMessage(message: string) {
     if (!isConnected) {
       return;
@@ -108,7 +149,9 @@ export default function useWallet() {
     isConnected,
     walletProvider,
     chainId,
+    provider: () => new BrowserProvider(walletProvider.value!),
     signMessage,
+    switchNetwork,
     open,
     disconnect,
   };

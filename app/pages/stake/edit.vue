@@ -1,12 +1,14 @@
 <script lang="ts" setup>
 import { formatEther } from 'ethers';
-// import { toast } from 'vue-sonner';
-import { d, formatAmount } from '~/utils/helpers';
+import BN from 'bignumber.js';
+import { toast } from 'vue-sonner';
+import { formatAmount } from '~/utils/helpers';
+import { network, stakeApi } from '~/utils/contracts';
 
 const { query } = useRoute();
 const router = useRouter();
-// const { $api } = useNuxtApp();
 const { t } = useI18n();
+const { address, open, chainId, switchNetwork } = useWallet();
 
 const {
   dhcDID,
@@ -15,8 +17,8 @@ const {
   annualYield,
   currentStaking,
   availableBalance,
-  // devices,
-  // stakeAmountList,
+  devices,
+  stakeAmountList,
 } = query as {
   dhcDID: string;
   totalStaking: string;
@@ -29,160 +31,139 @@ const {
   allowVote?: string;
 };
 
-// const currentStaking = 0;
-
 const amountField = ref<string | undefined>(currentStaking ? formatEther(currentStaking) : undefined);
 const removeStake = ref(false);
 
-const stakeProcessing = ref(false);
-
 function stakeAll() {
-  amountField.value = d(availableBalance)
-    .add(d(formatEther(currentStaking ?? '0')))
-    .toDP(2, Decimal.ROUND_DOWN)
+  amountField.value = BN(availableBalance)
+    .plus(BN(formatEther(currentStaking ?? '0')))
+    .dp(2, 1)
     .toString();
 }
 
-async function confirmBtnOnTap() {
-//   const amountList = stakeAmountList.map(amount => formatEther(amount));
-//   const index = devices.indexOf(dhcDID);
-//   const deviceId = [...devices];
-//   stakeProcessing.value = true;
-//   if (removeStake.value) {
-//     amountList[index] = '0';
-//   }
-//   else {
-//     if (!amountField.value) return;
-//     let value = Number(amountField.value.replaceAll(',', ''));
-//     if (value < 200) {
-//       toast.warning(t('numOfTBOLAtLeastHint', { num: 200 }));
-//       stakeProcessing.value = false;
-//       return;
-//     }
-//     if (index !== -1) {
-//       const diff = value! - Number(amountList[index]);
-//       if (d(diff).gt(d(availableBalance))) {
-//         toast.warning(t('insufficientBolBalance'));
-//         stakeProcessing.value = false;
-//         return;
-//       }
-//       if (d(availableBalance).minus(d(diff)).lt(0.00025)) {
-//         value -= 0.00025;
-//       }
-//       amountList[index] = value.toString();
-//     }
-//     else {
-//       if (d(value).gt(d(availableBalance))) {
-//         toast.warning(t('insufficientBolBalance'));
-//         stakeProcessing.value = false;
-//         return;
-//       }
-//       if (d(availableBalance).minus(d(value)).lt(0.00025)) {
-//         value -= 0.00025;
-//       }
-//       deviceId.push(dhcDID);
-//       amountList.push(value.toString());
-//     }
-//   }
-//   console.log('amountList', amountList);
-//   try {
-//     const data = await $api.stakeDoPost({
-//       deviceId,
-//       amount: amountList,
-//       hash: auth.value.hash,
-//       data: auth.value.checkString,
-//     });
-//     if (!data) {
-//       throw new Error();
-//     }
-//     // Simulate the transaction
-//     await useWallet().simulate(data);
-//     const send = async () => {
-//       const tx = await useWallet().broadcast(data);
-//       await tx.wait();
-//     };
-//     toast.promise(send(), {
-//       loading: t('sendTransaction'),
-//       success: (_) => {
-//         refreshNuxtData();
-//         return t('transactionSuccess');
-//       },
-//       error: () => t('transactionFail'),
-//     });
-//     router.back();
-//   }
-//   catch (error) {
-//     if (error instanceof Error) {
-//       if (error.message.includes('missing revert data')) {
-//         toast.warning(t('fullStaked'));
-//         router.back();
-//       }
-//       else {
-//         toast.warning(t('stakeFailed'));
-//       }
-//     }
-//     else {
-//       toast.warning(t('stakeFailed'));
-//     }
-//   }
-//   finally {
-//     stakeProcessing.value = false;
-//   }
+const isStaking = ref(false);
+async function onStake() {
+  const amountList = stakeAmountList.map(amount => formatEther(amount));
+  const index = devices.indexOf(dhcDID);
+  const deviceId = [...devices];
+  isStaking.value = true;
+  if (removeStake.value) {
+    amountList[index] = '0';
+  }
+  else {
+    if (!amountField.value) return;
+    let value = Number(amountField.value.replaceAll(',', ''));
+    if (value < 200) {
+      toast.warning(t('numOfTBOLAtLeastHint', { num: 200 }));
+      isStaking.value = false;
+      return;
+    }
+    if (index !== -1) {
+      const diff = value! - Number(amountList[index]);
+      if (BN(diff).gt(BN(availableBalance))) {
+        toast.warning(t('insufficientBolBalance'));
+        isStaking.value = false;
+        return;
+      }
+      if (BN(availableBalance).minus(BN(diff)).lt(0.00025)) {
+        value -= 0.00025;
+      }
+      amountList[index] = value.toString();
+    }
+    else {
+      if (BN(value).gt(BN(availableBalance))) {
+        toast.warning(t('insufficientBolBalance'));
+        isStaking.value = false;
+        return;
+      }
+      if (BN(availableBalance).minus(BN(value)).lt(0.00025)) {
+        value -= 0.00025;
+      }
+      deviceId.push(dhcDID);
+      amountList.push(value.toString());
+    }
+  }
+  try {
+    const provider = useWallet().provider();
+    if (!address.value) {
+      return open();
+    }
+    if (chainId.value !== Number(network.chainId)) {
+      const result = await switchNetwork(Number(network.chainId));
+      if (!result) return;
+    }
+    await stakeApi.vote(provider, {
+      devices: deviceId,
+      stakeAmountList: amountList,
+    });
+    if (removeStake.value) {
+      toast.success(t('transactionSuccess'));
+    }
+    else {
+      toast.success(t('transactionSuccess'));
+    }
+    router.back();
+  }
+  catch (error) {
+    if (error instanceof Error) {
+      if (error.message.includes('missing revert data')) {
+        toast.warning(t('fullStaked'));
+        router.back();
+      }
+      else {
+        toast.warning(t('transactionFail'));
+      }
+    }
+    else {
+      toast.warning(t('transactionFail'));
+    }
+  }
+  finally {
+    isStaking.value = false;
+  }
 }
 </script>
 
 <template>
-  <div class="card w-full h-full flex flex-col px-[16px] py-[20px]">
-    <div class="flex-row items-center justify-center mb-[20px]">
-      <div class="flex relative items-center justify-center">
-        <h1
-          class="text-[14px] font-semibold leading-[16px] text-[#333] dark:text-white"
-        >
-          {{ t("dhcStaking") }}
-        </h1>
-      </div>
+  <div class="card w-full h-full flex flex-col px-[30px]">
+    <div class="w-full flex items-center justify-center mt-[40px] mb-[30px]">
+      <h1
+        class="text-[24px] text-[#333] dark:text-white"
+      >
+        {{ t("dhcStaking") }}
+      </h1>
     </div>
     <div
-      class="p-[16px] rounded-[12px] border border-[#D5D5D5] dark:border-[#2E2E2E] bg-[#EEE] dark:bg-[#121212]"
+      class="flex flex-col space-y-[16px] px-[16px] py-[26px] text-[18px] rounded-[6px] border border-black dark:border-white bg-[#EEE] dark:bg-[#121212]"
     >
-      <div class="flex flex-row justify-between items-center py-[8px]">
-        <p
-          class="text-[14px] font-semibold leading-[16px] text-[#333] dark:text-white"
-        >
+      <div class="flex justify-between items-center">
+        <span>
           DHC DID:
-        </p>
-        <p
-          class="text-[14px] leading-[16px] text-[#333] dark:text-white overflow-ellipsis"
-        >
-          {{ dhcDID?.slice(0, 6) }}...{{ dhcDID?.slice(-6) }}
-        </p>
+        </span>
+        <span>
+          {{ shortAddress(dhcDID, 6) }}
+        </span>
       </div>
-      <div class="flex flex-row justify-between py-[8px]">
-        <p
-          class="text-[14px] font-semibold leading-[16px] text-[#333] dark:text-white"
-        >
+      <div class="flex justify-between">
+        <p>
           {{ t("totalStaking") }}:
         </p>
-        <p class="text-[14px] leading-[16px] text-[#333] dark:text-white">
+        <p>
           {{ formatAmount(formatEther(totalStaking ?? "0")) }}
         </p>
       </div>
-      <div class="flex flex-row justify-between py-[8px]">
-        <p
-          class="text-[14px] font-semibold leading-[16px] text-[#333] dark:text-white"
-        >
+      <div class="flex justify-between">
+        <p>
           {{ t("totalVoters") }}:
         </p>
-        <p class="text-[14px] leading-[16px] text-[#333] dark:text-white">
+        <span>
           {{ totalVoters }}
-        </p>
+        </span>
       </div>
-      <div class="flex flex-row justify-between pt-[0px] items-center">
-        <p
-          class="text-[14px] font-semibold leading-[16px] text-[#333] dark:text-white"
-        >
+      <div class="flex justify-between items-center">
+        <span>
           {{ t("annualYield") }}:
-        </p>
+        </span>
         <div class="flex flex-row items-center">
           <UPopover :popper="{ placement: 'top' }">
             <UIcon
@@ -197,7 +178,7 @@ async function confirmBtnOnTap() {
           </UPopover>
           <p
             v-if="annualYield"
-            class="ms-[5px] text-[14px] leading-[14px] text-[#333] dark:text-white"
+            class="ms-[5px]"
           >
             {{ (Number(annualYield) * 100).toFixed(2) }}%
           </p>
@@ -205,37 +186,31 @@ async function confirmBtnOnTap() {
       </div>
     </div>
     <div
-      class="mt-[16px] mb-[30px] p-[16px] flex flex-col rounded-[12px] border border-[#D5D5D5] dark:border-[#2E2E2E] bg-[#EEE] dark:bg-[#121212]"
+      class="space-y-[16px] mt-[16px] py-[26px] px-[16px] flex flex-col text-[18px] rounded-[6px] border border-[#D5D5D5] dark:border-white bg-[#EEE] dark:bg-[#121212]"
     >
-      <div class="flex flex-row justify-between">
-        <p
-          class="text-[14px] font-semibold leading-[16px] text-[#333] dark:text-white"
-        >
+      <div class="flex justify-between">
+        <p>
           {{ t("myStaking") }}:
         </p>
-        <p class="font-normal text-[14px] leading-[16px] text-primary-500">
+        <p class="text-primary">
           {{ formatAmount(formatEther(currentStaking ?? "0"), 2) }} tBOL
         </p>
       </div>
-      <div class="mt-[16px] flex flex-row justify-between">
-        <p
-          class="text-[14px] font-semibold leading-[16px] text-[#333] dark:text-white"
-        >
+      <div class="flex justify-between">
+        <p>
           {{ t("availableBalance") }}:
         </p>
-        <p class="font-normal text-[14px] leading-[16px] text-primary-500">
+        <p class="text-primary">
           {{ formatAmount(availableBalance ?? "0", 2) }} tBOL
         </p>
       </div>
     </div>
-    <div class="flex flex-row justify-between">
-      <h1
-        class="text-[16px] leading-none text-[#333] dark:text-white"
-      >
+    <div class="mt-[28px] flex justify-between text-[20px]">
+      <h1>
         {{ t("updateStaking") }}
         <span
           :padded="false"
-          class="ml-2 text-[12px] text-primary-500"
+          class="ml-2 text-[16px] text-primary"
           @click="stakeAll"
         >
           {{ t("max") }}
@@ -256,58 +231,35 @@ async function confirmBtnOnTap() {
         </template>
       </button>
     </div>
-    <UInput
+    <CustomInput
       v-if="!removeStake"
       v-model="amountField"
-      v-number="{
-        decimal: '.',
-        separator: ',',
-        prefix: '',
-        precision: 2,
-        min: '0',
-      }"
-      color="white"
-      :ui="{
-        rounded: 'rounded-[6px]',
-        color: {
-          white: {
-            outline:
-              'dark:bg-white bg-white dark:text-black  text-black ring-0',
-          },
-        },
-      }"
       :placeholder="t('mustBiggerTanNumOfTBOL', { num: 200 })"
       :disabled="query.allowVote === 'false'"
-      class="mt-[8px]"
+      input-class="!text-[16px] !bg-white !text-black mt-[16px] !h-[40px]"
     />
     <div
       v-else
-      class="mt-[8px] flex flex-row bg-[#F5F5F5] ring-1 ring-inset ring-[#C4C4C4] rounded-[8px] px-[16px] py-[10px] text-[14px] leading-[16px] text-[#999]"
+      class="mt-[16px] flex bg-[#F5F5F5] ring-1 ring-inset ring-[#C4C4C4] rounded-[8px] px-[16px] py-[10px] text-[14px] leading-[16px] text-[#999]"
     >
       <IconDisable class="me-[8px]" />
       {{ t("unstakeTheDHC") }}
     </div>
     <div
-      v-if="query.allowVote === 'false' || removeStake"
-      class="mt-[8px] flex items-center"
+      v-if="removeStake"
+      class="flex justify-center items-center mt-[12px] space-x-2"
     >
-      <NuxtImg
-        src="images/info_icon.png"
-        densities="1x 2x"
-        width="16"
-        height="16"
-      />
-      <p class="mx-[6px] text-[12px] text-[#999] dark:text-white">
-        {{ t(removeStake ? 'unstakeHint' : 'votedNodeHasClosed') }}
+      <IconHelp />
+      <p class="text-[16px] text-[#999] dark:text-white">
+        {{ removeStake ? t('unstakeHint') : t('votedNodeHasClosed') }}
       </p>
     </div>
-    <div class="grow" />
-    <div class="mt-[83px] mb-[20px] flex justify-center space-x-[34px]">
+    <div class="mt-[83px] mb-[50px] grid grid-cols-2 justify-center space-x-[34px] mx-[60px]">
       <UButton
-        class="justify-center text-[16px] text-[#999] border-[#999] leading-none py-[10px] h-[43px] min-w-[190px]"
         color="black"
         variant="outline"
-        :ui="{ rounded: 'rounded-full' }"
+        block
+        class="h-[44px]"
         @click="router.back"
       >
         {{ t("cancel") }}
@@ -320,15 +272,13 @@ async function confirmBtnOnTap() {
             && !removeStake
         "
         color="black"
-        :loading="stakeProcessing"
-        :ui="{ rounded: 'rounded-full' }"
-        class="justify-center text-[16px] leading-[16px] py-[10px] h-[43px] min-w-[190px]"
-        @click="confirmBtnOnTap"
+        :loading="isStaking"
+        block
+        class="h-[44px]"
+        @click="onStake"
       >
         {{ t("confirm") }}
       </UButton>
     </div>
   </div>
 </template>
-
-<style scoped></style>

@@ -109,19 +109,19 @@ export interface paths {
                         msg?: string;
                         data?: {
                             /** @description 质押数量 */
-                            stake?: string;
+                            stake?: number;
                             /** @description 等级 */
-                            level?: string;
+                            level?: number;
                             /** @description 有效时间 */
                             validity?: string;
                             /** @description 返佣 */
-                            rebate?: string;
+                            rebate?: number;
                             /** @description 奖励系数 */
-                            bonus?: string;
+                            bonus?: number;
                             /** @description 奖励数量 */
-                            reward?: string;
+                            reward?: number;
                             /** @description 升到下一级所需数量 */
-                            upgradeAmount?: string;
+                            upgradeAmount?: number;
                         };
                         fail?: boolean;
                     };
@@ -668,6 +668,10 @@ export interface paths {
                 query: {
                     pageNo: number;
                     pageSize: number;
+                    /** 不传查所有众筹设备，传查该用户参与的众筹设备 */
+                    address?: string;
+                    /** type：1查所有standby设备，不传查未众筹满的 */
+                    type?: string;
                 };
             };
             responses: {
@@ -689,6 +693,7 @@ export interface paths {
                                 deviceOwnerStake: string;
                                 voterCount: number;
                                 progress: number;
+                                yield: number;
                             }[];
                         };
                     };
@@ -764,6 +769,17 @@ export interface paths {
                             reward: string;
                             businDateStr: string;
                             level: string;
+                            /** 算力分布图 */
+                            powerRange: {
+                                /** 低值 */
+                                low: string;
+                                /** 高值 */
+                                high: string;
+                                /** 人数 */
+                                amount: string;
+                            }[];
+                            /** 个人在分布图位置 */
+                            powerIndex: number;
                         };
                     };
                 };

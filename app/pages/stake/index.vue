@@ -1,26 +1,42 @@
 <script setup lang="ts">
-import StakeStat from '~/blocks/stake/StakeStat.vue';
-import DHCNodesList from '~/blocks/stake/DHCNodesList.vue';
+import type { AccountInfo } from '~/types/common';
 
-const accountInfos = ref<{
-  myRewards: string;
-  myBalance: string;
-  releaseBalance: string;
-  staking?: { [key: string]: string };
-  unstaked: string;
-  incommingUnstaked: string;
-} | null>({
-  myBalance: '300.13',
-  releaseBalance: '500',
-  myRewards: '8390000000000000000',
-  unstaked: '50.00',
-  incommingUnstaked: '100',
-});
+const { t } = useI18n();
+const accountInfo = ref<AccountInfo | undefined>();
+
+const tabs = [
+  { value: 'crowdfund', label: t('crowdfundingNodes') },
+  { value: 'mine', label: t('miningNodes') },
+] as const;
+const selectedTab = ref<'mine' | 'crowdfund'>('crowdfund');
 </script>
 
 <template>
   <div class="flex flex-col items-center w-full">
-    <StakeStat v-model:value="accountInfos" />
-    <DHCNodesList :account-infos="accountInfos" />
+    <StakeStat @update="(value: any) => accountInfo = value" />
+    <div class="my-[28px] card w-full flex flex-col p-[30px]">
+      <div class="flex justify-around text-[28px] text-[#999]">
+        <h1
+          v-for="item in tabs"
+          :key="item.value"
+          class="cursor-pointer"
+          :class="selectedTab === item.value ?'text-primary-500':''"
+          @click="selectedTab = item.value"
+        >
+          {{ item.label }}
+        </h1>
+      </div>
+      <DHCNodesList
+        v-if="selectedTab === 'mine'"
+        Key="mine"
+        :account-info="accountInfo"
+        type="mine"
+      />
+      <DHCNodesList
+        v-else
+        :account-info="accountInfo"
+        type="crowdfund"
+      />
+    </div>
   </div>
 </template>

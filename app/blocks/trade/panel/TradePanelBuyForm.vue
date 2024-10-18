@@ -51,7 +51,7 @@ const selectedMode = ref('limit');
       <CustomInput
         v-model="state.price"
         placeholder="0.0"
-        class="!text-[16px]"
+        input-class="!text-[16px] !bg-transparent !text-end"
       />
       <span
         class="text-white"
@@ -65,7 +65,7 @@ const selectedMode = ref('limit');
       <CustomInput
         v-model="state.quantity"
         placeholder="0.0"
-        class="!text-[16px]"
+        input-class="!text-[16px] !bg-transparent !text-end"
       />
       <span
         class="text-white"

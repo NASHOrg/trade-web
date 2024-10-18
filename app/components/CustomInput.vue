@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import type { CSSProperties } from 'vue';
-
 const props = withDefaults(
   defineProps<{
     value?: string | number;
@@ -9,7 +7,7 @@ const props = withDefaults(
     placeholder?: string;
     type?: 'text' | 'password' | 'number';
     minHeight?: string;
-    style?: CSSProperties;
+    inputClass?: string;
     radius?: string;
     onlyRead?: boolean;
     cleanable?: boolean;
@@ -120,7 +118,6 @@ const onEnter = (ev: KeyboardEvent) => {
 <template>
   <UInput
     ref="inputRef"
-    :style="style"
     :type="inputType === 'number' ? 'text' : inputType"
     :model-value="inputValue"
     :maxlength="max"
@@ -128,7 +125,7 @@ const onEnter = (ev: KeyboardEvent) => {
     :readonly="onlyRead"
     :min="min"
     :ui="{
-      base: 'border-none !bg-transparent text-end',
+      base: inputClass,
       padding: {
         sm: 'p-2.5',
       },

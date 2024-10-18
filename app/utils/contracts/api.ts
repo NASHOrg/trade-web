@@ -3,7 +3,7 @@ import type { BrowserProvider, ethers } from 'ethers';
 import { Contract, JsonRpcProvider } from 'ethers';
 import { MAX_INTEGER } from '@ethereumjs/util';
 import { ChainConfig } from './chains';
-import { erc20ABI } from './abi';
+import { erc20ABI } from './abis/erc20';
 
 export const ORIGIN_TOKEN = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 
@@ -24,6 +24,10 @@ export class BaseEvmApi {
 
   get provider() {
     return new JsonRpcProvider(this.rpc);
+  }
+
+  async getBlockNumber() {
+    return await this.provider.getBlockNumber();
   }
 
   private getContractProvider<K extends 'ERC20'>(

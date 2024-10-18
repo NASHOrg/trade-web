@@ -49,7 +49,7 @@ async function signIn() {
     const tokens = JSON.parse(localStorage.getItem('tokens') ?? '{}');
     const message = await $api.userMsgToLogin({});
     const signature = await signMessage(message);
-    if (data.value === false && input.value) {
+    if (data.value === true && input.value) {
       const response = await $api.userUserLoginPost({
         address: address.value!,
         message,
