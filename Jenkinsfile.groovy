@@ -8,11 +8,11 @@ pipeline {
   environment {
     DING_DING_ROBOT = 'safematrix'
 
-    K8S_SVC_NAME = 'bool-campaign-web'
-    IMAGE_NAME = 'bool-campaign-web'
+    K8S_SVC_NAME = 'xbit-web'
+    IMAGE_NAME = 'xbit-web'
 
-    PROD_WEB_URL = 'https://campaign.bool.network/'
-    TEST_WEB_URL = 'https://test-campaign.bool.network/'
+    PROD_WEB_URL = 'https://xbit.finance/'
+    TEST_WEB_URL = 'https://testnet.xbit.finance/'
 
     OUT_PUT_PATH = 'dist'
     RUN_PROD = 'build'

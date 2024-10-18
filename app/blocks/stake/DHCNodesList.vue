@@ -21,7 +21,6 @@ const orderBy = useStorage('hdc-orderby', 'APR');
 const stakedFilter = useStorage<boolean>('hdc-staked-filter', false);
 
 const dhcList = ref<DHCListItem[]>([]);
-const crowdFundingList = ref<CrowdfundingListItem[]>([]);
 
 const activeOrderBy = computed({
   get: () => ({
