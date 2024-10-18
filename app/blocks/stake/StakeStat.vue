@@ -142,8 +142,15 @@ async function onRetrieve() {
       const result = await switchNetwork(Number(network.chainId));
       if (!result) return;
     }
-    await stakeApi.unlockBalance(provider);
-    toast.success(t('transactionSuccess'));
+    const tx = await stakeApi.unlockBalance(provider);
+    toast.promise(tx.wait(), {
+      loading: t('sendTransaction'),
+      success: () => {
+        refreshNuxtData();
+        return t('transactionSuccess');
+      },
+      error: () => t('transactionFail'),
+    });
   }
   catch (error) {
     handleJsonRpcError(error, toast);
@@ -268,6 +275,7 @@ async function onRetrieve() {
         </div>
         <UButton
           class="text-[18px]"
+          size="sm"
           :loading="isRetrieveing"
           :disabled="Number(data?.unstaked ?? 0) === 0"
           @click="onRetrieve"

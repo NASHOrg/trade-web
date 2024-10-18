@@ -114,6 +114,7 @@
   "latestTrades": "Latest Trades",
   "transactionSuccess": "Transaction Success",
   "transactionFail": "Transaction Fail",
+  "sendTransaction": "Sending transaction...",
   "fullStaked": "You can't stake on this node right now. Please choose a different node or try again later.",
   "cancelUnstake": "Cancel Unstake"
 }
