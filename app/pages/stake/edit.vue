@@ -92,16 +92,18 @@ async function onStake() {
       const result = await switchNetwork(Number(network.chainId));
       if (!result) return;
     }
-    await stakeApi.vote(provider, {
+    const tx = await stakeApi.vote(provider, {
       devices: deviceId,
       stakeAmountList: amountList,
     });
-    if (removeStake.value) {
-      toast.success(t('transactionSuccess'));
-    }
-    else {
-      toast.success(t('transactionSuccess'));
-    }
+    toast.promise(tx.wait(), {
+      loading: t('sendTransaction'),
+      success: () => {
+        refreshNuxtData();
+        return t('transactionSuccess');
+      },
+      error: () => t('transactionFail'),
+    });
     router.back();
   }
   catch (error) {
