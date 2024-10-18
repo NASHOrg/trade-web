@@ -88,6 +88,9 @@ useInfiniteScroll(
           ? dhcListState.pageNo < data?.value?.totalPage
           : true;
       }
+      return crowdfundingData?.value?.totalPage !== undefined
+        ? dhcListState.pageNo < crowdfundingData?.value?.totalPage
+        : true;
     },
     distance: 20,
   },
@@ -336,7 +339,7 @@ function dhcListItemStateDisplay(deviceState: string) {
             />
             <div class="ms-[16px] flex flex-col items-start font-normal">
               <p class="text-[20px]">
-                {{ item?.deviceId.slice(0, 6) }}...{{ item?.deviceId.slice(-6) }}
+                {{ item?.deviceID.slice(0, 6) }}...{{ item?.deviceID.slice(-6) }}
               </p>
               <p class="mt-[8px] text-[16px] text-[#999]">
                 {{ formatAmount(formatEther(item.deviceStake ?? "0"), 2) }}

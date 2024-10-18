@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { toast } from 'vue-sonner';
 import { formatEther } from 'ethers';
 import { formatAmount } from '~/utils/helpers';
 
@@ -74,14 +73,14 @@ const retrieveBtnOnTap = async () => {
             rowspan="2"
             class="relative w-1/2 border-s border-[#EAEAEA] dark:border-[#2E2E2E]"
           >
-            <NuxtImg
-              class="absolute top-[20px] end-[16px] cursor-pointer"
-              src="images/info_icon.png"
-              densities="1x 2x"
-              width="16"
-              height="16"
-              @click="toast.info(t('stakeTip'))"
-            />
+            <!--            <NuxtImg -->
+            <!--              class="absolute top-[20px] end-[16px] cursor-pointer" -->
+            <!--              src="images/info_icon.png" -->
+            <!--              densities="1x 2x" -->
+            <!--              width="16" -->
+            <!--              height="16" -->
+            <!--              @click="toast.info(t('stakeTip'))" -->
+            <!--            /> -->
             <!--            <IconCoinsRewards v-if="isLight" /> -->
             <IconCoinsRewardsDark />
             <p class="mt-[8px] text-[18px] leading-[20px]">

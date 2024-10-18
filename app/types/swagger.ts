@@ -91,6 +91,44 @@ export interface paths {
             };
         };
     };
+    "/user/user-level": {
+        get: {
+            parameters: {
+                query: {
+                    /** type：0团队信息；type：1个人 */
+                    type: string;
+                    /** 用户地址 */
+                    address: string;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        code?: string;
+                        msg?: string;
+                        data?: {
+                            /** @description 质押数量 */
+                            stake?: string;
+                            /** @description 等级 */
+                            level?: string;
+                            /** @description 有效时间 */
+                            validity?: string;
+                            /** @description 返佣 */
+                            rebate?: string;
+                            /** @description 奖励系数 */
+                            bonus?: string;
+                            /** @description 奖励数量 */
+                            reward?: string;
+                            /** @description 升到下一级所需数量 */
+                            upgradeAmount?: string;
+                        };
+                        fail?: boolean;
+                    };
+                };
+            };
+        };
+    };
     "/user/user:login": {
         post: {
             parameters: {
@@ -600,7 +638,7 @@ export interface paths {
                             pageSize?: number;
                             hasNext?: boolean;
                             totalCount?: number;
-                            items?: {
+                            items: {
                                 deviceStateTimeOnChain: string;
                                 deviceState: string;
                                 deviceID: string;
@@ -608,7 +646,7 @@ export interface paths {
                                 deviceRegisterTimeOnChain: string;
                                 deviceTotalStake: string;
                                 deviceOwnerStake: string;
-                                voterCount: string;
+                                voterCount: number;
                                 deviceMyStake: string;
                                 lastHeartBeat: string;
                                 perBill: string;
@@ -616,6 +654,7 @@ export interface paths {
                                 nextStake: string;
                                 yield: string;
                                 allowVote: number;
+                                nextVoterCount: number;
                             }[];
                         };
                     };
@@ -646,7 +685,7 @@ export interface paths {
                             totalCount?: number;
                             items?: {
                                 deviceStake: number;
-                                deviceId: string;
+                                deviceID: string;
                                 deviceOwnerStake: string;
                                 voterCount: number;
                                 progress: number;
@@ -719,18 +758,41 @@ export interface paths {
                         code: string;
                         msg: string;
                         data: {
-                            /** 算力 */
                             power: string;
-                            /** 个人质押 */
                             pesonalStake: string;
-                            /** 团队质押 */
                             teamStake: string;
-                            /** 总奖励 */
                             reward: string;
-                            /** 业务日期 */
                             businDateStr: string;
-                            /** 等级 */
-                            level: number;
+                            level: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "/power/withdraw": {
+        post: {
+            parameters: {
+                body: {
+                    root?: {
+                        /** 地址 */
+                        address: string;
+                        /** 类别 */
+                        type: number;
+                        /** 业务日期，列表返回值中提供 */
+                        businDate: number;
+                    };
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        code: string;
+                        msg: string;
+                        data: {
+                            /** 是否成功 */
+                            success: boolean;
                         };
                     };
                 };
@@ -771,6 +833,12 @@ export interface paths {
                                 reward: string;
                                 /** 业务日期 */
                                 businDateStr: string;
+                                /** 业务日期数字简写 */
+                                businDate: number;
+                                /** 排名 */
+                                rank: number;
+                                /** 是否已领取 */
+                                claimed: boolean;
                             }[];
                         };
                     };
@@ -790,6 +858,8 @@ export type UserUserGetParams = paths["/user/user"]['get']['parameters'];
 export type UserUser = paths["/user/user"]['get']['responses'][200]['schema']['data'];
 export type UserCheckGetParams = paths["/user/check"]['get']['parameters']['query'];
 export type UserCheck = paths["/user/check"]['get']['responses'][200]['schema']['data'];
+export type UserUserLevelGetParams = paths["/user/user-level"]['get']['parameters']['query'];
+export type UserUserLevel = paths["/user/user-level"]['get']['responses'][200]['schema']['data'];
 export type UserUserLoginPostParams = paths["/user/user:login"]['post']['parameters']['body']['root'];
 export type UserUserLoginPost = paths["/user/user:login"]['post']['responses'][200]['schema']['data'];
 export type UserMsgToLoginGetParams = paths["/user/msg-to-login"]['get']['parameters'];
@@ -820,5 +890,7 @@ export type UserVoteDevicesGetParams = paths["/user/vote-devices"]['get']['param
 export type UserVoteDevices = paths["/user/vote-devices"]['get']['responses'][200]['schema']['data'];
 export type PowerSingleGetParams = paths["/power/single"]['get']['parameters']['query'];
 export type PowerSingle = paths["/power/single"]['get']['responses'][200]['schema']['data'];
+export type PowerWithdrawPostParams = paths["/power/withdraw"]['post']['parameters']['body']['root'];
+export type PowerWithdrawPost = paths["/power/withdraw"]['post']['responses'][200]['schema']['data'];
 export type PowerListGetParams = paths["/power/list"]['get']['parameters']['query'];
 export type PowerList = paths["/power/list"]['get']['responses'][200]['schema']['data'];

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { formatAmount } from '~/utils/helpers';
+
 const props = defineProps<{
   mode: 'team' | 'personal';
 }>();
@@ -11,76 +13,73 @@ const { user, token } = useUserStore();
 
 const rank = computed(() => {
   switch (data.value?.level) {
-    case 2:
+    case '2':
       return 'bronze';
-    case 3:
+    case '3':
       return 'silver';
-    case 4:
+    case '4':
       return 'gold';
-    case 5:
+    case '5':
       return 'platinum';
-    case 6:
+    case '6':
       return 'diamond';
-    case 7:
+    case '7':
       return 'master';
-    case 1:
+    case '1':
     default:
       return 'iron';
   }
 });
 
-const powerMultiplier = computed(() => {
-  switch (data.value?.level) {
-    case 2:
-      return 1;
-    case 3:
-      return 1.1;
-    case 4:
-      return 1.2;
-    case 5:
-      return 1.3;
-    case 6:
-      return 1.4;
-    case 7:
-      return 1.5;
-    case 1:
-    default:
-      return 0;
-  }
-});
+// const powerMultiplier = computed(() => {
+//   switch (data.value?.level) {
+//     case '2':
+//       return 1;
+//     case '3':
+//       return 1.1;
+//     case '4':
+//       return 1.2;
+//     case '5':
+//       return 1.3;
+//     case '6':
+//       return 1.4;
+//     case '7':
+//       return 1.5;
+//     case '1':
+//     default:
+//       return 0;
+//   }
+// });
 
-const stakeAmount = computed(() =>
-  props.mode === 'team'
-    ? Number(data.value?.teamStake ?? 0)
-    : Number(data.value?.pesonalStake ?? 0));
+const stakeAmount = computed(() => Number(data.value?.stake ?? 0));
 
-const nextRankMinimumStakeRequireAmount = computed(() => {
-  switch (data.value?.level) {
-    case 2:
-      return 20000;
-    case 3:
-      return 150000;
-    case 4:
-      return 200000;
-    case 5:
-      return 300000;
-    case 6:
-      return 500000;
-    case 7:
-      return 0;
-    case 1:
-    default:
-      return 10000;
-  }
-});
+// const nextRankMinimumStakeRequireAmount = computed(() => {
+//   switch (data.value?.level) {
+//     case '2':
+//       return 20000;
+//     case '3':
+//       return 70000;
+//     case '4':
+//       return 150000;
+//     case '5':
+//       return 300000;
+//     case '6':
+//       return 500000;
+//     case '7':
+//       return 0;
+//     case '1':
+//     default:
+//       return 10000;
+//   }
+// });
 
 const { data } = useAsyncData(
-  'power-single-self',
-  () => $api.powerSingle(
+  `user-level-${props.mode}`,
+  () => $api.userUserLevel(
     { address: user!.userAddress, type: props.mode === 'team' ? '0' : '1' },
     token,
   ),
-  { immediate: true },
+  { watch: [props], immediate: true },
 );
 </script>
 
@@ -116,15 +115,16 @@ const { data } = useAsyncData(
           :width="mode === 'team' ? 168 : 108"
         />
         <p
-          v-if="data?.level !== 7"
+          v-if="data?.level !== '7'"
           class="text-[14px]"
         >
-          {{ nextRankMinimumStakeRequireAmount - stakeAmount }} BOOL
+          <!--          {{ nextRankMinimumStakeRequireAmount - stakeAmount }} BOOL -->
+          {{ data?.upgradeAmount ?? 0 }} BOOL
         </p>
         <UProgress
-          v-if="data?.level !== 7"
+          v-if="data?.level !== '7'"
           :value="stakeAmount"
-          :max="nextRankMinimumStakeRequireAmount"
+          :max="Number(data?.upgradeAmount ?? 0)"
           size="xs"
           class="w-[100px]"
         />
@@ -147,7 +147,7 @@ const { data } = useAsyncData(
         <p class="text-white/80">
           {{ t('staking') }}:
         </p>
-        <p>{{ `${Number(data?.teamStake ?? 0).toLocaleString()} BOOL` }}</p>
+        <p>{{ `${formatAmount(data?.stake ?? '0')} BOOL` }}</p>
       </div>
       <div
         class="flex justify-between py-[8px] text-[18px]"
@@ -166,13 +166,13 @@ const { data } = useAsyncData(
         <p>{{ t('dailyRefreshing') }}</p>
       </div>
       <div
-        v-if="powerMultiplier > 0"
+        v-if="Number(data?.bonus ?? 0) > 0"
         class="flex justify-between py-[8px] text-[18px]"
       >
         <p class="text-white/80">
           {{ t('bonus') }}:
         </p>
-        <p>{{ `x ${powerMultiplier}` }}</p>
+        <p>{{ `x ${data?.bonus}` }}</p>
       </div>
       <div
         class="flex justify-between py-[8px] text-[18px]"
@@ -180,7 +180,7 @@ const { data } = useAsyncData(
         <p class="text-white/80">
           {{ t('rewards') }}:
         </p>
-        <p>{{ `${Number(data?.reward ?? 0).toLocaleString()} BOOL` }}</p>
+        <p>{{ `${formatAmount(data?.reward ?? '0')} BOOL` }}</p>
       </div>
     </template>
     <template v-else>
@@ -190,7 +190,7 @@ const { data } = useAsyncData(
         <p class="text-white/80">
           {{ t('staking') }}:
         </p>
-        <p>{{ `${Number(data?.pesonalStake ?? 0).toLocaleString()} BOOL` }}</p>
+        <p>{{ `${formatAmount(data?.stake ?? '0')} BOOL` }}</p>
       </div>
       <!--      <div -->
       <!--        class="flex justify-between py-[8px] text-[18px]" -->
@@ -215,6 +215,7 @@ const { data } = useAsyncData(
           {{ t('rebate') }}:
         </p>
         <p>{{ '10% (T1) + 5% (T2)' }}</p>
+        <!--        <p>{{ data?.rebate }}</p> -->
       </div>
       <div
         class="flex justify-between py-[8px] text-[18px]"
@@ -222,7 +223,7 @@ const { data } = useAsyncData(
         <p class="text-white/80">
           {{ t('rewards') }}:
         </p>
-        <p>{{ `${Number(data?.reward ?? 0).toLocaleString()} BOOL` }}</p>
+        <p>{{ `${formatAmount(data?.reward ?? '0')} BOOL` }}</p>
       </div>
     </template>
   </div>

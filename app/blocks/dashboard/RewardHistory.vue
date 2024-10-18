@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PowerList } from '~/types/swagger';
+import { formatAmount } from '~/utils/helpers';
 
 const { t } = useI18n();
 const { $api } = useNuxtApp();
@@ -11,20 +12,27 @@ const rewardsHistoryListState = reactive<{
   pageNo: number;
 }>({ pageNo: 1 });
 
-type PowerListItem = PowerList['items'][0] & { rank: string };
+type PowerListItem = PowerList['items'][0];
 
 const rewardsHistoryList = ref<PowerListItem[]>([]);
 
 const { data: rewardsData, status: rewardsStatus } = useAsyncData(
   `rewards-history-${rewardsHistoryListState.pageNo}`,
   () => $api.powerList({
-    address: user!.userAddress,
+    // address: user!.userAddress,
+    address: '0x56d9dfc0ce2e16a9cc9c0c04829df2de03f458a6',
     type: props.mode === 'team' ? '0' : '1',
     pageNumber: rewardsHistoryListState.pageNo.toString(),
     pageSize: 20,
   }, token),
   { watch: [rewardsHistoryListState], immediate: true, server: false },
 );
+
+watch(rewardsData, () => {
+  if (rewardsData?.value?.items) {
+    rewardsHistoryList.value = [...rewardsHistoryList.value, ...rewardsData.value.items];
+  }
+});
 
 useInfiniteScroll(
   document,
@@ -42,6 +50,24 @@ useInfiniteScroll(
     },
   },
 );
+
+const claiming = ref<number | undefined>(undefined);
+function claimBtnOnTap(item: PowerListItem) {
+  if (claiming.value !== undefined) return;
+  claiming.value = item.businDate;
+  $api
+    .powerWithdrawPost({
+      address: user!.userAddress,
+      businDate: item.businDate,
+      type: props.mode === 'team' ? 0 : 1,
+    }, token)
+    .then(() => {
+      rewardsHistoryListState.pageNo = 1;
+    })
+    .finally(() => {
+      claiming.value = undefined;
+    });
+}
 </script>
 
 <template>
@@ -109,7 +135,10 @@ useInfiniteScroll(
         {{ t('reward') }}
       </p>
     </div>
-    <div class="flex flex-col divide-[#2E2E2E] divide-y">
+    <div
+      v-if="(rewardsData?.items.length ?? 0) > 0"
+      class="flex flex-col divide-[#2E2E2E] divide-y"
+    >
       <div
         v-for="(item, index) in rewardsHistoryList"
         :key="index"
@@ -118,24 +147,44 @@ useInfiniteScroll(
         <div class="flex space-x-[16px] items-center">
           <UAvatar
             size="md"
-            :text="item.rank"
+            :text="item.rank.toString()"
             :ui="{ background: 'dark:bg-white', text: 'dark:text-[#333]' }"
           />
-          <p>{{ item.businDateStr }}</p>
+          <p>{{ item.businDate }}</p>
         </div>
-        <p>{{ item.power }} BTP</p>
+        <p>{{ formatAmount(item.power) }} BTP</p>
         <div class="flex space-x-[8px] items-center">
           <p class="text-primary-500">
-            + {{ Number(item.reward).toLocaleString(undefined, { minimumFractionDigits: 2 }) }} BOOL
+            + {{ formatAmount(item.reward) }} BOOL
           </p>
           <UButton
             color="black"
             class="px-[8px] py-[6px] text-[16px] text-[#333] rounded-[4px]"
+            :disabled="item.claimed"
+            :loading="claiming === item.businDate"
+            @click="claimBtnOnTap(item)"
           >
             {{ t('claim') }}
           </UButton>
         </div>
       </div>
     </div>
+    <div
+      v-else-if="rewardsStatus === 'pending'"
+      class="my-[50px] w-[68px] h-[68px] flex flex-col justify-center items-center"
+    >
+      <UIcon
+        class="animate-spin text-primary-500 w-6 h-6 flex justify-center"
+        name="quill:loading-spin"
+      />
+    </div>
+    <NuxtPicture
+      v-else
+      class="my-[50px] flex justify-center"
+      src="images/empty_box.png"
+      densities="1x 2x"
+      height="68"
+      width="80"
+    />
   </div>
 </template>

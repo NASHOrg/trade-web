@@ -17,6 +17,10 @@ export class Yapi extends Api {
     return this.ft.path('/user/check').method('get').create()!;
   }
 
+  get userUserLevel() {
+    return this.ft.path('/user/user-level').method('get').create()!;
+  }
+
   get userUserLoginPost() {
     return this.ft.path('/user/user:login').method('post').create()!;
   }
@@ -75,6 +79,10 @@ export class Yapi extends Api {
 
   get powerSingle() {
     return this.ft.path('/power/single').method('get').create()!;
+  }
+
+  get powerWithdrawPost() {
+    return this.ft.path('/power/withdraw').method('post').create()!;
   }
 
   get powerList() {
