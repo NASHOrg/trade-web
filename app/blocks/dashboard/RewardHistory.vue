@@ -26,7 +26,7 @@ const { data: rewardsData, status: rewardsStatus } = useAsyncData(
       pageSize: 20,
     }, token);
   },
-  { watch: [pageNo], immediate: true, server: false },
+  { watch: [pageNo, props], immediate: true, server: false },
 );
 
 watch(rewardsData, () => {
@@ -183,10 +183,10 @@ function formatDate(dateString: string) {
     </div>
     <div
       v-else-if="rewardsStatus === 'pending'"
-      class="my-[50px] w-[68px] h-[68px] flex flex-col justify-center items-center"
+      class="my-[50px] w-full h-[68px] flex justify-center items-center"
     >
       <UIcon
-        class="animate-spin text-primary-500 w-6 h-6 flex justify-center"
+        class="animate-spin text-primary-500 w-6 h-6"
         name="quill:loading-spin"
       />
     </div>

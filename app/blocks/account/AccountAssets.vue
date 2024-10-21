@@ -81,7 +81,7 @@ const { t } = useI18n();
             width="50"
           />
           <div class="flex flex-col justify-center ms-[8px] space-y-[6px]">
-            <p>BOOL</p>
+            <p>BTP</p>
             <div class="border border-[#38C15A] rounded-[2px] p-[3px] text-[#38C15A] text-[12px]">
               {{ t('power') }}
             </div>
@@ -107,7 +107,7 @@ const { t } = useI18n();
             width="50"
           />
           <div class="flex flex-col justify-center ms-[8px] space-y-[6px]">
-            <p>BOOL</p>
+            <p>BPP</p>
             <div class="border border-[#38C15A] rounded-[2px] p-[3px] text-[#38C15A] text-[12px]">
               {{ t('power') }}
             </div>

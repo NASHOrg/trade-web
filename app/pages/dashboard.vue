@@ -21,8 +21,8 @@ const selectedTab = ref<'team' | 'self'>('team');
         {{ item.name }}
       </button>
     </div>
-    <TeamStat v-if="selectedTab === 'team'" />
-    <PersonalStat v-else />
+    <TeamStat v-show="selectedTab === 'team'" />
+    <PersonalStat v-show="selectedTab === 'self'" />
     <RewardHistory :mode="selectedTab" />
   </div>
 </template>
