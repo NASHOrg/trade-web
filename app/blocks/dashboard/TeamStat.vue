@@ -42,7 +42,7 @@ const { data } = useAsyncData(
 </script>
 
 <template>
-  <div class="flex flex-col mt-[28px] card w-full h-[590px] px-[25px] py-[20px]">
+  <div class="flex flex-col mt-[28px] card w-full px-[25px] py-[20px]">
     <div
       class="gradient-card relative mt-[13px] mb-[32px] flex flex-col items-start ps-[30px] mx-[5px]"
     >
@@ -106,7 +106,7 @@ const { data } = useAsyncData(
         <p>{{ t('totalMined') }}</p>
       </div>
     </div>
-    <TeamChart class="mt-[40px]" />
+    <TeamChart />
   </div>
 </template>
 

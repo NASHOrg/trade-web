@@ -30,7 +30,7 @@ const { data } = useAsyncData(
 </script>
 
 <template>
-  <div class="card flex flex-col mt-[28px] w-full h-[590px] px-[30px] py-[40px]">
+  <div class="card flex flex-col mt-[28px] w-full px-[30px] py-[40px]">
     <div
       class="relative mb-[40px] flex flex-col items-start gradient-card ps-[30px]"
     >
@@ -88,6 +88,6 @@ const { data } = useAsyncData(
         + {{ Number(data?.reward ?? 0).toLocaleString() }}
       </p>
     </div>
-    <PersonalChart class="mt-[40px]" />
+    <PersonalChart />
   </div>
 </template>

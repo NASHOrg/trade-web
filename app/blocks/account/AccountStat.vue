@@ -101,8 +101,12 @@ const { data } = useAsyncData(
             />
           </button>
         </div>
-        <h1 class="mt-[30px] text-[40px] text-primary-500">
-          {{ mode === 'team' ? `${t(rank)} ${t('troops')}` : `${t(rank)} ${t('miner')}` }}
+        <h1
+          v-if="mode === 'team'"
+          class="mt-[30px] text-[40px] text-primary-500"
+        >
+          <!--          {{ mode === 'team' ? `${t(rank)} ${t('troops')}` : `${t(rank)} ${t('miner')}` }} -->
+          {{ `${t(rank)} ${t('troops')}` }}
         </h1>
       </div>
       <div

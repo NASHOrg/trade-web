@@ -1,18 +1,43 @@
 <script setup lang="ts">
 import { Line } from 'vue-chartjs';
 import type { ChartData, ChartOptions, Point } from 'chart.js';
+import BigNumber from 'bignumber.js';
 
-const chartData: ChartData<'line', (number | Point | null)[], unknown> = {
+const { $api } = useNuxtApp();
+const { user, token } = useUserStore();
+
+const { data: rewardsData, status: rewardsStatus } = useAsyncData(
+  `rewards-history-last-8-days`,
+  () => {
+    if (!token) return Promise.resolve(undefined);
+    return $api.powerList({
+      address: user!.userAddress,
+      // address: '0x56d9dfc0ce2e16a9cc9c0c04829df2de03f458a6',
+      type: '0',
+      pageNumber: '1',
+      pageSize: 8,
+    }, token);
+  },
+  { immediate: true, server: false },
+);
+
+const chartData = computed<ChartData<'line', (number | Point | null)[]>>(() => ({
   labels: Array.from({ length: 8 }, (_, i) =>
-    new Date(Date.now() - i * 24 * 60 * 60 * 1000).toLocaleDateString(undefined, { month: '2-digit', day: '2-digit' }),
+    new Date(Date.now() - (i + 1) * 24 * 60 * 60 * 1000)
+      .toLocaleDateString(undefined, { month: '2-digit', day: '2-digit' }),
   ).reverse(),
   datasets: [{
-    data: [3500, 800, 1000, 800, 1900, 1100, 2800, 1900],
+    data: rewardsData.value?.items
+      .map(item => BigNumber(item.power).dp(6, 1).toNumber())
+      .concat(Array(8).fill(null))
+      .slice(0, 8)
+      .reverse() ?? [],
     borderColor: '#FF623F',
     borderWidth: 2,
     pointStyle: false,
   }],
-};
+}));
+
 const chartOptions: ChartOptions<'line'> = {
   maintainAspectRatio: false,
   responsive: true,
@@ -25,8 +50,8 @@ const chartOptions: ChartOptions<'line'> = {
       min: 0,
       ticks: {
         padding: 10,
-        stepSize: 1000,
-        format: { style: 'currency', currency: 'USD' },
+        // stepSize: 1000,
+        // format: { style: 'currency', currency: 'USD' },
         callback: value => value === 0 ? '0' : `${Number(value) / 1000}K`,
       },
       grid: { display: true, color: '#2E2E2E', lineWidth: 1 },
@@ -36,12 +61,24 @@ const chartOptions: ChartOptions<'line'> = {
 </script>
 
 <template>
-  <div class="flex-grow">
+  <div
+    v-if="Number(rewardsData?.items?.length ?? 0) > 0"
+    class="mt-[40px] flex-grow h-[232px]"
+  >
+    <USkeleton
+      v-if="rewardsStatus === 'pending'"
+      class="w-full h-[212px]"
+    />
     <Line
+      v-else
       :data="chartData"
       :options="chartOptions"
     />
   </div>
+  <div
+    v-else
+    class="h-[20px]"
+  />
 </template>
 
 <style scoped lang="scss">

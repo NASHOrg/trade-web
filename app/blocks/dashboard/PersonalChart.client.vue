@@ -2,10 +2,41 @@
 import { Bar } from 'vue-chartjs';
 import type { ChartData, ChartOptions } from 'chart.js';
 
-const chartData: ChartData<'bar', (number | [number, number] | null)[], unknown> = {
-  labels: ['< 500', '500-1k', '1k-2k', '2k-4k', '4k-7k', '7k-10k', '> 10k'],
+const { $api } = useNuxtApp();
+const { token } = useUserStore();
+
+const { data: powerData, status: powerDataStatus } = useAsyncData(
+  `power-single`,
+  () => {
+    if (!token) return Promise.resolve(undefined);
+    return $api.powerSingle({
+      // address: user!.userAddress,
+      address: '0x56d9dfc0ce2e16a9cc9c0c04829df2de03f458a6',
+      type: '1',
+    }, token);
+  },
+  { immediate: true, server: false },
+);
+
+const chartData = computed<ChartData<'bar', (number | [number, number] | null)[]>>(() => ({
+  // labels: ['< 500', '500-1k', '1k-2k', '2k-4k', '4k-7k', '7k-10k', '> 10k'],
+  labels: powerData.value?.powerRange.map((item) => {
+    if (item.low) {
+      if (item.high) {
+        return `${Number(item.low) / 1000}K-${Number(item.high) / 1000}K`;
+      }
+      else {
+        return `< ${item.low}`;
+      }
+    }
+    else {
+      return `> ${item.high}`;
+    }
+  }) ?? [],
   datasets: [{
-    data: [2500, 1200, null, 2900, 3500, 2000, 900],
+    // data: [2500, 1200, null, 2900, 3500, 2000, 900],
+    data: powerData.value?.powerRange
+      .map((item, index) => index !== powerData.value?.powerIndex ? Number(item.amount) : null) ?? [],
     backgroundColor: '#563D38',
     borderRadius: 8,
     pointStyle: false,
@@ -14,7 +45,9 @@ const chartData: ChartData<'bar', (number | [number, number] | null)[], unknown>
     stack: 'Stack 0',
   },
   {
-    data: [null, null, 2600, null, null, null, null],
+    // data: [null, null, 2600, null, null, null, null],
+    data: powerData.value?.powerRange
+      .map((item, index) => index === powerData.value?.powerIndex ? Number(item.amount) : null) ?? [],
     backgroundColor: '#FF623F',
     borderRadius: 8,
     pointStyle: false,
@@ -23,7 +56,7 @@ const chartData: ChartData<'bar', (number | [number, number] | null)[], unknown>
     stack: 'Stack 0',
   },
   ],
-};
+}));
 const chartOptions: ChartOptions<'bar'> = {
   maintainAspectRatio: false,
   responsive: true,
@@ -48,10 +81,18 @@ const chartOptions: ChartOptions<'bar'> = {
 </script>
 
 <template>
-  <div class="flex-grow">
+  <div
+    v-if="powerData?.powerRange"
+    class="flex-grow mt-[40px] h-[232px]"
+  >
+    <USkeleton
+      v-if="powerDataStatus === 'pending'"
+      class="w-full h-[212px]"
+    />
     <Bar
       :data="chartData"
       :options="chartOptions"
     />
   </div>
+  <div v-else />
 </template>
