@@ -18,13 +18,16 @@ const rewardsHistoryList = ref<PowerListItem[]>([]);
 
 const { data: rewardsData, status: rewardsStatus } = useAsyncData(
   `rewards-history-${rewardsHistoryListState.pageNo}`,
-  () => $api.powerList({
-    // address: user!.userAddress,
-    address: '0x56d9dfc0ce2e16a9cc9c0c04829df2de03f458a6',
-    type: props.mode === 'team' ? '0' : '1',
-    pageNumber: rewardsHistoryListState.pageNo.toString(),
-    pageSize: 20,
-  }, token),
+  () => {
+    if (!token) return Promise.resolve(undefined);
+    return $api.powerList({
+      // address: user!.userAddress,
+      address: '0x56d9dfc0ce2e16a9cc9c0c04829df2de03f458a6',
+      type: props.mode === 'team' ? '0' : '1',
+      pageNumber: rewardsHistoryListState.pageNo.toString(),
+      pageSize: 20,
+    }, token);
+  },
   { watch: [rewardsHistoryListState], immediate: true, server: false },
 );
 
@@ -52,6 +55,7 @@ useInfiniteScroll(
 );
 
 const claiming = ref<number | undefined>(undefined);
+
 function claimBtnOnTap(item: PowerListItem) {
   if (claiming.value !== undefined) return;
   claiming.value = item.businDate;

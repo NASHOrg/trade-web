@@ -3,6 +3,7 @@ import EligibilityCheckModal from '~/components/modals/EligibilityCheckModal.vue
 
 const { $api } = useNuxtApp();
 const { t } = useI18n();
+const { user, token } = useUserStore();
 
 const userStore = useUserStore();
 
@@ -22,13 +23,9 @@ function onClaim() {
 const { data } = useAsyncData(
   'power-single-self',
   () => {
-    if (!userStore.token) return Promise.resolve(undefined);
-    return $api.powerSingle(
-      { address: userStore.user!.userAddress, type: '1' },
-      userStore.token,
-    );
+    if (!token) return Promise.resolve(undefined);
+    return $api.powerSingle({ address: user!.userAddress, type: '1' }, token);
   },
-  { watch: [() => userStore.token], immediate: true },
 );
 </script>
 

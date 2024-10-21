@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { formatAmount } from '~/utils/helpers';
 
-const props = defineProps<{
-  mode: 'team' | 'personal';
-}>();
+const props = defineProps<{ mode: 'team' | 'personal' }>();
 
 const emit = defineEmits(['switch']);
 
@@ -13,19 +11,19 @@ const { user, token } = useUserStore();
 
 const rank = computed(() => {
   switch (data.value?.level) {
-    case '2':
+    case 2:
       return 'bronze';
-    case '3':
+    case 3:
       return 'silver';
-    case '4':
+    case 4:
       return 'gold';
-    case '5':
+    case 5:
       return 'platinum';
-    case '6':
+    case 6:
       return 'diamond';
-    case '7':
+    case 7:
       return 'master';
-    case '1':
+    case 1:
     default:
       return 'iron';
   }
@@ -75,10 +73,13 @@ const stakeAmount = computed(() => Number(data.value?.stake ?? 0));
 
 const { data } = useAsyncData(
   `user-level-${props.mode}`,
-  () => $api.userUserLevel(
-    { address: user!.userAddress, type: props.mode === 'team' ? '0' : '1' },
-    token,
-  ),
+  () => {
+    if (!user) return Promise.resolve(undefined);
+    return $api.userUserLevel(
+      { address: user!.userAddress, type: props.mode === 'team' ? '0' : '1' },
+      token,
+    );
+  },
   { watch: [props], immediate: true },
 );
 </script>
@@ -115,14 +116,14 @@ const { data } = useAsyncData(
           :width="mode === 'team' ? 168 : 108"
         />
         <p
-          v-if="data?.level !== '7'"
+          v-if="data?.level !== 7"
           class="text-[14px]"
         >
           <!--          {{ nextRankMinimumStakeRequireAmount - stakeAmount }} BOOL -->
           {{ data?.upgradeAmount ?? 0 }} BOOL
         </p>
         <UProgress
-          v-if="data?.level !== '7'"
+          v-if="data?.level !== 7"
           :value="stakeAmount"
           :max="Number(data?.upgradeAmount ?? 0)"
           size="xs"
@@ -147,7 +148,7 @@ const { data } = useAsyncData(
         <p class="text-white/80">
           {{ t('staking') }}:
         </p>
-        <p>{{ `${formatAmount(data?.stake ?? '0')} BOOL` }}</p>
+        <p>{{ `${formatAmount(data?.stake?.toString() ?? '0')} BOOL` }}</p>
       </div>
       <div
         class="flex justify-between py-[8px] text-[18px]"
@@ -180,7 +181,7 @@ const { data } = useAsyncData(
         <p class="text-white/80">
           {{ t('rewards') }}:
         </p>
-        <p>{{ `${formatAmount(data?.reward ?? '0')} BOOL` }}</p>
+        <p>{{ `${formatAmount(data?.reward?.toString() ?? '0')} BOOL` }}</p>
       </div>
     </template>
     <template v-else>
@@ -190,7 +191,7 @@ const { data } = useAsyncData(
         <p class="text-white/80">
           {{ t('staking') }}:
         </p>
-        <p>{{ `${formatAmount(data?.stake ?? '0')} BOOL` }}</p>
+        <p>{{ `${formatAmount(data?.stake?.toString() ?? '0')} BOOL` }}</p>
       </div>
       <!--      <div -->
       <!--        class="flex justify-between py-[8px] text-[18px]" -->
@@ -223,7 +224,7 @@ const { data } = useAsyncData(
         <p class="text-white/80">
           {{ t('rewards') }}:
         </p>
-        <p>{{ `${formatAmount(data?.reward ?? '0')} BOOL` }}</p>
+        <p>{{ `${formatAmount(data?.reward?.toString() ?? '0')} BOOL` }}</p>
       </div>
     </template>
   </div>

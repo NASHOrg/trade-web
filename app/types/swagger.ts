@@ -919,9 +919,11 @@ export interface paths {
     };
 }
 
-export interface operations { }
+export interface operations {
+}
 
-export interface external { }
+export interface external {
+}
 
 export type UserBotLoginPostParams = paths["/user/bot:login"]['post']['parameters']['body']['root'];
 export type UserBotLoginPost = paths["/user/bot:login"]['post']['responses'][200]['schema']['data'];
