@@ -142,7 +142,7 @@ const stakedList = computed<DHCListItem[]>(() => {
 
 <template>
   <div class="w-full flex flex-col">
-    <h2 class="mt-[40px] text-[24px]">
+    <h2 class="mt-[40px]">
       {{ t('dhcList') }}
     </h2>
     <div class="w-full flex justify-between my-[20px] text-[#999]">
@@ -171,18 +171,7 @@ const stakedList = computed<DHCListItem[]>(() => {
           {{ type === 'crowdfund' ? t("joinedOnly") : t("stakedOnly") }}
         </p>
         <ClientOnly>
-          <UToggle
-            v-model="stakedFilter"
-            size="sm"
-            :ui="{
-              base: 'order-[1px]',
-              active: 'bg-primary-500 dark:bg-primary-500',
-              indicator: 'bg-[#999999] dark:bg-[#999999]',
-              container: {
-                base: 'bg-white dark:bg-white border-none',
-              },
-            }"
-          />
+          <UToggle v-model="stakedFilter" />
         </ClientOnly>
       </div>
     </div>

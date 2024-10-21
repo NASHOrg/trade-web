@@ -27,9 +27,9 @@ const rows = [
     />
     <div class="bg-primary rounded-[12px] clip-path absolute left-[4px] top-[-1px] inset-0 " />
     <div class="w-full bg-black rounded-[12px] clip-path overflow-x-auto md:overflow-hidden">
-      <h2 class="h-[70px] z-10 text-[30px] ms-[40px] flex items-center">
+      <h1 class="h-[70px] z-10 text-[30px] ms-[40px] flex items-center">
         {{ t('checkRules') }}
-      </h2>
+      </h1>
       <table
         class="min-w-[804px] z-10 grow text-[18px] text-center ms-[1px] mt-[1px] mb-[5px] rounded-[15px] border-collapse"
       >

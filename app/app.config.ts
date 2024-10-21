@@ -96,5 +96,19 @@ export default defineAppConfig({
         },
       },
     },
+    toggle: {
+      base: 'order-[1px] border-none',
+      size: {
+        md: ' h-[18px] w-[34px]',
+      },
+      active: 'bg-primary-500 dark:bg-primary-500',
+      inactive: 'bg-[#999999] dark:bg-[#999999]',
+      container: {
+        base: 'bg-white dark:bg-white border-none',
+        size: {
+          md: 'h-[18px] w-[18px]',
+        },
+      },
+    },
   },
 });

@@ -38,8 +38,10 @@ const onCopy = () => {
         />
         <span
           v-else
-          id="data-text"
-        >{{ user?.inviterL1Count ?? 0 }} / {{ user?.inviterL2Count ?? 0 }}</span>
+          class="data-text"
+        >
+          {{ user?.inviterL1Count ?? 0 }} / {{ user?.inviterL2Count ?? 0 }}
+        </span>
       </div>
 
       <div class="flex flex-col items-center space-y-[16px]">
@@ -50,8 +52,10 @@ const onCopy = () => {
         />
         <span
           v-else
-          id="data-text"
-        >{{ Number(user?.inviterStakingAmount).toLocaleString() }}</span>
+          class="data-text"
+        >
+          {{ Number(user?.inviterStakingAmount).toLocaleString() }}
+        </span>
       </div>
       <div class="flex flex-col items-center space-y-[16px]">
         <p>{{ t('totalRebates') }}</p>
@@ -61,7 +65,7 @@ const onCopy = () => {
         />
         <span
           v-else
-          id="data-text"
+          class="data-text"
         >
           {{ user.rebateWithdrawAmount.toLocaleString() }}
         </span>

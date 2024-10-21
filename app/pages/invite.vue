@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import FriendsList from '~/blocks/invite/FriendsList.vue';
 </script>
 
 <template>
   <div class="flex flex-col items-center pt-[40px] w-full">
     <InviteStat />
-    <InviteFriends class="mt-[28px]" />
+    <FriendsList class="mt-[28px]" />
   </div>
 </template>
