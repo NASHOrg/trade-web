@@ -8,27 +8,25 @@ const { user, token } = useUserStore();
 
 const props = defineProps<{ mode: 'team' | 'self' }>();
 
-const rewardsHistoryListState = reactive<{
-  pageNo: number;
-}>({ pageNo: 1 });
+const pageNo = ref<number>(1);
 
 type PowerListItem = PowerList['items'][0];
 
 const rewardsHistoryList = ref<PowerListItem[]>([]);
 
 const { data: rewardsData, status: rewardsStatus } = useAsyncData(
-  `rewards-history-${rewardsHistoryListState.pageNo}`,
+  `rewards-history-${pageNo.value}`,
   () => {
     if (!token) return Promise.resolve(undefined);
     return $api.powerList({
       // address: user!.userAddress,
       address: '0x56d9dfc0ce2e16a9cc9c0c04829df2de03f458a6',
       type: props.mode === 'team' ? '0' : '1',
-      pageNumber: rewardsHistoryListState.pageNo.toString(),
+      pageNumber: pageNo.value.toString(),
       pageSize: 20,
     }, token);
   },
-  { watch: [rewardsHistoryListState], immediate: true, server: false },
+  { watch: [pageNo], immediate: true, server: false },
 );
 
 watch(rewardsData, () => {
@@ -40,14 +38,14 @@ watch(rewardsData, () => {
 useInfiniteScroll(
   document,
   (state) => {
-    if (state.arrivedState.bottom) rewardsHistoryListState.pageNo++;
+    if (state.arrivedState.bottom) pageNo.value++;
   },
   {
     canLoadMore: () => {
-      // if (rewardsHistoryList.value.length === 0 && rewardsHistoryListState.pageNo === 1) return false;
+      if (rewardsHistoryList.value.length === 0 && pageNo.value === 1) return false;
       if (rewardsStatus.value !== 'success') return false;
       return rewardsData?.value?.totalPage !== undefined
-        ? rewardsHistoryListState.pageNo < rewardsData?.value!.totalPage
+        ? pageNo.value < rewardsData?.value!.totalPage
         : true;
       // return false;
     },
@@ -66,11 +64,21 @@ function claimBtnOnTap(item: PowerListItem) {
       type: props.mode === 'team' ? 0 : 1,
     }, token)
     .then(() => {
-      rewardsHistoryListState.pageNo = 1;
+      pageNo.value = 1;
     })
     .finally(() => {
       claiming.value = undefined;
     });
+}
+
+function formatDate(dateString: string) {
+  if (dateString.length !== 8) {
+    throw new Error('Invalid date string');
+  }
+  const year = dateString.slice(0, 4);
+  const month = dateString.slice(4, 6);
+  const day = dateString.slice(6, 8);
+  return `${year}/${month}/${day}`;
 }
 </script>
 
@@ -154,12 +162,12 @@ function claimBtnOnTap(item: PowerListItem) {
             :text="item.rank.toString()"
             :ui="{ background: 'dark:bg-white', text: 'dark:text-[#333]' }"
           />
-          <p>{{ item.businDate }}</p>
+          <p>{{ formatDate(item.businDate.toString()) }}</p>
         </div>
-        <p>{{ formatAmount(item.power) }} BTP</p>
+        <p>{{ formatAmount(item.power, 2) }} BTP</p>
         <div class="flex space-x-[8px] items-center">
           <p class="text-primary-500">
-            + {{ formatAmount(item.reward) }} BOOL
+            + {{ formatAmount(item.reward, 2) }} BOOL
           </p>
           <UButton
             color="black"

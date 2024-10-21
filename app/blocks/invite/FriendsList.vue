@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { shortAddress } from '~/utils/helpers';
+import type { UserInviterRebates } from '~/types/swagger';
 
 const { t } = useI18n();
 const { $api } = useNuxtApp();
+
+type FriendsListItem = UserInviterRebates['items'][0];
 
 const selectedTierTab = ref<'LEVEL_1' | 'LEVEL_2'>('LEVEL_1');
 const pageNo = ref(1);
 
 const { token, user } = storeToRefs(useUserStore());
+
+const friendsList = ref<FriendsListItem[]>([]);
 
 const userCollectableRewardsAmount = computed(() => (
   Number(user.value?.rebateBalanceMap?.INVITER_L1 ?? 0)
@@ -24,6 +29,28 @@ const { data, status, refresh } = useAsyncData(
     }, token.value);
   },
   { server: false, watch: [pageNo, selectedTierTab, token] },
+);
+
+watch(data, () => {
+  if (data.value?.items) {
+    friendsList.value = [...friendsList.value, ...data.value.items];
+  }
+});
+
+useInfiniteScroll(
+  document,
+  (state) => {
+    if (state.arrivedState.bottom) pageNo.value++;
+  },
+  {
+    canLoadMore: () => {
+      if (friendsList.value.length === 0 && pageNo.value === 1) return false;
+      if (status.value !== 'success') return false;
+      return data.value?.totalPage !== undefined
+        ? pageNo.value < data.value.totalPage
+        : true;
+    },
+  },
 );
 
 const collecting = ref<boolean>(false);
@@ -68,7 +95,7 @@ async function onCollect() {
             <div class="flex justify-between text-[#666] text-[16px] space-x-[16px]">
               <span>{{ t('unlockRewardsCondition1') }}</span>
               <NuxtImg
-                :src="`images/${user?.computeTag?'icon_checkmark_circle_green':'icon_xmark_circle_red'}.png`"
+                :src="`images/icon_${user?.computeTag ? 'checkmark_circle_green' : 'xmark_circle_red'}.png`"
                 densities="1x 2x"
                 height="16"
                 width="16"
