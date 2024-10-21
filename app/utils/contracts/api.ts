@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import type { BrowserProvider, ethers } from 'ethers';
+import type { BrowserProvider, TransactionReceipt } from 'ethers';
 import { Contract, JsonRpcProvider } from 'ethers';
 import { MAX_INTEGER } from '@ethereumjs/util';
 import { ChainConfig } from './chains';
@@ -90,13 +90,19 @@ export class BaseEvmApi {
     address?: string;
     amount: string | bigint;
   }): Promise<boolean> {
-    const _address = param.address;
-    const erc20Contract = this.getContractProvider('ERC20', param.contract);
-    const approved = await erc20Contract.allowance?.(
-      _address,
-      param.approvedAddress,
-    );
-    return new BigNumber(approved).gte(new BigNumber(param.amount.toString()));
+    try {
+      const _address = param.address;
+      const erc20Contract = this.getContractProvider('ERC20', param.contract);
+      const approved = await erc20Contract.allowance?.(
+        _address,
+        param.approvedAddress,
+      );
+      return new BigNumber(approved).gte(new BigNumber(param.amount.toString()));
+    }
+    catch (error) {
+      console.log(error);
+      return false;
+    }
   }
 
   /**
@@ -115,23 +121,14 @@ export class BaseEvmApi {
     param: {
       contract: string;
       approvedAddress: string;
-      address?: string;
-      amount: string | bigint;
     },
-  ): Promise<boolean | ethers.TransactionReceipt> {
-    const isApprove = await this.isApprove(param);
-
-    if (isApprove) {
-      return true;
-    }
+  ): Promise<TransactionReceipt | null> {
     const erc20Contract = this.getContractProvider('ERC20', param.contract);
     const data = await erc20Contract
       .getFunction('approve')
       .populateTransaction(param.approvedAddress, MAX_INTEGER);
     const signer = await provider.getSigner();
     const res = await signer.sendTransaction(data);
-
-    const transactionReceipt = await this.checkTransaction(res.hash);
-    return transactionReceipt !== null ? transactionReceipt : false;
+    return res.wait();
   }
 }

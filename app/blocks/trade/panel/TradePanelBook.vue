@@ -1,92 +1,26 @@
 <script setup lang="ts">
-const data = [
-  {
-    price: '0.45468',
-    qtl: '1000',
-    time: '12:00:00',
-    type: 'buy',
-  },
-  {
-    price: '0.45468',
-    qtl: '1000',
-    time: '12:00:00',
-    type: 'sell',
-  },
-  {
-    price: '0.45468',
-    qtl: '1000',
-    time: '12:00:00',
-    type: 'buy',
-  },
-  {
-    price: '0.45468',
-    qtl: '1000',
-    time: '12:00:00',
-    type: 'sell',
-  },
-  {
-    price: '0.45468',
-    qtl: '1000',
-    time: '12:00:00',
-    type: 'buy',
-  },
-  {
-    price: '0.45468',
-    qtl: '1000',
-    time: '12:00:00',
-    type: 'sell',
-  },
-  {
-    price: '0.45468',
-    qtl: '1000',
-    time: '12:00:00',
-    type: 'buy',
-  },
-  {
-    price: '0.45468',
-    qtl: '1000',
-    time: '12:00:00',
-    type: 'sell',
-  },
-  {
-    price: '0.45468',
-    qtl: '1000',
-    time: '12:00:00',
-    type: 'buy',
-  },
-  {
-    price: '0.45468',
-    qtl: '1000',
-    time: '12:00:00',
-    type: 'sell',
-  },
-  {
-    price: '0.45468',
-    qtl: '1000',
-    time: '12:00:00',
-    type: 'buy',
-  },
-  {
-    price: '0.45468',
-    qtl: '1000',
-    time: '12:00:00',
-    type: 'sell',
-  },
-];
+const { $api } = useNuxtApp();
 const columns = [
   {
     value: 'price',
-    label: 'Price',
+    label: 'Price(USDT)',
   },
   {
     value: 'qty',
     label: 'Qty',
   },
   {
-    value: 'time',
-    label: 'Time',
+    value: 'value',
+    label: 'Value(USDT)',
   },
 ];
+
+const { counter } = useInterval(10000, { controls: true });
+const { data } = useAsyncData('order-book', () => {
+  return $api.blockchainOrderBooks({});
+}, {
+  watch: [counter],
+});
 </script>
 
 <template>
@@ -95,20 +29,36 @@ const columns = [
       <div
         v-for="column in columns"
         :key="column.value"
-        class="text-[#999]"
+        class="text-[#999] text-[14px] text-center"
       >
         {{ column.label }}
       </div>
     </div>
-    <div
-      v-for="(item, i) in data"
-      :key="i"
-    >
-      <div class="grid grid-cols-3 mt-[10px] text-[14px] first:mt-[14px]">
-        <span class="text-[#0ac491]">{{ item.price }}</span>
-        <span>{{ item.qtl }}</span>
-        <span>{{ item.time }}</span>
+    <template v-if="data">
+      <div
+        v-for="item in data.orderBuyBList"
+        :key="JSON.stringify(item)"
+      >
+        <div class="grid grid-cols-[3fr,2fr,2fr] mt-[10px] text-[14px] first:mt-[14px] text-start">
+          <span class="text-buy">{{ formatAmount(item.price, 5) }}</span>
+          <span>{{ formatAmount(item.qty, 2) }}</span>
+          <span class="text-end">{{ formatAmount(item.value, 2) }}</span>
+        </div>
       </div>
-    </div>
+      <div class="my-[20px]">
+        <span class="text-[20px] me-2">{{ formatAmount(data.latestPrice, 5) }}</span>
+        <span class="text-[14px] text-[#999]">≈ {{ formatAmount(data.latestPrice, 2) }} USD</span>
+      </div>
+      <div
+        v-for="item in data.orderSellBList"
+        :key="JSON.stringify(item)"
+      >
+        <div class="grid grid-cols-[3fr,2fr,2fr] mt-[10px] text-[14px] text-start">
+          <span class="text-sell">{{ formatAmount(item.price, 5) }}</span>
+          <span>{{ formatAmount(item.qty, 2) }}</span>
+          <span class="text-end">{{ formatAmount(item.value, 2) }}</span>
+        </div>
+      </div>
+    </template>
   </div>
 </template>

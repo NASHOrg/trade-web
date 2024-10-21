@@ -93,7 +93,7 @@ const { data } = useAsyncData(
 );
 
 const { data: stakedData } = useAsyncData(
-  `staked-list-${address.value}`,
+  `staked-list-${address.value}-stat`,
   () =>
     $botApi.userUserVoteDevices({
       address: address.value!,
@@ -274,7 +274,7 @@ async function onRetrieve() {
           </div>
         </div>
         <UButton
-          class="text-[18px]"
+          class="text-[16px]"
           size="sm"
           :loading="isRetrieveing"
           :disabled="Number(data?.unstaked ?? 0) === 0"

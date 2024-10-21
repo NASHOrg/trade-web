@@ -3,9 +3,12 @@ import { toast } from 'vue-sonner';
 
 const { t } = useI18n();
 const { user } = storeToRefs(useUserStore());
+const shareLink = computed(() => {
+  return `https://xbit.finance/invite?code=${user.value?.userInvitationCode}`;
+});
 
 const onCopy = () => {
-  const { copy } = useClipboard({ source: '', legacy: true });
+  const { copy } = useClipboard({ source: shareLink.value, legacy: true });
   copy();
   toast.success('Copied');
 };
@@ -19,9 +22,11 @@ const onCopy = () => {
     <p class="mt-[16px] text-white/80 text-[16px]">
       {{ t('inviteDesc') }}
     </p>
-    <NuxtImg
-      class="absolute -top-[18px] -right-[22px]"
+    <NuxtPicture
+      class="absolute top-0 right-0"
       src="images/bool_coin_hold.png"
+      width="180"
+      height="190"
       densities="1x 2x"
     />
     <div class="mt-[40px] w-full flex justify-around inner-glowing-box text-[16px]">
@@ -62,33 +67,26 @@ const onCopy = () => {
         </span>
       </div>
     </div>
-    <div class="mt-[28px] w-full flex justify-between items-center px-[10px] py-[5px] border rounded-[4px] text-[14px]">
+    <div class="mt-[40px] w-full flex justify-between items-center px-[16px] py-[11px] border border-[#afafaf] rounded-[4px] text-[14px]">
       <p>{{ t('invitationLink') }}: </p>
       <div class="flex items-center space-x-[8px]">
         <USkeleton
           v-if="!user"
           class="h-[24px] w-[350px]"
         />
-        <a
+        <ULink
           v-else
-          :href="`https://rebate.bool.network/invite?code=${user?.userInvitationCode}`"
-          class="text-primary-500"
+          :to="shareLink"
+          class="text-primary"
         >
-          https://rebate.bool.network/invite?code={{ user?.userInvitationCode }}
-        </a>
-        <UButton
-          variant="outline"
-          color="black"
-          class="p-[4px] rounded-[4px]"
+          {{ shareLink }}
+        </ULink>
+        <div
+          class="p-[4px] rounded-[4px] border border-[#afafaf] cursor-pointer"
           @click="onCopy"
         >
-          <NuxtImg
-            src="images/icon_copy_white.png"
-            densities="1x 2x"
-            height="18"
-            width="18"
-          />
-        </UButton>
+          <IconCopy />
+        </div>
       </div>
     </div>
   </div>

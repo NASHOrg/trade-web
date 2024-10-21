@@ -96,7 +96,7 @@ export const erc20ABI = [
     name: 'allowance',
     outputs: [
       {
-        name: '',
+        name: 'allowance',
         type: 'uint256',
       },
     ],

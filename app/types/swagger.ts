@@ -505,49 +505,6 @@ export interface paths {
             };
         };
     };
-    "/blockchain/order-books": {
-        get: {
-            parameters: {
-                query: {
-                    /** 不填默认10 */
-                    size?: string;
-                    /** 不填默认BOOL/USDT */
-                    pair?: string;
-                };
-            };
-            responses: {
-                /** successful operation */
-                200: {
-                    schema: {
-                        /**
-                         * @description 返回消息
-                         * 异常时返回错误信息
-                         */
-                        msg: string;
-                        /**
-                         * @description 返回码
-                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
-                         */
-                        code: string;
-                        /** @description 返回数据 */
-                        data: {
-                            oderRecvBList: {
-                                price: string;
-                                qty: string;
-                                value: string;
-                            }[];
-                            orderRecvAList: {
-                                price: string;
-                                qty: string;
-                                value: string;
-                            }[];
-                            latestPrice: string;
-                        };
-                    };
-                };
-            };
-        };
-    };
     "/blockchain/trade-historys": {
         get: {
             parameters: {
@@ -605,6 +562,104 @@ export interface paths {
                                 tradeTime: string;
                                 type: string;
                             }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "/blockchain/user-orders": {
+        get: {
+            parameters: {
+                query: {
+                    /** 不填默认10 */
+                    address: string;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        /**
+                         * @description 返回消息
+                         * 异常时返回错误信息
+                         */
+                        msg: string;
+                        /**
+                         * @description 返回码
+                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
+                         */
+                        code: string;
+                        /** @description 返回数据 */
+                        data: {
+                            /** @description 是否还有前一页 */
+                            hasPrev: boolean;
+                            /** @description 当前页码 */
+                            pageNo: number;
+                            /** @description 总页数 */
+                            totalPage: number;
+                            /** @description 每页个数 */
+                            pageSize: number;
+                            /** @description 是否还有后一页 */
+                            hasNext: boolean;
+                            /** @description 总数 */
+                            totalCount: number;
+                            /** @description 数据域 */
+                            items: {
+                                /** @description 交易记录time */
+                                pair?: string;
+                                qty: string;
+                                price: string;
+                                /** @description  0  sell bool 1  buy bool */
+                                type: string;
+                                filledQty: string;
+                                /** @description  0 active 1 success -1 cancel */
+                                status: string;
+                                time: string;
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "/blockchain/order-books": {
+        get: {
+            parameters: {
+                query: {
+                    /** 不填默认10 */
+                    size?: string;
+                    /** 不填默认BOOL/USDT */
+                    pair?: string;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        /**
+                         * @description 返回消息
+                         * 异常时返回错误信息
+                         */
+                        msg: string;
+                        /**
+                         * @description 返回码
+                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
+                         */
+                        code: string;
+                        /** @description 返回数据 */
+                        data: {
+                            orderBuyBList: {
+                                price: string;
+                                qty: string;
+                                value: string;
+                            }[];
+                            orderSellBList: {
+                                price: string;
+                                qty: string;
+                                value: string;
+                            }[];
+                            latestPrice: string;
                         };
                     };
                 };
@@ -894,10 +949,12 @@ export type UserRebateWithdrawRecordGetParams = paths["/user/rebate-withdraw-rec
 export type UserRebateWithdrawRecord = paths["/user/rebate-withdraw-record"]['get']['responses'][200]['schema']['data'];
 export type UserRebateWithdrawPostParams = paths["/user/rebate:withdraw"]['post']['parameters']['body']['root'];
 export type UserRebateWithdrawPost = paths["/user/rebate:withdraw"]['post']['responses'][200]['schema']['data'];
-export type BlockchainOrderBooksGetParams = paths["/blockchain/order-books"]['get']['parameters']['query'];
-export type BlockchainOrderBooks = paths["/blockchain/order-books"]['get']['responses'][200]['schema']['data'];
 export type BlockchainTradeHistorysGetParams = paths["/blockchain/trade-historys"]['get']['parameters']['query'];
 export type BlockchainTradeHistorys = paths["/blockchain/trade-historys"]['get']['responses'][200]['schema']['data'];
+export type BlockchainUserOrdersGetParams = paths["/blockchain/user-orders"]['get']['parameters']['query'];
+export type BlockchainUserOrders = paths["/blockchain/user-orders"]['get']['responses'][200]['schema']['data'];
+export type BlockchainOrderBooksGetParams = paths["/blockchain/order-books"]['get']['parameters']['query'];
+export type BlockchainOrderBooks = paths["/blockchain/order-books"]['get']['responses'][200]['schema']['data'];
 export type UserDevicesGetParams = paths["/user/devices"]['get']['parameters']['query'];
 export type UserDevices = paths["/user/devices"]['get']['responses'][200]['schema']['data'];
 export type UserCrowdfundingDevicesGetParams = paths["/user/crowdfunding-devices"]['get']['parameters']['query'];

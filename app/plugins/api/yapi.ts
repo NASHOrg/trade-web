@@ -57,12 +57,16 @@ export class Yapi extends Api {
     return this.ft.path('/user/rebate:withdraw').method('post').create()!;
   }
 
-  get blockchainOrderBooks() {
-    return this.ft.path('/blockchain/order-books').method('get').create()!;
-  }
-
   get blockchainTradeHistorys() {
     return this.ft.path('/blockchain/trade-historys').method('get').create()!;
+  }
+
+  get blockchainUserOrders() {
+    return this.ft.path('/blockchain/user-orders').method('get').create()!;
+  }
+
+  get blockchainOrderBooks() {
+    return this.ft.path('/blockchain/order-books').method('get').create()!;
   }
 
   get userDevices() {

@@ -1,4 +1,11 @@
 <script setup lang="ts">
+import BN from 'bignumber.js';
+import { toast } from 'vue-sonner';
+import { parseEther } from 'ethers';
+import { network, tradeApi } from '~/utils/contracts';
+
+const { address, open, chainId, switchNetwork } = useWallet();
+const { t } = useI18n();
 const state = reactive({
   price: undefined,
   quantity: undefined,
@@ -17,6 +24,48 @@ const modes = [
 const selectedMode = ref('limit');
 
 const amountPercent = ref(0);
+
+const total = computed(() => {
+  if (!state.quantity || !state.price) return 0;
+  return BN(state.quantity).times(state.price).dp(2, 1).toFormat();
+});
+
+const isSelling = ref(false);
+async function onSell() {
+  isSelling.value = true;
+  try {
+    if (!address.value) {
+      return open();
+    }
+    const provider = useWallet().provider();
+    if (chainId.value !== Number(network.chainId)) {
+      const result = await switchNetwork(Number(network.chainId));
+      if (!result) return;
+    }
+    if (!state.quantity || !state.price) {
+      return;
+    }
+    const amount = parseEther(state.quantity);
+    const receive = tradeApi.calcUsdt(state.price, state.quantity);
+    const tx = await tradeApi.createSellOrder(provider, { amount, receive });
+    state.price = undefined;
+    state.quantity = undefined;
+    toast.promise(tx.wait(), {
+      loading: t('sendTransaction'),
+      success: () => {
+        refreshNuxtData();
+        return t('transactionSuccess');
+      },
+      error: () => t('transactionFail'),
+    });
+  }
+  catch (error) {
+    handleJsonRpcError(error, toast);
+  }
+  finally {
+    isSelling.value = false;
+  }
+}
 </script>
 
 <template>
@@ -52,7 +101,8 @@ const amountPercent = ref(0);
       <CustomInput
         v-model="state.price"
         placeholder="0.0"
-        class="!text-[16px]"
+        :precision="5"
+        input-class="!text-[16px] !bg-transparent !text-end"
       />
       <span
         class="text-white"
@@ -66,7 +116,8 @@ const amountPercent = ref(0);
       <CustomInput
         v-model="state.quantity"
         placeholder="0.0"
-        class="!text-[16px]"
+        :precision="2"
+        input-class="!text-[16px] !bg-transparent !text-end"
       />
       <span
         class="text-white"
@@ -78,7 +129,7 @@ const amountPercent = ref(0);
   <div class="form-item">
     <span>Value</span>
     <div class="flex justify-end items-center space-x-[10px]">
-      <span>0.0</span>
+      <span>{{ total }}</span>
       <span
         class="text-white"
       >
@@ -100,6 +151,8 @@ const amountPercent = ref(0);
     color="sell"
     block
     class="h-[44px] rounded-[8px]"
+    :loading="isSelling"
+    @click="onSell"
   >
     Sell Bool
   </UButton>

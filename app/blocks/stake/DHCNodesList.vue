@@ -4,6 +4,8 @@ import type { AccountInfo, DHCListItem } from '~/types/common';
 
 const { $api } = useNuxtApp();
 const { address } = useWallet();
+const route = useRoute();
+const router = useRouter();
 
 const props = defineProps<{
   accountInfo: AccountInfo | undefined;
@@ -18,7 +20,12 @@ const dropdownItems = ['APR', 'Voters', 'TotalStaking'].map(item => ({
 }));
 
 const orderBy = useStorage('hdc-orderby', 'APR');
-const stakedFilter = useStorage<boolean>('hdc-staked-filter', false);
+const stakedFilter = computed({
+  get: () => route.query.staked === 'true',
+  set(value) {
+    router.replace({ query: { ...route.query, staked: value ? 'true' : undefined } });
+  },
+});
 
 const dhcList = ref<DHCListItem[]>([]);
 
@@ -166,18 +173,13 @@ const stakedList = computed<DHCListItem[]>(() => {
         <ClientOnly>
           <UToggle
             v-model="stakedFilter"
+            size="sm"
             :ui="{
               base: 'order-[1px]',
-              size: {
-                md: ' h-[18px] w-[34px]',
-              },
               active: 'bg-primary-500 dark:bg-primary-500',
               indicator: 'bg-[#999999] dark:bg-[#999999]',
               container: {
                 base: 'bg-white dark:bg-white border-none',
-                size: {
-                  md: 'h-[16px] w-[16px]',
-                },
               },
             }"
           />
@@ -188,30 +190,43 @@ const stakedList = computed<DHCListItem[]>(() => {
       v-show="stakedFilter"
       class="w-full flex flex-col items-center gap-6"
     >
-      <NodeCard
-        v-for="item in stakedList"
-        :key="item.deviceID"
-        :item="item"
-        :account-info="accountInfo"
-        :staked-filter="stakedFilter"
-        type="mine"
-      />
+      <div
+        v-if="stakedStatus === 'pending'"
+        class="flex justify-center my-auto py-8"
+      >
+        <UIcon
+          class="animate-spin text-primary-500 w-6 h-6"
+          name="quill:loading-spin"
+        />
+      </div>
+      <div
+        v-else-if="stakedList.length === 0"
+        class="grow flex items-center justify-center py-8"
+      >
+        <NuxtPicture
+          class="my-auto"
+          width="80"
+          src="images/empty_box.png"
+        />
+      </div>
+      <template v-else>
+        <NodeCard
+          v-for="item in stakedList"
+          :key="item.deviceID"
+          :item="item"
+          :account-info="accountInfo"
+          :staked-filter="stakedFilter"
+          type="mine"
+        />
+      </template>
     </div>
     <div
       v-show="!stakedFilter"
       class="w-full flex flex-col items-center gap-6"
     >
-      <NodeCard
-        v-for="item in dhcList"
-        :key="item.deviceId ?? item.deviceID"
-        :item="item"
-        :account-info="accountInfo"
-        :staked-filter="stakedFilter"
-        :type="type"
-      />
       <div
-        v-if="stakedStatus === 'pending' || allStakeListStatus === 'pending'"
-        class="flex justify-center my-auto"
+        v-if="allStakeListStatus === 'pending'"
+        class="flex justify-center my-auto py-8"
       >
         <UIcon
           class="animate-spin text-primary-500 w-6 h-6"
@@ -220,7 +235,7 @@ const stakedList = computed<DHCListItem[]>(() => {
       </div>
       <div
         v-else-if="dhcList.length === 0"
-        class="grow flex items-center justify-center pt-8"
+        class="grow flex items-center justify-center py-8"
       >
         <NuxtPicture
           class="my-auto"
@@ -228,6 +243,16 @@ const stakedList = computed<DHCListItem[]>(() => {
           src="images/empty_box.png"
         />
       </div>
+      <template v-else>
+        <NodeCard
+          v-for="item in dhcList"
+          :key="item.deviceId ?? item.deviceID"
+          :item="item"
+          :account-info="accountInfo"
+          :staked-filter="stakedFilter"
+          :type="type"
+        />
+      </template>
     </div>
   </div>
 </template>
