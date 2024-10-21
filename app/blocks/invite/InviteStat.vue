@@ -95,15 +95,4 @@ const onCopy = () => {
 </template>
 
 <style scoped>
-.inner-glowing-box {
-  padding: 16px;
-  border-radius: 6px;
-  border: 1px solid white;
-  background: radial-gradient(50% 50% at 50% 50%, #373737 0%, #0E0E0E 100%);
-
-  #data-text {
-    font-size: 24px;
-    color: #FF623F;
-  }
-}
 </style>

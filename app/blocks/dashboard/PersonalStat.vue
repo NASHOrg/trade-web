@@ -22,11 +22,10 @@ function onClaim() {
 
 const { data } = useAsyncData(
   'power-single-self',
-  () => $api.powerSingle(
-    { address: user!.userAddress, type: '1' },
-    token,
-  ),
-  { immediate: true },
+  () => {
+    if (!token) return Promise.resolve(undefined);
+    return $api.powerSingle({ address: user!.userAddress, type: '1' }, token);
+  },
 );
 </script>
 
