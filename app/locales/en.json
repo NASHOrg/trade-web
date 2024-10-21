@@ -136,5 +136,17 @@
   "transactionFail": "Transaction Fail",
   "sendTransaction": "Sending transaction...",
   "fullStaked": "You can't stake on this node right now. Please choose a different node or try again later.",
-  "cancelUnstake": "Cancel Unstake"
+  "cancelUnstake": "Cancel Unstake",
+  "tradingFee": "Trading Fee",
+  "tradingFeeRate": "Trding Fee Rate",
+  "maker": "Maker",
+  "taker": "Taker",
+  "buy": "Buy",
+  "sell": "Sell",
+  "pair": "Pair",
+  "side": "Side",
+  "targetPrice": "Target Price",
+  "filledQty": "Filled Qty",
+  "totalQty": "Total Qty",
+  "action": "Action"
 }

@@ -2,8 +2,23 @@
 const props = defineProps<{
   total: number;
   current: number;
+  disabled: boolean;
 }>();
-const emit = defineEmits(['previous', 'next']);
+const emit = defineEmits<{
+  (e: 'change', value: number): void;
+}>();
+
+function onChange(type: 'previous' | 'next') {
+  if (props.disabled) return;
+  if (type === 'previous') {
+    if (props.current > 1)
+      emit('change', props.current - 1);
+  }
+  else {
+    if (props.current < props.total)
+      emit('change', props.current + 1);
+  }
+}
 </script>
 
 <template>
@@ -12,14 +27,14 @@ const emit = defineEmits(['previous', 'next']);
   >
     <IconPrevious
       class="cursor-pointer"
-      :class="{ 'opacity-40': props.current <= 1 }"
-      @click="emit('previous')"
+      :class="{ 'opacity-40': props.current <= 1 || disabled }"
+      @click="onChange('previous')"
     />
     <span>{{ `${props.current} / ${props.total}` }}</span>
     <IconNext
       class="cursor-pointer"
-      :class="{ 'opacity-40': props.current >= props.total }"
-      @click="emit('next')"
+      :class="{ 'opacity-40': props.current >= props.total || disabled }"
+      @click="onChange('next')"
     />
   </div>
 </template>

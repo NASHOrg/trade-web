@@ -12,8 +12,13 @@ export const betaTestnet = {
     trade: '0xA68C79821ab377f03B87B74e61d39E503b18DfD5',
   },
   tokens: {
+    bool: {
+      symbol: 'tBOL',
+      decimals: 18,
+    },
     usdt: {
       address: '0x3fFa3237b30b15eF3368132a2AC9D262d8502bB3',
+      symbol: 'USDT',
       decimals: 18,
     },
   },

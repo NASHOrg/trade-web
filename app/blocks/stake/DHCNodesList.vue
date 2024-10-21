@@ -117,7 +117,7 @@ const { data: stakedData, status: stakedStatus } = useAsyncData(
   `staked-list-${address.value}`,
   async () => {
     if (!address.value) return;
-    if (stakedFilter.value) {
+    if (props.type === 'mine') {
       return $api.userVoteDevices({
         address: address.value,
         pageNo: 1,
@@ -214,16 +214,7 @@ const stakedList = computed<DHCListItem[]>(() => {
       class="w-full flex flex-col items-center gap-6"
     >
       <div
-        v-if="allStakeListStatus === 'pending'"
-        class="flex justify-center my-auto py-8"
-      >
-        <UIcon
-          class="animate-spin text-primary-500 w-6 h-6"
-          name="quill:loading-spin"
-        />
-      </div>
-      <div
-        v-else-if="dhcList.length === 0"
+        v-if="allStakeListStatus === 'success' && dhcList.length === 0"
         class="grow flex items-center justify-center py-8"
       >
         <NuxtPicture
@@ -242,6 +233,15 @@ const stakedList = computed<DHCListItem[]>(() => {
           :type="type"
         />
       </template>
+      <div
+        v-if="allStakeListStatus === 'pending'"
+        class="flex justify-center my-auto py-2"
+      >
+        <UIcon
+          class="animate-spin text-primary-500 w-6 h-6"
+          name="quill:loading-spin"
+        />
+      </div>
     </div>
   </div>
 </template>

@@ -34,6 +34,15 @@ export class TradeApi extends BaseEvmApi {
     return signer.sendTransaction(res);
   }
 
+  async cancelOrder(provider: BrowserProvider, { orderId, type }: { orderId: bigint; type: 'buy' | 'sell' }) {
+    const res = await this.contract
+      .getFunction(type === 'buy' ? 'cancelOrderBuyB' : 'cancelOrderSellB')
+      .populateTransaction(orderId);
+    const signer = await provider.getSigner();
+    await signer.estimateGas(res);
+    return signer.sendTransaction(res);
+  }
+
   isUsdtApproved(address: string, amount: bigint) {
     return super.isApprove({
       contract: this.usdt.address,

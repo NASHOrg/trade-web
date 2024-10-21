@@ -5,11 +5,14 @@ import { parseEther } from 'ethers';
 import { network, tradeApi } from '~/utils/contracts';
 
 const { address, open, chainId, switchNetwork } = useWallet();
+const { bool } = useNetworkConfig();
 const { t } = useI18n();
-const state = reactive({
+const state = reactive<{ price: string | undefined; quantity: string | undefined }>({
   price: undefined,
   quantity: undefined,
 });
+
+const balance = ref<bigint | undefined>();
 
 const modes = [
   {
@@ -23,7 +26,18 @@ const modes = [
 ];
 const selectedMode = ref('limit');
 
-const amountPercent = ref(0);
+const amountPercent = computed({
+  get() {
+    if (!balance.value) {
+      return 0;
+    }
+    return BN(state.quantity ?? 0).div(BN(balance.value.toString()).div(10 ** 18)).times(100).toNumber();
+  },
+  set(value) {
+    if (!balance.value) return;
+    state.quantity = BN(balance.value.toString()).div(10 ** 18).times(BN(value ?? 0)).div(100).dp(2, 1).toString();
+  },
+});
 
 const total = computed(() => {
   if (!state.quantity || !state.price) return 0;
@@ -137,7 +151,14 @@ async function onSell() {
     </div>
   </div>
   <div class="flex justify-between items-center mt-[6px]">
-    <span class="text-white text-[14px]">Balance: 440.3456 USDT</span>
+    <div class="text-white text-[14px] flex space-x-1">
+      <span>Balance:</span>
+      <TokenBalance
+        :address="address"
+        :token="bool"
+        @change="(value) => balance = value"
+      />
+    </div>
     <UButton
       to=""
       variant="outline"
@@ -147,6 +168,7 @@ async function onSell() {
       Add Fund
     </UButton>
   </div>
+  <div class="grow" />
   <UButton
     color="sell"
     block

@@ -574,6 +574,8 @@ export interface paths {
                 query: {
                     /** 不填默认10 */
                     address: string;
+                    pageSize: number;
+                    pageNo: number;
                 };
             };
             responses: {
@@ -616,6 +618,7 @@ export interface paths {
                                 /** @description  0 active 1 success -1 cancel */
                                 status: string;
                                 time: string;
+                                orderId: string;
                             }[];
                         };
                     };
@@ -917,6 +920,53 @@ export interface paths {
             };
         };
     };
+    "/rebate/compute": {
+        /** 1\. 需要先查看bool\_stake\_reward\_user\_daily\_reward\_info\_cp表中是否有数据，没有的话需要先调用接口来同步 */
+        post: {
+            parameters: {
+                body: {
+                    root?: {
+                        /** @description INVITER_L1: 1级邀请返佣分润,INVITER_L2: 2级邀请返佣分润 */
+                        day: string;
+                    };
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        code: string;
+                        msg: string;
+                        data: string;
+                        fail: boolean;
+                    };
+                };
+            };
+        };
+    };
+    "/user/daily-reward-info-cp": {
+        post: {
+            parameters: {
+                body: {
+                    root?: {
+                        /** @description INVITER_L1: 1级邀请返佣分润,INVITER_L2: 2级邀请返佣分润 */
+                        day: string;
+                    };
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        code: string;
+                        msg: string;
+                        data: string;
+                        fail: boolean;
+                    };
+                };
+            };
+        };
+    };
 }
 
 export interface operations {
@@ -969,3 +1019,7 @@ export type PowerWithdrawPostParams = paths["/power/withdraw"]['post']['paramete
 export type PowerWithdrawPost = paths["/power/withdraw"]['post']['responses'][200]['schema']['data'];
 export type PowerListGetParams = paths["/power/list"]['get']['parameters']['query'];
 export type PowerList = paths["/power/list"]['get']['responses'][200]['schema']['data'];
+export type RebateComputePostParams = paths["/rebate/compute"]['post']['parameters']['body']['root'];
+export type RebateComputePost = paths["/rebate/compute"]['post']['responses'][200]['schema']['data'];
+export type UserDailyRewardInfoCpPostParams = paths["/user/daily-reward-info-cp"]['post']['parameters']['body']['root'];
+export type UserDailyRewardInfoCpPost = paths["/user/daily-reward-info-cp"]['post']['responses'][200]['schema']['data'];

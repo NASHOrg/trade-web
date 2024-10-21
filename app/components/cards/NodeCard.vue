@@ -42,7 +42,7 @@ function dhcListItemStateDisplay(deviceState: string) {
     case 'STANDBY':
       return t('standby');
     default:
-      return deviceState.toLowerCase();
+      return t('standBy');
   }
 }
 

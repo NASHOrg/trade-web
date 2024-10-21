@@ -5,13 +5,18 @@ import { toast } from 'vue-sonner';
 import { network, tradeApi } from '~/utils/contracts';
 
 const { address, open, chainId, switchNetwork } = useWallet();
+const { usdt } = useNetworkConfig();
 const { t } = useI18n();
 
-const state = reactive({
+const state = reactive<{
+  price: string | undefined;
+  quantity: string | undefined;
+}>({
   price: undefined,
   quantity: undefined,
 });
 
+const balance = ref<bigint | undefined>();
 const modes = [
   {
     value: 'limit',
@@ -22,7 +27,18 @@ const modes = [
     label: 'Market',
   },
 ];
-const amountPercent = ref(0);
+const amountPercent = computed({
+  get() {
+    if (!balance.value) {
+      return 0;
+    }
+    return BN(state.quantity ?? 0).div(BN(balance.value.toString()).div(10 ** 18)).times(100).toNumber();
+  },
+  set(value) {
+    if (!balance.value) return;
+    state.quantity = BN(balance.value.toString()).div(10 ** 18).times(BN(value ?? 0)).div(100).dp(2, 1).toString();
+  },
+});
 const selectedMode = ref('limit');
 
 const total = computed(() => {
@@ -141,7 +157,14 @@ async function onBuy() {
     </div>
   </div>
   <div class="flex justify-between items-center mt-[6px]">
-    <span class="text-white text-[14px]">Balance: 440.3456 USDT</span>
+    <div class="text-white text-[14px] flex space-x-1">
+      <span>Balance:</span>
+      <TokenBalance
+        :address="address"
+        :token="usdt"
+        @change="(value) => balance = value"
+      />
+    </div>
     <UButton
       to=""
       variant="outline"
@@ -151,6 +174,7 @@ async function onBuy() {
       Add Fund
     </UButton>
   </div>
+  <div class="grow" />
   <UButton
     color="buy"
     block

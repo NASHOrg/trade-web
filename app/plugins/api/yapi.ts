@@ -92,4 +92,12 @@ export class Yapi extends Api {
   get powerList() {
     return this.ft.path('/power/list').method('get').create()!;
   }
+
+  get rebateComputePost() {
+    return this.ft.path('/rebate/compute').method('post').create()!;
+  }
+
+  get userDailyRewardInfoCpPost() {
+    return this.ft.path('/user/daily-reward-info-cp').method('post').create()!;
+  }
 }

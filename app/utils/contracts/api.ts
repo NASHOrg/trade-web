@@ -64,7 +64,7 @@ export class BaseEvmApi {
     address: string;
     contractAddress?: string;
   }): Promise<bigint> {
-    if (this.isNative(contractAddress)) {
+    if (this.isNative(contractAddress) || !contractAddress) {
       const balance = await this.provider.getBalance(address);
       return balance;
     }

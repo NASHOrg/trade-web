@@ -22,7 +22,7 @@ const selectedTab = ref('buy');
         :class="{ 'text-white': selectedTab === item.value, 'bg-sell': (selectedTab === 'sell' && item.value === 'sell'), 'bg-buy': (selectedTab === 'buy' && item.value === 'buy') }"
         @click="selectedTab = item.value"
       >
-        <span class="z-10">{{ item.label }}</span>
+        <span class="z-[5]">{{ item.label }}</span>
         <IconBuyArraw
           v-if="item.value === 'buy' && selectedTab === 'buy'"
           class="absolute -end-4"
@@ -35,6 +35,22 @@ const selectedTab = ref('buy');
     </div>
     <TradePanelBuyForm v-if="selectedTab === 'buy'" />
     <TradePanelSellForm v-else />
+    <div class="flex justify-center items-center mt-[8px] space-x-[8px] text-[#999] text-[14px]">
+      <UPopover
+        :popper="{ placement: 'top' }"
+        mode="hover"
+      >
+        <IconHelp />
+        <template #panel>
+          <div class="flex flex-col p-2 text-[12px] space-y-[8px]">
+            <span>{{ $t('tradingFeeRate') }}</span>
+            <span>{{ $t('maker') }}: 0.00%</span>
+            <span>{{ $t('taker') }}: 0.30%</span>
+          </div>
+        </template>
+      </UPopover>
+      <span>{{ $t('tradingFee') }}</span>
+    </div>
   </div>
 </template>
 

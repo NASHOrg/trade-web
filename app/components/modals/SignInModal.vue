@@ -14,7 +14,8 @@ const referral = route.query.ref as string | undefined;
 
 const { data } = useAsyncData(
   async () => {
-    return true;
+    if (!address.value) return Promise.resolve(undefined);
+    return $api.userCheck({ address: address.value });
   },
   {
     watch: [address],
@@ -109,7 +110,7 @@ function cancel() {
         Verify wallet ownership to access xbit.
       </div>
       <div
-        v-if="!referral && data !== false"
+        v-if="!referral && data !== true"
         class="flex flex-col mt-4"
       >
         <label
