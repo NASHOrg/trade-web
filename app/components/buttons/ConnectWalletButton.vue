@@ -5,11 +5,15 @@ import { stakeApi } from '~/utils/contracts';
 const { open, address } = useWallet();
 const userStore = useUserStore();
 
-const { data: balance } = useAsyncData(`bool-balance-${address}`, async () => {
-  if (!address.value) return;
-  const balance = await stakeApi.getBalance({ address: address.value });
-  return formatAmount(formatEther(balance));
-}, { watch: [address] });
+const { data: balance } = useAsyncData(
+  `bool-balance-${address}`,
+  async () => {
+    if (!address.value) return;
+    const balance = await stakeApi.getBalance({ address: address.value });
+    return formatAmount(formatEther(balance));
+  },
+  { watch: [address] },
+);
 </script>
 
 <template>

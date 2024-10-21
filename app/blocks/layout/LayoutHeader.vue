@@ -55,12 +55,12 @@ function toggleMenu() {
       </ULink>
     </div>
     <div class="absolute right-[26px] flex items-center space-x-[16px]">
-      <ULink
-        to="/language"
-        class="text-white hover:text-primary"
-      >
-        <IconLanguage />
-      </ULink>
+      <!--      <ULink -->
+      <!--        to="/language" -->
+      <!--        class="text-white hover:text-primary" -->
+      <!--      > -->
+      <!--        <IconLanguage /> -->
+      <!--      </ULink> -->
       <ConnectWalletButton />
       <div
         class="w-5 h-5 block lg:hidden relative text-white mx-2 cursor-pointer"

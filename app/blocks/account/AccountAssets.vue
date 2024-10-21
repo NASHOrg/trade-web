@@ -1,5 +1,26 @@
 <script setup lang="ts">
+import { formatAmount } from '../../utils/helpers';
+
 const { t } = useI18n();
+const { $api } = useNuxtApp();
+
+const { user, token } = useUserStore();
+
+const { data: teamData } = useAsyncData(
+  `power-single-team`,
+  () => {
+    if (!token) return Promise.resolve(undefined);
+    return $api.powerSingle({ address: user!.userAddress, type: '0' }, token);
+  },
+);
+
+const { data: personalData } = useAsyncData(
+  'power-single-self',
+  () => {
+    if (!token) return Promise.resolve(undefined);
+    return $api.powerSingle({ address: user!.userAddress, type: '1' }, token);
+  },
+);
 </script>
 
 <template>
@@ -88,7 +109,7 @@ const { t } = useI18n();
           </div>
         </div>
         <p class="text-primary-500 text-[20px]">
-          2390.0000
+          {{ formatAmount(teamData?.power ?? '0', 2) }}
         </p>
         <UButton
           color="black"
@@ -114,7 +135,7 @@ const { t } = useI18n();
           </div>
         </div>
         <p class="text-primary-500 text-[20px]">
-          1756.8800
+          {{ formatAmount(personalData?.power ?? '0', 2) }}
         </p>
         <div class="w-[72px]" />
         <div class="absolute -end-0 flex space-x-[8px]">

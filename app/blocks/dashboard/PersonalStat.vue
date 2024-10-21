@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatAmount } from '../../utils/helpers';
 import EligibilityCheckModal from '~/components/modals/EligibilityCheckModal.vue';
 
 const { $api } = useNuxtApp();
@@ -46,7 +47,7 @@ const { data } = useAsyncData(
       </div>
       <div class="mt-[20px] mb-[54px] flex items-center space-x-[16px]">
         <h1 class="text-[54px]">
-          {{ Number(0).toLocaleString() }} BPP
+          {{ formatAmount(data?.power ?? '0', 2) }} BPP
         </h1>
         <UButton
           size="xs"

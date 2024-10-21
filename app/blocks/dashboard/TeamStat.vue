@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BigNumber from 'bignumber.js';
 import { CheckRulesModal } from '#components';
 
 const { $api } = useNuxtApp();
@@ -57,11 +58,18 @@ const { data } = useAsyncData(
         {{ t('userNamesTeam', { userName }) }}
       </div>
       <h1 class="mt-[16px] text-[54px]">
-        {{ (Number(data?.teamStake ?? 0) * powerMultiplier).toLocaleString() }} BTP
+        {{ (BigNumber(data?.teamStake ?? 0).dp(6, 1).toNumber() * powerMultiplier).toLocaleString() }} BTP
       </h1>
-      <p class="mt-[8px] mb-[30px] text-[16px] text-[#666]">
-        = {{ Number(data?.teamStake ?? 0).toLocaleString() }} * {{ powerMultiplier }} Staking BOOL
+      <p
+        v-if="powerMultiplier !== 0"
+        class="mt-[8px] mb-[30px] text-[16px] text-[#666]"
+      >
+        = {{ Number(data?.power ?? 0).toLocaleString() }} * {{ powerMultiplier }} Staking BOOL
       </p>
+      <div
+        v-else
+        class="mb-[54px]"
+      />
       <div class="absolute right-[25px] bottom-0">
         <NuxtPicture
           src="images/base_with_light.png"
