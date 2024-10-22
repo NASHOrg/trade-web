@@ -27,24 +27,6 @@ async function signIn() {
     cancel();
     return;
   }
-  if (
-    data.value === false
-    && input.value
-    && input.value.length !== 4
-    && input.value.length !== 5
-  ) {
-    toast.error('The referral code is invalid, please check the referral code');
-    return;
-  }
-  if (
-    data.value === false
-    && referral
-    && referral.length !== 4
-    && referral.length !== 5
-  ) {
-    toast.error('The referral code is invalid, please check the referral link');
-    return;
-  }
   try {
     isLoading.value = true;
     const tokens = JSON.parse(localStorage.getItem('tokens') ?? '{}');
@@ -75,7 +57,6 @@ async function signIn() {
     modal.close();
   }
   catch (error: any) {
-    // disconnect()
     if ('message' in error && error.message) {
       handleJsonRpcError(error, toast);
     }
@@ -107,7 +88,7 @@ function cancel() {
       </div>
 
       <div class="mt-2 text-[18px]">
-        Verify wallet ownership to access xbit.
+        {{ $t('verifyTip') }}
       </div>
       <div
         v-if="!referral && data !== true"
@@ -117,7 +98,7 @@ function cancel() {
           for="referral"
           class="w-full flex flex-row justify-between"
         >
-          <span class="font-semibold">Referral Code</span>
+          <span class="font-semibold">{{ $t('referalCode') }}</span>
         </label>
         <UInput
           v-model="input"
@@ -135,16 +116,15 @@ function cancel() {
             color="white"
             @click="cancel"
           >
-            Change Wallet
+            {{ $t('changeWallet') }}
           </UButton>
           <UButton
             block
             class="rounded-full"
-            color="white"
             :loading="isLoading"
             @click="signIn"
           >
-            Sign In
+            {{ $t('signIn') }}
           </UButton>
         </div>
       </div>

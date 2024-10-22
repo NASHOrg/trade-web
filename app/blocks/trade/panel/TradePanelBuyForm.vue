@@ -48,6 +48,15 @@ const total = computed(() => {
 
 const isBuying = ref(false);
 async function onBuy() {
+  // const { success, close } = useTransactionModal({
+  //   title: 'Token Approval',
+  //   steps: ['approve', 'send'],
+  //   token: usdt,
+  //   onClose() {
+  //     isBuying.value = false;
+  //   },
+  // });
+  // return;
   isBuying.value = true;
   try {
     if (!address.value) {

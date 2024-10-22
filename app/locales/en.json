@@ -148,5 +148,12 @@
   "targetPrice": "Target Price",
   "filledQty": "Filled Qty",
   "totalQty": "Total Qty",
-  "action": "Action"
+  "action": "Action",
+  "approveTip": "Please approve your {token} to the contract.",
+  "viewContract": "View Contract",
+  "approve": "Approve",
+  "verifyTip": "Verify wallet ownership to access xbit.",
+  "referalCode": "Referal Code",
+  "changeWallet": "Change Wallet",
+  "signIn": "Sign In"
 }
