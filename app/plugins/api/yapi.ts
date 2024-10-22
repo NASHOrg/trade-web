@@ -100,4 +100,24 @@ export class Yapi extends Api {
   get userDailyRewardInfoCpPost() {
     return this.ft.path('/user/daily-reward-info-cp').method('post').create()!;
   }
+
+  get userAirdropRecord() {
+    return this.ft.path('/user/airdrop-record').method('get').create()!;
+  }
+
+  get userAirdropRecordPut() {
+    return this.ft.path('/user/airdrop-record').method('put').create()!;
+  }
+
+  get userAirdropRecordPost() {
+    return this.ft.path('/user/airdrop-record').method('post').create()!;
+  }
+
+  get userAirdropRecordDelete() {
+    return this.ft.path('/user/airdrop-record').method('delete').create()!;
+  }
+
+  get userAirdropRecords() {
+    return this.ft.path('/user/airdrop-records').method('get').create()!;
+  }
 }

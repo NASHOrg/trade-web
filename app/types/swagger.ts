@@ -967,6 +967,231 @@ export interface paths {
             };
         };
     };
+    "/user/airdrop-record": {
+        get: {
+            parameters: {
+                query: {
+                    /** bot 用户 gas airdrop 记录ID */
+                    airdropRecordID: string;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        /**
+                         * @description 返回消息
+                         * 异常时返回错误信息
+                         */
+                        msg: string;
+                        /**
+                         * @description 返回码
+                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
+                         */
+                        code: string;
+                        /** @description 返回数据 */
+                        data: {
+                            /** @description bot 用户 gas airdrop 记录上链时间 */
+                            airdropRecordTxTime: string;
+                            /** @description bot 用户 gas airdrop 记录名称 */
+                            airdropRecordName: string;
+                            /** @description bot 用户 gas airdrop 记录质押地址 */
+                            airdropRecordAddress: string;
+                            /** @description bot 用户 gas airdrop 记录交易 hash */
+                            airdropRecordTxHash: string;
+                            /** @description bot 用户 gas airdrop 记录质押金额 */
+                            airdropRecordAirdropAmount: string;
+                            /** @description bot 用户 gas airdrop 记录ID */
+                            airdropRecordID: string;
+                            /** @description bot 用户 gas airdrop 记录交易状态 */
+                            airdropRecordTxStatus: string;
+                        };
+                    };
+                };
+            };
+        };
+        put: {
+            parameters: {
+                body: {
+                    /** 请求参数 */
+                    root?: {
+                        /** @description 交易状态 */
+                        txStatus: string;
+                        /** @description 质押地址 */
+                        address: string;
+                        /** @description 上链时间 */
+                        txTime: string;
+                        /** @description 名称 */
+                        name: string;
+                        /** @description bot 用户 gas airdrop 记录ID */
+                        airdropRecordID: string;
+                        /** @description 交易 hash */
+                        txHash: string;
+                        /** @description 质押金额 */
+                        airdropAmount: string;
+                    };
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        /**
+                         * @description 返回消息
+                         * 异常时返回错误信息
+                         */
+                        msg: string;
+                        /**
+                         * @description 返回码
+                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
+                         */
+                        code: string;
+                        /** @description 返回数据 */
+                        data: { [key: string]: unknown };
+                    };
+                };
+            };
+        };
+        post: {
+            parameters: {
+                body: {
+                    /** 请求参数 */
+                    root?: {
+                        /** @description 交易状态 */
+                        txStatus: string;
+                        /** @description 质押地址 */
+                        address: string;
+                        /** @description 上链时间 */
+                        txTime: string;
+                        /** @description 名称 */
+                        name: string;
+                        /** @description 交易 hash */
+                        txHash: string;
+                        /** @description 质押金额 */
+                        airdropAmount: string;
+                    };
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        /**
+                         * @description 返回消息
+                         * 异常时返回错误信息
+                         */
+                        msg: string;
+                        /**
+                         * @description 返回码
+                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
+                         */
+                        code: string;
+                        /** @description 返回数据 */
+                        data: { [key: string]: unknown };
+                    };
+                };
+            };
+        };
+        delete: {
+            parameters: {
+                body: {
+                    /** 请求参数 */
+                    root?: {
+                        /** @description bot 用户 gas airdrop 记录ID */
+                        airdropRecordID: string;
+                    };
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        /**
+                         * @description 返回消息
+                         * 异常时返回错误信息
+                         */
+                        msg: string;
+                        /**
+                         * @description 返回码
+                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
+                         */
+                        code: string;
+                        /** @description 返回数据 */
+                        data: { [key: string]: unknown };
+                    };
+                };
+            };
+        };
+    };
+    "/user/airdrop-records": {
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * 页码
+                     * 从 1 开始
+                     * 不传默认为第一页
+                     */
+                    pageNo: number;
+                    /**
+                     * 每页个数
+                     * 不传默认为 20
+                     * 最大为 1000
+                     */
+                    pageSize: number;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        /**
+                         * @description 返回消息
+                         * 异常时返回错误信息
+                         */
+                        msg: string;
+                        /**
+                         * @description 返回码
+                         * 成功时返回 000 异常时返回码如 105.abm.UNKNOWN
+                         */
+                        code: string;
+                        /** @description 返回数据 */
+                        data: {
+                            /** @description 是否还有前一页 */
+                            hasPrev: boolean;
+                            /** @description 当前页码 */
+                            pageNo: number;
+                            /** @description 总页数 */
+                            totalPage: number;
+                            /** @description 每页个数 */
+                            pageSize: number;
+                            /** @description 是否还有后一页 */
+                            hasNext: boolean;
+                            /** @description 总数 */
+                            totalCount: number;
+                            /** @description 数据域 */
+                            items: {
+                                /** @description bot 用户 gas airdrop 记录上链时间 */
+                                airdropRecordTxTime?: string;
+                                /** @description bot 用户 gas airdrop 记录名称 */
+                                airdropRecordName?: string;
+                                /** @description bot 用户 gas airdrop 记录质押地址 */
+                                airdropRecordAddress?: string;
+                                /** @description bot 用户 gas airdrop 记录交易 hash */
+                                airdropRecordTxHash?: string;
+                                /** @description bot 用户 gas airdrop 记录质押金额 */
+                                airdropRecordAirdropAmount?: string;
+                                /** @description bot 用户 gas airdrop 记录ID */
+                                airdropRecordID?: string;
+                                /** @description bot 用户 gas airdrop 记录交易状态 */
+                                airdropRecordTxStatus?: string;
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
 }
 
 export interface operations {
@@ -1023,3 +1248,11 @@ export type RebateComputePostParams = paths["/rebate/compute"]['post']['paramete
 export type RebateComputePost = paths["/rebate/compute"]['post']['responses'][200]['schema']['data'];
 export type UserDailyRewardInfoCpPostParams = paths["/user/daily-reward-info-cp"]['post']['parameters']['body']['root'];
 export type UserDailyRewardInfoCpPost = paths["/user/daily-reward-info-cp"]['post']['responses'][200]['schema']['data'];
+export type UserAirdropRecordGetParams = paths["/user/airdrop-record"]['get']['parameters']['query'];
+export type UserAirdropRecord = paths["/user/airdrop-record"]['get']['responses'][200]['schema']['data'];
+export type UserAirdropRecordPutParams = paths["/user/airdrop-record"]['put']['parameters']['body']['root'];
+export type UserAirdropRecordPostParams = paths["/user/airdrop-record"]['post']['parameters']['body']['root'];
+export type UserAirdropRecordPost = paths["/user/airdrop-record"]['post']['responses'][200]['schema']['data'];
+export type UserAirdropRecordDeleteParams = paths["/user/airdrop-record"]['delete']['parameters']['body']['root'];
+export type UserAirdropRecordsGetParams = paths["/user/airdrop-records"]['get']['parameters']['query'];
+export type UserAirdropRecords = paths["/user/airdrop-records"]['get']['responses'][200]['schema']['data'];

@@ -153,19 +153,20 @@ async function onCollect() {
     </div>
     <div
       v-if="(data?.items.length ?? 0) > 0"
-      class="flex flex-col divide-[#2E2E2E] divide-y"
+      class="w-full flex flex-col divide-[#2E2E2E] divide-y"
     >
       <div
-        v-for="item in data?.items"
+        v-for="(item, index) in data?.items"
         :key="item.inviteeAddress"
-        class="flex justify-between items-center py-[20px]"
+        class="w-full flex justify-between items-center py-[20px]"
       >
         <div class="flex space-x-[16px] items-center">
           <UAvatar
             size="md"
-            :text="shortAddress(item.inviteeAddress)"
+            :text="(index+1).toString()"
             :ui="{ background: 'dark:bg-white', text: 'dark:text-[#333]' }"
           />
+          <p>{{ shortAddress(item.inviteeAddress) }}</p>
         </div>
         <p class="text-primary-500">
           + {{ item.totalRebateAmount.toLocaleString(undefined, { minimumFractionDigits: 2 }) }} BOOL

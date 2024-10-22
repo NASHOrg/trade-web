@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import FriendsList from '~/blocks/invite/FriendsList.vue';
+
+const { refreshUser } = useUserStore();
+refreshUser();
 </script>
 
 <template>

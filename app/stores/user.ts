@@ -28,6 +28,7 @@ export const useUserStore = defineStore('user-store', () => {
 
   const user = ref<UserUser | undefined>(undefined);
   async function refreshUser() {
+    if (!token.value) return;
     user.value = await nuxtApp.$api.userUser({}, token.value);
     if (useRoute().path === '/') {
       navigateTo('/dashboard');
