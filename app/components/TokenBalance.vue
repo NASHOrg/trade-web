@@ -2,7 +2,7 @@
 import { formatUnits } from 'ethers';
 import { stakeApi } from '~/utils/contracts';
 
-const props = defineProps<{ address?: string; token: { address?: string; decimals?: number; symbol?: string } }>();
+const props = defineProps<{ address?: string; token: { address?: string; decimals?: number; symbol?: string }; config?: { showSymbol: boolean } }>();
 const emit = defineEmits<{
   (e: 'change', value: bigint): void;
 }>();
@@ -23,7 +23,10 @@ const { data: balance } = useAsyncData(
 
 const formatedBalance = computed(() => {
   if (!balance.value) return '';
-  return formatAmount(formatUnits(balance.value, props.token.decimals), 2) + ' ' + props.token.symbol;
+  if (props.config?.showSymbol) {
+    return formatAmount(formatUnits(balance.value, props.token.decimals), 2) + ' ' + props.token.symbol;
+  }
+  return formatAmount(formatUnits(balance.value, props.token.decimals), 2);
 });
 
 watch(balance, () => {

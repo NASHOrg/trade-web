@@ -3,8 +3,10 @@ import { toast } from 'vue-sonner';
 
 const { t } = useI18n();
 const { user } = storeToRefs(useUserStore());
-
-const shareLink = computed(() => `https://xbit.finance?code=${user.value?.userInvitationCode}`);
+const shareLink = computed(() => {
+  const url = window.location.protocol + '//' + window.location.host;
+  return `${url}?ref=${user.value?.userInvitationCode}`;
+});
 
 const onCopy = () => {
   const { copy } = useClipboard({ source: shareLink.value, legacy: true });

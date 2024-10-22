@@ -171,6 +171,7 @@ async function onBuy() {
       <TokenBalance
         :address="address"
         :token="usdt"
+        :config="{ showSymbol: true }"
         @change="(value) => balance = value"
       />
     </div>
