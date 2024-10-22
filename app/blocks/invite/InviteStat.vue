@@ -4,7 +4,7 @@ import { toast } from 'vue-sonner';
 const { t } = useI18n();
 const { user } = storeToRefs(useUserStore());
 
-const shareLink = computed(() => `https://xbit.finance/invite?code=${user.value?.userInvitationCode}`);
+const shareLink = computed(() => `https://xbit.finance?code=${user.value?.userInvitationCode}`);
 
 const onCopy = () => {
   const { copy } = useClipboard({ source: shareLink.value, legacy: true });
@@ -80,6 +80,7 @@ const onCopy = () => {
         <a
           v-else
           :href="shareLink"
+          target="_blank"
           class="text-primary"
         >
           {{ shareLink }}
