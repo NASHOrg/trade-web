@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { formatAmount } from '~/utils/helpers';
-import EligibilityCheckModal from '~/components/modals/EligibilityCheckModal.vue';
+// import EligibilityCheckModal from '~/components/modals/EligibilityCheckModal.vue';
 
 const { $api } = useNuxtApp();
 const { t } = useI18n();
@@ -11,11 +11,11 @@ const userStore = useUserStore();
 const userName = computed(() => shortAddress(userStore.user?.userAddress));
 
 // const badgeLevel = 4;
-const modal = useModal();
+// const modal = useModal();
 
-function onClaim() {
-  modal.open(EligibilityCheckModal);
-}
+// function onClaim() {
+//   modal.open(EligibilityCheckModal);
+// }
 
 // function onCheckRules() {
 //   modal.open(CheckRulesModal);
@@ -50,14 +50,14 @@ const { data } = useAsyncData(
         <h1 class="text-[54px]">
           {{ formatAmount(data?.power ?? '0', 2) }} BPP
         </h1>
-        <UButton
-          size="xs"
-          color="black"
-          class="rounded-[4px]"
-          @click="onClaim"
-        >
-          {{ t('claim') }}
-        </UButton>
+        <!--        <UButton -->
+        <!--          size="xs" -->
+        <!--          color="black" -->
+        <!--          class="rounded-[4px]" -->
+        <!--          @click="onClaim" -->
+        <!--        > -->
+        <!--          {{ t('claim') }} -->
+        <!--        </UButton> -->
       </div>
       <!--      <div class="absolute right-[25px] bottom-0"> -->
       <!--        <NuxtImg -->

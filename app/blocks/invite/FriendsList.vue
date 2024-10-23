@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { shortAddress } from '~/utils/helpers';
+import { shortAddress, formatAmount } from '~/utils/helpers';
 import type { UserInviterRebates } from '~/types/swagger';
 
 const { t } = useI18n();
@@ -172,7 +172,7 @@ async function onCollect() {
           <p>{{ shortAddress(item.inviteeAddress) }}</p>
         </div>
         <p class="text-primary-500">
-          + {{ item.totalRebateAmount.toLocaleString(undefined, { minimumFractionDigits: 2 }) }} BOOL
+          + {{ formatAmount(item.totalRebateAmount, 2) }} BOOL
         </p>
       </div>
     </div>
