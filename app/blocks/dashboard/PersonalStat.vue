@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatAmount } from '../../utils/helpers';
+import { formatAmount } from '~/utils/helpers';
 import EligibilityCheckModal from '~/components/modals/EligibilityCheckModal.vue';
 
 const { $api } = useNuxtApp();

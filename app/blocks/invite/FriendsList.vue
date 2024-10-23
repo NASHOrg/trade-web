@@ -58,7 +58,10 @@ const collecting = ref<boolean>(false);
 async function onCollect() {
   collecting.value = true;
   $api
-    .userRebateWithdrawPost({ withdrawType: selectedTierTab.value }, token.value)
+    .userRebateWithdrawPost(
+      { withdrawType: selectedTierTab.value === 'LEVEL_1' ? 'INVITER_L1' : 'INVITER_L2' },
+      token.value,
+    )
     .then(() => {
       if (pageNo.value !== 1) {
         pageNo.value = 1;
