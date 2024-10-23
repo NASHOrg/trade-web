@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const tradeStore = useTradeStore();
+const { replace, currentRoute } = useRouter();
 const { $api } = useNuxtApp();
 const { currantToken } = storeToRefs(tradeStore);
 const columns = computed(() => {
@@ -31,6 +32,10 @@ const { data } = useAsyncData(
     watch: [counter],
   },
 );
+
+const onSelectPrice = (price: string) => {
+  replace({ query: { ...(currentRoute.value.query ?? {}), price } });
+};
 </script>
 
 <template>
@@ -49,7 +54,8 @@ const { data } = useAsyncData(
         <div
           v-for="item in data.orderBuyBList"
           :key="JSON.stringify(item)"
-          class="grid grid-cols-3 text-[14px] text-start"
+          class="grid grid-cols-3 text-[14px] text-start cursor-pointer hover:bg-gray-50/10"
+          @click="onSelectPrice(item.price)"
         >
           <span class="text-buy">{{ formatAmount(item.price, 5) }}</span>
           <span class="text-center"> {{ formatAmount(item.qty, 2) }}</span>
@@ -70,7 +76,8 @@ const { data } = useAsyncData(
         <div
           v-for="item in data.orderSellBList"
           :key="JSON.stringify(item)"
-          class="grid grid-cols-3 text-[14px] text-start"
+          class="grid grid-cols-3 text-[14px] text-start cursor-pointer hover:bg-gray-50/10"
+          @click="onSelectPrice(item.price)"
         >
           <span class="text-sell">{{ formatAmount(item.price, 5) }}</span>
           <span class="text-center"> {{ formatAmount(item.qty, 2) }}</span>

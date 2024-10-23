@@ -4,24 +4,6 @@ import { toast } from 'vue-sonner';
 import { parseEther } from 'ethers';
 import { network, tradeApi } from '~/utils/contracts';
 
-const tradeStore = useTradeStore();
-
-const { address, open, chainId, switchNetwork } = useWallet();
-const { t } = useI18n();
-const { $api } = useNuxtApp();
-
-const { currantToken } = storeToRefs(tradeStore);
-
-const state = reactive<{
-  price: string | undefined;
-  quantity: string | undefined;
-}>({
-  price: undefined,
-  quantity: undefined,
-});
-
-const balance = ref<bigint | undefined>();
-
 const modes = [
   {
     value: 'limit',
@@ -32,7 +14,24 @@ const modes = [
     label: 'Market',
   },
 ];
+
+const tradeStore = useTradeStore();
+const balance = ref<bigint | undefined>();
 const selectedMode = ref('limit');
+
+const { address, open, chainId, switchNetwork } = useWallet();
+const { t } = useI18n();
+const { currantToken } = storeToRefs(tradeStore);
+const { currentRoute } = useRouter();
+
+const { data } = useNuxtData('order-book');
+const state = reactive<{
+  price: string | undefined;
+  quantity: string | undefined;
+}>({
+  price: data.value?.latestPrice,
+  quantity: undefined,
+});
 
 const tokenSymbolList = computed(() => {
   return currantToken.value.value.split('/');
@@ -63,6 +62,31 @@ const total = computed(() => {
   if (!state.quantity || !state.price) return 0;
   return BN(state.quantity).times(state.price).dp(2, 1).toFormat();
 });
+
+watch(
+  data,
+  () => {
+    if (!state.price) {
+      state.price = data.value?.latestPrice;
+    }
+  },
+  {
+    deep: true,
+  },
+);
+
+watch(
+  currentRoute,
+  () => {
+    const price = Number(currentRoute.value.query?.price ?? '0');
+    if (price && !Number.isNaN(price)) {
+      state.price = price.toString();
+    }
+  },
+  {
+    deep: true,
+  },
+);
 
 const isSelling = ref(false);
 async function onSell() {
@@ -108,11 +132,7 @@ async function onSelectMode(mode: (typeof modes)[number]) {
   }
   else {
     try {
-      const price = await $api.blockchainOrderBooks({
-        size: '1',
-        pair: currantToken.value?.value,
-      });
-      state.price = price.latestPrice;
+      state.price = data.value?.latestPrice;
     }
     catch {
       state.price = undefined;

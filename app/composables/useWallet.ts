@@ -31,23 +31,28 @@ const metadata = {
   icons: ['https://xbit.finance/favicon.png'],
 };
 let signing = false;
+createWeb3Modal({
+  ethersConfig: defaultConfig({
+    metadata,
+    auth: { email: false, socials: [] },
+  }),
+  themeMode: 'dark',
+  themeVariables: {
+    '--w3m-accent': '#FF5a19',
+    '--w3m-border-radius-master': '1.5px',
+    '--w3m-z-index': 9999,
+    '--w3m-font-family': 'Roboto',
+  },
+  chains: [mainnet],
+  chainImages: {
+    481: 'https://bool.network/favicon.svg',
+  },
+  projectId,
+  enableSwaps: false,
+  enableOnramp: false,
+});
 
 export default function useWallet() {
-  createWeb3Modal({
-    ethersConfig: defaultConfig({ metadata, auth: { email: false, socials: [] } }),
-    themeMode: 'dark',
-    themeVariables: {
-      '--w3m-accent': '#FF5a19',
-      '--w3m-border-radius-master': '1.5px',
-      '--w3m-z-index': 9999,
-      '--w3m-font-family': 'Roboto',
-    },
-    chains: [mainnet],
-    chainImages: {
-      481: 'https://bool.network/favicon.svg',
-    },
-    projectId,
-  });
   const { address, isConnected, chainId } = useWeb3ModalAccount();
   const { disconnect } = useDisconnect();
   const { open } = useWeb3Modal();

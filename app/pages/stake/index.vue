@@ -28,7 +28,6 @@ const selectedTab = ref<'mine' | 'crowdfund'>('crowdfund');
       </div>
       <DHCNodesList
         v-if="selectedTab === 'mine'"
-        Key="mine"
         :account-info="accountInfo"
         type="mine"
       />
