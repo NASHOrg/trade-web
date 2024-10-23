@@ -11,19 +11,19 @@ const { user, token } = useUserStore();
 
 const rank = computed(() => {
   switch (data.value?.level) {
-    case 2:
-      return 'bronze';
-    case 3:
-      return 'silver';
-    case 4:
-      return 'gold';
-    case 5:
-      return 'platinum';
-    case 6:
-      return 'diamond';
-    case 7:
-      return 'master';
     case 1:
+      return 'bronze';
+    case 2:
+      return 'silver';
+    case 3:
+      return 'gold';
+    case 4:
+      return 'platinum';
+    case 5:
+      return 'diamond';
+    case 6:
+      return 'master';
+    case 0:
     default:
       return 'iron';
   }
