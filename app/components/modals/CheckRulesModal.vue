@@ -1,13 +1,13 @@
 <script setup lang="ts">
 const { t } = useI18n();
 const rows = [
-  { level: 1, tag: 'iron', teamTotalStaking: '0 <= N < 10000', powerPackageCalculation: '0' },
-  { level: 2, tag: 'bronze', teamTotalStaking: '10000 <= N < 20000', powerPackageCalculation: '1' },
-  { level: 3, tag: 'silver', teamTotalStaking: '20000 <= N < 70000', powerPackageCalculation: '1.1' },
-  { level: 4, tag: 'gold', teamTotalStaking: '70000 <= N < 150000', powerPackageCalculation: '1.2' },
-  { level: 5, tag: 'platinum', teamTotalStaking: '150000 <= N < 300000', powerPackageCalculation: '1.3' },
-  { level: 6, tag: 'diamond', teamTotalStaking: '300000 <= N < 500000', powerPackageCalculation: '1.4' },
-  { level: 7, tag: 'legend', teamTotalStaking: 'N >= 500000', powerPackageCalculation: '1.5' },
+  { level: 0, tag: 'iron', teamTotalStaking: '0 <= N < 10000', powerPackageCalculation: '0' },
+  { level: 1, tag: 'bronze', teamTotalStaking: '10000 <= N < 20000', powerPackageCalculation: '1' },
+  { level: 2, tag: 'silver', teamTotalStaking: '20000 <= N < 70000', powerPackageCalculation: '1.1' },
+  { level: 3, tag: 'gold', teamTotalStaking: '70000 <= N < 150000', powerPackageCalculation: '1.2' },
+  { level: 4, tag: 'platinum', teamTotalStaking: '150000 <= N < 300000', powerPackageCalculation: '1.3' },
+  { level: 5, tag: 'diamond', teamTotalStaking: '300000 <= N < 500000', powerPackageCalculation: '1.4' },
+  { level: 6, tag: 'legend', teamTotalStaking: 'N >= 500000', powerPackageCalculation: '1.5' },
 ];
 </script>
 

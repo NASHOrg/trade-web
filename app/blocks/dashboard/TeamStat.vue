@@ -80,7 +80,7 @@ const { data } = useAsyncData(
         />
         <NuxtPicture
           class="absolute -top-[57px]"
-          :src="`images/badge_rank_${data?.level ?? 1}.png`"
+          :src="`images/badge_rank_${data?.level ?? 0}.png`"
           densities="1x 2x"
           height="148"
           width="196"
