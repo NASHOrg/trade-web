@@ -156,6 +156,7 @@ async function onSell() {
       <TokenBalance
         :address="address"
         :token="bool"
+        :config="{ showSymbol: true }"
         @change="(value) => balance = value"
       />
     </div>

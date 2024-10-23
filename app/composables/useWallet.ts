@@ -44,7 +44,7 @@ export default function useWallet() {
     },
     chains: [mainnet],
     chainImages: {
-      481: 'https://bool.network/favicon.png',
+      481: 'https://bool.network/favicon.svg',
     },
     projectId,
   });

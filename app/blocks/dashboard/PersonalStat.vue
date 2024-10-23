@@ -37,7 +37,8 @@ const { data } = useAsyncData(
     >
       <USkeleton
         v-if="!userName"
-        class="mt-[20px] rounded-[55px] h-[26px] w-[150px]"
+        :ui="{ background: 'bg-white' }"
+        class="mt-[20px] rounded-[55px] h-[26px] w-[150px] opacity-10"
       />
       <div
         v-else
