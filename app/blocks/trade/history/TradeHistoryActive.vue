@@ -6,37 +6,53 @@ const { address, chainId, switchNetwork } = useWallet();
 const { $api } = useNuxtApp();
 const { network } = useNetworkConfig();
 const { t } = useI18n();
-const columns = [{
-  key: 'pair',
-  label: t('pair'),
-}, {
-  key: 'type',
-  label: t('side'),
-}, {
-  key: 'price',
-  label: t('targetPrice'),
-}, {
-  key: 'filledQty',
-  label: t('filledQty'),
-}, {
-  key: 'qty',
-  label: t('totalQty'),
-}, {
-  key: 'action',
-  label: t('action'),
-}];
+const columns = [
+  {
+    key: 'pair',
+    label: t('pair'),
+  },
+  {
+    key: 'type',
+    label: t('side'),
+  },
+  {
+    key: 'price',
+    label: t('targetPrice'),
+  },
+  {
+    key: 'filledQty',
+    label: t('filledQty'),
+  },
+  {
+    key: 'qty',
+    label: t('totalQty'),
+  },
+  {
+    key: 'action',
+    label: t('action'),
+  },
+];
 
 const queryparams = ref({
   pageNo: 1,
   pageSize: 10,
 });
 
-const { data, status } = useAsyncData(`trade-orders-${address}`, () => {
-  if (!address.value) return Promise.resolve(undefined);
-  return $api.blockchainUserOrders({ address: address.value, ...queryparams.value });
-}, {
-  watch: [address, () => queryparams.value.pageNo], immediate: true, server: false,
-});
+const { data, status } = useAsyncData(
+  `trade-orders-${address}`,
+  () => {
+    if (!address.value) return Promise.resolve(undefined);
+    return $api.blockchainUserOrders({
+      address: address.value,
+      ...queryparams.value,
+    });
+  },
+  {
+    watch: [address, () => queryparams.value.pageNo],
+    immediate: true,
+    server: false,
+  },
+);
 
 const isCanceling = ref<string | undefined>(undefined);
 async function onCancelOrder(id: string, type: number) {
@@ -50,7 +66,10 @@ async function onCancelOrder(id: string, type: number) {
       const result = await switchNetwork(Number(network.chainId));
       if (!result) return;
     }
-    const tx = await tradeApi.cancelOrder(provider, { type: type === 0 ? 'sell' : 'buy', orderId: BigInt(id) });
+    const tx = await tradeApi.cancelOrder(provider, {
+      type: type === 0 ? 'sell' : 'buy',
+      orderId: BigInt(id),
+    });
     toast.promise(tx.wait(), {
       loading: t('sendTransaction'),
       success: () => {
@@ -102,24 +121,28 @@ async function onCancelOrder(id: string, type: number) {
           @click="onCancelOrder(row.orderId, row.type)"
         >
           <span v-if="isCanceling !== row.orderId + row.type.toString()">
-            {{ t('cancel') }}
+            {{ t("cancel") }}
           </span>
         </UButton>
       </template>
       <template #type-data="{ row }">
         <div>
-          <span v-if="row.type === 0">{{ $t('sell') }}</span>
-          <span v-else>{{ $t('buy') }}</span>
+          <span v-if="row.type === 0">{{ t("sell") }}</span>
+          <span v-else>{{ t("buy") }}</span>
         </div>
       </template>
     </UTable>
     <TablePagination
-      v-if="data"
+      v-if="data && data.totalPage > 0"
       class="mt-[30px]"
       :total="data.totalPage"
       :current="data.pageNo"
       :disabled="status === 'pending'"
-      @change="(value) => { queryparams.pageNo = value }"
+      @change="
+        (value) => {
+          queryparams.pageNo = value;
+        }
+      "
     />
   </div>
 </template>

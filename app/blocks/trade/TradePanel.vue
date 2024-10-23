@@ -40,7 +40,7 @@ const { data } = useNuxtData('order-book');
     <!--     {{ item.label }} -->
     <!--   </div> -->
     <!-- </div> -->
-    <div class="card w-full p-[40px]">
+    <div class="card w-full py-10 px-8">
       <div class="flex items-center mb-[20px]">
         <div class="flex items-center space-x-[8px]">
           <USkeleton
@@ -51,7 +51,11 @@ const { data } = useNuxtData('order-book');
             v-else
             class="text-[48px]"
           >{{ data?.latestPrice }}</span>
-          <span class="text-[16px] bg-buy-600 text-buy rounded-full h-[32px] text-center flex items-center px-[8px]">+0.00%</span>
+          <span
+            class="text-[16px] bg-buy-600 text-buy rounded-full h-[32px] text-center flex items-center px-[8px]"
+          >
+            +0.00%
+          </span>
         </div>
         <!-- <UButton -->
         <!--   color="black" -->
@@ -61,18 +65,21 @@ const { data } = useNuxtData('order-book');
         <!--   Trade BOOL -->
         <!-- </UButton> -->
       </div>
-      <div
-        class="grid grid-cols-1 md:grid-cols-2 gap-[30px]"
-      >
-        <TradePanelForm />
-        <div class="flex flex-col">
-          <div class="flex justify-start space-x-[30px] mb-[20px] border-b border-[#2e2e2e]">
+      <div class="flex md:flex-row flex-col gap-8">
+        <TradePanelForm class="md:w-1/2 w-full" />
+        <div class="flex flex-col md:w-1/2 w-full">
+          <div
+            class="flex justify-start space-x-[30px] mb-2.5 border-b border-[#2e2e2e]"
+          >
             <div
               v-for="item in orderTypes"
               :key="item.value"
               class="relative text-[#999] hover:text-white text-[16px] pb-[10px] cursor-pointer"
-              :class="{ 'text-white selected after:bg-white': selectedOrderType === item.value }"
-              @click="() => selectedOrderType = item.value"
+              :class="{
+                'text-white selected after:bg-white':
+                  selectedOrderType === item.value,
+              }"
+              @click="() => (selectedOrderType = item.value)"
             >
               {{ item.label }}
             </div>
@@ -87,7 +94,7 @@ const { data } = useNuxtData('order-book');
 
 <style scoped>
 .selected::after {
-  content: '';
+  content: "";
   position: absolute;
   height: 2px;
   width: 100%;

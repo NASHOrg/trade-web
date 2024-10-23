@@ -1,6 +1,6 @@
 html {
   background-color: black;
-  font-family: 'Ark Pixel', serif;
+  font-family: "Ark Pixel", serif;
   line-height: 1;
 }
 
@@ -18,8 +18,8 @@ h2 {
 
 .gradient-card {
   border-radius: 28px;
-  background: linear-gradient(80deg, #F6CEA6 0%, #FF623F 100%);
-  box-shadow: 0 -3px 0 0 #FFC0B2;
+  background: linear-gradient(80deg, #f6cea6 0%, #ff623f 100%);
+  box-shadow: 0 -3px 0 0 #ffc0b2;
   color: #333;
 }
 
@@ -27,10 +27,17 @@ h2 {
   padding: 16px;
   border-radius: 6px;
   border: 1px solid white;
-  background: radial-gradient(50% 50% at 50% 50%, #373737 0%, #0E0E0E 100%);
+  background: radial-gradient(50% 50% at 50% 50%, #373737 0%, #0e0e0e 100%);
 
   .data-text {
     font-size: 24px;
-    color: #FF623F;
+    color: #ff623f;
+  }
+}
+
+.scrollbar {
+  overflow: auto;
+  &::-webkit-scrollbar {
+    display: none;
   }
 }

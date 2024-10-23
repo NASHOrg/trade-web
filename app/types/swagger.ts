@@ -505,7 +505,7 @@ export interface paths {
             };
         };
     };
-    "/blockchain/trade-historys": {
+    "/blockchain/trade-history": {
         get: {
             parameters: {
                 query: {
@@ -1194,11 +1194,9 @@ export interface paths {
     };
 }
 
-export interface operations {
-}
+export interface operations { }
 
-export interface external {
-}
+export interface external { }
 
 export type UserBotLoginPostParams = paths["/user/bot:login"]['post']['parameters']['body']['root'];
 export type UserBotLoginPost = paths["/user/bot:login"]['post']['responses'][200]['schema']['data'];
@@ -1226,8 +1224,8 @@ export type UserRebateWithdrawRecordGetParams = paths["/user/rebate-withdraw-rec
 export type UserRebateWithdrawRecord = paths["/user/rebate-withdraw-record"]['get']['responses'][200]['schema']['data'];
 export type UserRebateWithdrawPostParams = paths["/user/rebate:withdraw"]['post']['parameters']['body']['root'];
 export type UserRebateWithdrawPost = paths["/user/rebate:withdraw"]['post']['responses'][200]['schema']['data'];
-export type BlockchainTradeHistorysGetParams = paths["/blockchain/trade-historys"]['get']['parameters']['query'];
-export type BlockchainTradeHistorys = paths["/blockchain/trade-historys"]['get']['responses'][200]['schema']['data'];
+export type BlockchainTradeHistoryGetParams = paths["/blockchain/trade-history"]['get']['parameters']['query'];
+export type BlockchainTradeHistory = paths["/blockchain/trade-history"]['get']['responses'][200]['schema']['data'];
 export type BlockchainUserOrdersGetParams = paths["/blockchain/user-orders"]['get']['parameters']['query'];
 export type BlockchainUserOrders = paths["/blockchain/user-orders"]['get']['responses'][200]['schema']['data'];
 export type BlockchainOrderBooksGetParams = paths["/blockchain/order-books"]['get']['parameters']['query'];

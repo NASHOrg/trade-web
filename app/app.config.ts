@@ -66,9 +66,8 @@ export default defineAppConfig({
       },
     },
     table: {
-      base: '!bg-transparent rounded-lg',
+      base: '!bg-transparent rounded-lg text-nowrap',
       divide: '!divide-none',
-      tbody: '!divide-none',
       th: {
         color: 'text-gray-500 dark:text-[#999]',
       },

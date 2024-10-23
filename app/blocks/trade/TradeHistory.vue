@@ -21,7 +21,9 @@ const selected = ref('orders');
         v-for="item in tabs"
         :key="item.value"
         class="relative text-[#999] hover:text-white text-[24px] pb-[10px] cursor-pointer"
-        :class="{ 'text-white selected after:bg-white': selected === item.value }"
+        :class="{
+          'text-white selected after:bg-white': selected === item.value,
+        }"
         @click="selected = item.value"
       >
         {{ item.label }}
@@ -34,7 +36,7 @@ const selected = ref('orders');
 
 <style scoped>
 .selected::after {
-  content: '';
+  content: "";
   position: absolute;
   height: 2px;
   width: 80%;

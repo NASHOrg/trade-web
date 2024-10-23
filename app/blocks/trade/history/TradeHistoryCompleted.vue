@@ -1,30 +1,48 @@
 <script setup lang="ts">
-const columns = [{
-  key: 'id',
-  label: 'ID',
-}, {
-  key: 'name',
-  label: 'User name',
-}, {
-  key: 'title',
-  label: 'Job position',
-}, {
-  key: 'email',
-  label: 'Email',
-}, {
-  key: 'role',
-}];
+const { $api } = useNuxtApp();
+
+const columns = [
+  {
+    key: 'id',
+    label: 'ID',
+  },
+  {
+    key: 'name',
+    label: 'User name',
+  },
+  {
+    key: 'title',
+    label: 'Job position',
+  },
+  {
+    key: 'email',
+    label: 'Email',
+  },
+  {
+    key: 'role',
+  },
+];
 const { address } = useWallet();
-const queryparams = ref({
+const queryParams = ref({
   pageNo: 1,
   pageSize: 10,
 });
 
-const { data } = useAsyncData(`trade-history-${address}`, () => {
-  if (!address.value) return Promise.resolve(undefined);
-}, {
-  watch: [address, queryparams], immediate: true, server: false,
-});
+const { data, status } = useAsyncData(
+  `trade-history-${address}`,
+  () => {
+    if (!address.value) return Promise.resolve(undefined);
+    return $api.blockchainTradeHistory({
+      ...queryParams.value,
+      address: address.value,
+    });
+  },
+  {
+    watch: [address, queryParams],
+    immediate: true,
+    server: false,
+  },
+);
 </script>
 
 <template>
@@ -33,12 +51,19 @@ const { data } = useAsyncData(`trade-history-${address}`, () => {
       v-if="data"
       class="w-full"
       :columns="columns"
-      :rows="data.items"
+      :rows="data?.items ?? []"
     />
     <TablePagination
+      v-if="data && data.totalPage > 0"
       class="mt-[30px]"
-      :total="10"
-      :current="1"
+      :total="data.totalPage"
+      :current="data.pageNo"
+      :disabled="status === 'pending'"
+      @change="
+        (value) => {
+          queryParams.pageNo = value;
+        }
+      "
     />
   </div>
 </template>

@@ -4,9 +4,12 @@ import BN from 'bignumber.js';
 import { toast } from 'vue-sonner';
 import { network, tradeApi } from '~/utils/contracts';
 
+const tradeStore = useTradeStore();
+
 const { address, open, chainId, switchNetwork } = useWallet();
-const { usdt } = useNetworkConfig();
 const { t } = useI18n();
+const { $api } = useNuxtApp();
+const { currantToken } = storeToRefs(tradeStore);
 
 const state = reactive<{
   price: string | undefined;
@@ -27,16 +30,29 @@ const modes = [
     label: 'Market',
   },
 ];
+
+const tokenSymbolList = computed(() => {
+  return currantToken.value.value.split('/');
+});
+
 const amountPercent = computed({
   get() {
     if (!balance.value) {
       return 0;
     }
-    return BN(state.quantity ?? 0).div(BN(balance.value.toString()).div(10 ** 18)).times(100).toNumber();
+    return BN(state.quantity ?? 0)
+      .div(BN(balance.value.toString()).div(10 ** 18))
+      .times(100)
+      .toNumber();
   },
   set(value) {
     if (!balance.value) return;
-    state.quantity = BN(balance.value.toString()).div(10 ** 18).times(BN(value ?? 0)).div(100).dp(2, 1).toString();
+    state.quantity = BN(balance.value.toString())
+      .div(10 ** 18)
+      .times(BN(value ?? 0))
+      .div(100)
+      .dp(2, 1)
+      .toString();
   },
 });
 const selectedMode = ref('limit');
@@ -93,110 +109,123 @@ async function onBuy() {
     isBuying.value = false;
   }
 }
+
+async function onSelectMode(mode: (typeof modes)[number]) {
+  selectedMode.value = mode.value;
+  if (mode.value === 'limit') {
+    state.price = undefined;
+  }
+  else {
+    try {
+      const price = await $api.blockchainOrderBooks({
+        size: '1',
+        pair: currantToken.value?.value,
+      });
+      state.price = price.latestPrice;
+    }
+    catch {
+      state.price = undefined;
+    }
+  }
+}
 </script>
 
 <template>
-  <div class="form-item">
-    <span>Mode</span>
-    <div class="flex justify-end space-x-[10px]">
-      <div
-        v-for="item in modes"
-        :key="item.value"
-        class="flex items-center gap-2 cursor-pointer"
-        @click="selectedMode= item.value"
-      >
-        <IconActiveRadio
-          v-if="selectedMode === item.value"
-          class="size-[16px] text-white"
-        />
-        <IconInactiveRadio
-          v-else
-          class="size-[16px]"
-        />
-        <span
-          :class="selectedMode === item.value ? 'text-white' : 'text-[#999]'"
-        >{{ item.label }}</span>
+  <div class="flex flex-col grow space-y-4">
+    <div class="form-item">
+      <span>Mode</span>
+      <div class="flex justify-end space-x-[10px]">
+        <div
+          v-for="item in modes"
+          :key="item.value"
+          class="flex items-center gap-2 cursor-pointer"
+          @click="onSelectMode(item)"
+        >
+          <IconActiveRadio
+            v-if="selectedMode === item.value"
+            class="size-[16px] text-white"
+          />
+          <IconInactiveRadio
+            v-else
+            class="size-[16px]"
+          />
+          <span
+            :class="selectedMode === item.value ? 'text-white' : 'text-[#999]'"
+          >{{ item.label }}</span>
+        </div>
       </div>
     </div>
-  </div>
-  <div
-    v-if="selectedMode === 'limit'"
-    class="form-item"
-  >
-    <span>Price</span>
-    <div class="flex justify-end items-center">
-      <CustomInput
-        v-model="state.price"
-        placeholder="0.0"
-        :precision="5"
-        input-class="!text-[16px] !bg-transparent !text-end"
-      />
-      <span
-        class="text-white"
-      >
-        USDT</span>
-    </div>
-  </div>
-  <div class="form-item">
-    <span>Qty</span>
-    <div class="flex justify-end items-center">
-      <CustomInput
-        v-model="state.quantity"
-        placeholder="0.0"
-        :precision="2"
-        input-class="!text-[16px] !bg-transparent !text-end"
-      />
-      <span
-        class="text-white"
-      >
-        BOOL</span>
-    </div>
-  </div>
-  <div class="pb-[16px]">
-    <AmountSlider v-model="amountPercent" />
-  </div>
-  <div class="form-item">
-    <span>Value</span>
-    <div class="flex justify-end items-center space-x-[10px]">
-      <span>{{ total }}</span>
-      <span
-        class="text-white"
-      >
-        USDT</span>
-    </div>
-  </div>
-  <div class="flex justify-between items-center mt-[6px]">
-    <div class="text-white text-[14px] flex space-x-1">
-      <span>Balance:</span>
-      <TokenBalance
-        :address="address"
-        :token="usdt"
-        @change="(value) => balance = value"
-      />
-    </div>
-    <UButton
-      to=""
-      variant="outline"
-      size="xs"
-      class="mt-[6px] rounded-[4px] h-[22px] text-[12px]"
+    <div
+      v-if="selectedMode === 'limit'"
+      class="form-item"
     >
-      Add Fund
+      <span>Price</span>
+      <div class="flex justify-end items-center">
+        <CustomInput
+          v-model="state.price"
+          placeholder="0.0"
+          :precision="5"
+          input-class="!text-[16px] !bg-transparent !text-end"
+        />
+        <span class="text-white"> {{ tokenSymbolList[1] }}</span>
+      </div>
+    </div>
+    <div class="form-item">
+      <span>Qty</span>
+      <div class="flex justify-end items-center">
+        <CustomInput
+          v-model="state.quantity"
+          placeholder="0.0"
+          :precision="2"
+          input-class="!text-[16px] !bg-transparent !text-end"
+        />
+        <span class="text-white"> {{ tokenSymbolList[0] }}</span>
+      </div>
+    </div>
+    <div class="pb-[16px]">
+      <AmountSlider v-model="amountPercent" />
+    </div>
+    <div class="form-item">
+      <span>Value</span>
+      <div class="flex justify-end items-center space-x-[10px]">
+        <span>{{ total }}</span>
+        <span class="text-white"> {{ tokenSymbolList[1] }}</span>
+      </div>
+    </div>
+    <div class="flex justify-between items-center !mt-[6px]">
+      <div class="text-white text-[14px] flex space-x-1">
+        <span>Balance:</span>
+        <TokenBalance
+          v-if="currantToken.tokens[1]"
+          :address="address"
+          :token="currantToken.tokens[1]"
+          @change="(value) => (balance = value)"
+        />
+      </div>
+      <UButton
+        to=""
+        variant="outline"
+        size="xs"
+        class="rounded-[4px] h-[22px] text-[12px] !px-1"
+      >
+        Add Fund
+      </UButton>
+    </div>
+    <div class="grow" />
+    <UButton
+      color="buy"
+      block
+      class="h-[44px] rounded-[8px]"
+      :loading="isBuying"
+      @click="onBuy"
+    >
+      Buy Bool
     </UButton>
   </div>
-  <div class="grow" />
-  <UButton
-    color="buy"
-    block
-    class="h-[44px] rounded-[8px]"
-    :loading="isBuying"
-    @click="onBuy"
-  >
-    Buy Bool
-  </UButton>
 </template>
 
 <style scoped>
 .form-item {
-  @apply h-[40px] bg-[#242424] text-[#999] rounded-[4px] flex justify-between items-center px-[16px] text-[16px]
+  @apply h-[40px] bg-[#242424] text-[#999] rounded-[4px] flex justify-between items-center px-[16px] text-[16px];
 }
 </style>
