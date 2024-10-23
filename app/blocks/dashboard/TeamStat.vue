@@ -49,6 +49,7 @@ const { data } = useAsyncData(
     >
       <USkeleton
         v-if="!userName"
+        :ui="{ background: 'dark:bg-[#FFD9C5]' }"
         class="mt-[20px] rounded-[55px] h-[26px] w-[150px]"
       />
       <div

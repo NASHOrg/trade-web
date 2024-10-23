@@ -3,6 +3,8 @@ import { formatAmount } from '../../utils/helpers';
 
 const { t } = useI18n();
 const { $api } = useNuxtApp();
+const { bool, usdt } = useNetworkConfig();
+const { address } = useWallet();
 
 const { user, token } = useUserStore();
 
@@ -34,13 +36,13 @@ const { data: personalData } = useAsyncData(
       <div class="py-[20px] flex justify-between items-center">
         <div class="flex">
           <NuxtImg
-            src="images/bool_circle_fill_pink.png"
+            :src="bool.icon"
             densities="1x 2x"
             height="50"
             width="50"
           />
           <div class="flex flex-col justify-center ms-[8px] space-y-[6px]">
-            <p>BOOL</p>
+            <p>{{ bool.symbol }}</p>
             <div class="border border-primary-500 rounded-[2px] p-[3px] text-primary-500 text-[12px]">
               {{ t('token') }}
             </div>
@@ -48,7 +50,10 @@ const { data: personalData } = useAsyncData(
         </div>
         <div class="flex flex-col items-end space-y-[8px]">
           <p class="text-primary-500 text-[20px]">
-            5100.1218
+            <TokenBalance
+              :token="bool"
+              :address="address"
+            />
           </p>
           <p class="text-[16px] text-[#999]">
             $1020.02
@@ -65,13 +70,13 @@ const { data: personalData } = useAsyncData(
       <div class="py-[20px] flex justify-between items-center">
         <div class="flex">
           <NuxtImg
-            src="images/btu_circle_fill_yellow.png"
+            :src="usdt.icon"
             densities="1x 2x"
             height="50"
             width="50"
           />
           <div class="flex flex-col justify-center ms-[8px] space-y-[6px]">
-            <p>BTU</p>
+            <p>{{ usdt.symbol }}</p>
             <div class="border border-primary-500 rounded-[2px] p-[3px] text-primary-500 text-[12px]">
               {{ t('token') }}
             </div>
@@ -79,7 +84,10 @@ const { data: personalData } = useAsyncData(
         </div>
         <div class="flex flex-col items-end space-y-[8px]">
           <p class="text-primary-500 text-[20px]">
-            1,000.1545
+            <TokenBalance
+              :token="usdt"
+              :address="address"
+            />
           </p>
           <p class="text-[16px] text-[#999]">
             $1000.15
@@ -91,7 +99,7 @@ const { data: personalData } = useAsyncData(
           to="https://test.hellobtu.com/borrow"
           target="_blank"
         >
-          {{ t('borrow') }}
+          {{ t('swap') }}
         </UButton>
       </div>
       <div class="py-[20px] flex justify-between items-center">
@@ -159,9 +167,3 @@ const { data: personalData } = useAsyncData(
     </div>
   </div>
 </template>
-
-<style scoped lang="postcss">
-td {
-  @apply border-b border-[#2E2E2E];
-}
-</style>

@@ -77,7 +77,7 @@ function cancel() {
   <UModal
     prevent-close
   >
-    <div class="py-[48px] p-[20px] flex flex-col justify-center">
+    <div class="py-[48px] px-[66px] flex flex-col justify-center">
       <div class="flex flex-row item-center">
         <span class="text-[24px] font-bold text-primary">Sign In</span>
         <div

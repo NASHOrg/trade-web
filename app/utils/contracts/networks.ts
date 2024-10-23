@@ -15,9 +15,11 @@ export const betaTestnet = {
     bool: {
       symbol: 'tBOL',
       decimals: 18,
+      icon: '/images/bool_circle_fill_pink.png',
     },
     usdt: {
       address: '0x3fFa3237b30b15eF3368132a2AC9D262d8502bB3',
+      icon: '/images/usdt.png',
       symbol: 'USDT',
       decimals: 18,
     },
