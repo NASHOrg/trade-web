@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BN from 'bignumber.js';
 import { formatAmount } from '../../utils/helpers';
 
 const { t } = useI18n();
@@ -23,6 +24,22 @@ const { data: personalData } = useAsyncData(
     return $api.powerSingle({ address: user!.userAddress, type: '1' }, token);
   },
 );
+
+const boolBalance = ref();
+const usdtBalance = ref();
+const { data: boolPrice } = useAsyncData('bool-price', async () => {
+  const data = await $api.blockchainOrderBooks({});
+  return data.latestPrice;
+});
+
+const boolValue = computed(() => {
+  if (!boolPrice.value || !boolBalance.value) return 0;
+  return BN(boolBalance.value).times(BN(boolPrice.value)).dp(2).toFormat();
+});
+const usdtValue = computed(() => {
+  if (!usdtBalance.value) return 0;
+  return BN(usdtBalance.value).dp(2).toFormat();
+});
 </script>
 
 <template>
@@ -53,10 +70,11 @@ const { data: personalData } = useAsyncData(
             <TokenBalance
               :token="bool"
               :address="address"
+              @change="(value) => boolBalance = value"
             />
           </p>
           <p class="text-[16px] text-[#999]">
-            $1020.02
+            $ {{ boolValue }}
           </p>
         </div>
         <UButton
@@ -87,10 +105,11 @@ const { data: personalData } = useAsyncData(
             <TokenBalance
               :token="usdt"
               :address="address"
+              @change="(value) => usdtBalance = value"
             />
           </p>
           <p class="text-[16px] text-[#999]">
-            $1000.15
+            $ {{ usdtValue }}
           </p>
         </div>
         <UButton

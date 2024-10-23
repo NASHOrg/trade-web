@@ -4,7 +4,7 @@ import { stakeApi } from '~/utils/contracts';
 
 const props = defineProps<{ address?: string; token: { address?: string; decimals?: number; symbol?: string }; config?: { showSymbol: boolean } }>();
 const emit = defineEmits<{
-  (e: 'change', value: bigint): void;
+  (e: 'change', value: string): void;
 }>();
 
 const { data: balance } = useAsyncData(
@@ -22,16 +22,16 @@ const { data: balance } = useAsyncData(
 );
 
 const formatedBalance = computed(() => {
-  if (!balance.value) return '';
+  if (balance.value === undefined) return '';
   if (props.config?.showSymbol) {
-    return formatAmount(formatUnits(balance.value, props.token.decimals), 2) + ' ' + props.token.symbol;
+    return formatAmount(formatUnits(balance.value!, props.token.decimals), 2) + ' ' + props.token.symbol;
   }
-  return formatAmount(formatUnits(balance.value, props.token.decimals), 2);
+  return formatAmount(formatUnits(balance.value!, props.token.decimals), 2);
 });
 
 watch(balance, () => {
-  if (balance.value) {
-    emit('change', balance.value);
+  if (balance.value !== undefined) {
+    emit('change', formatUnits(balance.value, props.token.decimals));
   }
 }, { immediate: true });
 </script>
@@ -39,7 +39,7 @@ watch(balance, () => {
 <template>
   <div>
     <div
-      v-if="!balance"
+      v-if="balance === undefined"
       class="min-w-[40px]"
     >
       <USkeleton class="w-full h-[14px]" />

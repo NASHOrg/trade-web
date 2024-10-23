@@ -4,9 +4,9 @@ import { CheckRulesModal } from '#components';
 
 const { $api } = useNuxtApp();
 const { t } = useI18n();
-const { user, token } = useUserStore();
+const { token, user } = storeToRefs(useUserStore());
 
-const userName = computed(() => shortAddress(user?.userAddress));
+const userName = computed(() => shortAddress(user.value?.userAddress));
 const powerMultiplier = computed<number>(() => {
   switch (data.value?.level) {
     case '1':
@@ -36,8 +36,8 @@ function onCheckRules() {
 const { data } = useAsyncData(
   `power-single-team`,
   () => {
-    if (!token) return Promise.resolve(undefined);
-    return $api.powerSingle({ address: user!.userAddress, type: '0' }, token);
+    if (!token.value) return Promise.resolve(undefined);
+    return $api.powerSingle({ address: user.value.userAddress, type: '0' }, token.value);
   },
 );
 </script>

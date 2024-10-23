@@ -11,7 +11,7 @@ const shareLink = computed(() => {
 const onCopy = () => {
   const { copy } = useClipboard({ source: shareLink.value, legacy: true });
   copy();
-  toast.success('Copied');
+  toast.success(t('copied'));
 };
 </script>
 
