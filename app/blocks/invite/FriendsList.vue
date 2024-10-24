@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BigNumber from 'bignumber.js';
 import { shortAddress, formatAmount } from '~/utils/helpers';
 import type { UserInviterRebates } from '~/types/swagger';
 
@@ -13,10 +14,6 @@ const pageNo = ref(1);
 const { token, user } = storeToRefs(useUserStore());
 
 const friendsList = ref<FriendsListItem[]>([]);
-
-const userCollectableRewardsAmount = computed(() => (
-  Number(user.value?.rebateBalanceMap?.INVITER_L1 ?? 0)
-  + Number(user.value?.rebateBalanceMap?.INVITER_L2 ?? 0)));
 
 const { data, status, refresh } = useAsyncData(
   `inviteFriends-${pageNo.value}`,
@@ -141,12 +138,20 @@ async function onCollect() {
         />
         <p v-else>
           {{ t('collectableRewards') }}:
-          {{ userCollectableRewardsAmount.toLocaleString() }} BOOL
+          {{ formatAmount((selectedTierTab === 'LEVEL_1'
+            ? user?.rebateBalanceMap?.INVITER_L1
+            : user?.rebateBalanceMap?.INVITER_L2) ?? '0') }}
+          BOOL
         </p>
         <UButton
           color="black"
           class="px-[8px] py-[6px] text-[16px] rounded-[4px]"
-          :disabled="userCollectableRewardsAmount <= 0 || status === 'pending'"
+          :disabled="BigNumber((selectedTierTab === 'LEVEL_1'
+            ? user?.rebateBalanceMap?.INVITER_L1
+            : user?.rebateBalanceMap?.INVITER_L2
+          )?? 0)
+            .dp(6, 1)
+            .toNumber() <= 0 || status === 'pending'"
           :loading="collecting"
           @click="onCollect"
         >
@@ -172,7 +177,7 @@ async function onCollect() {
           <p>{{ shortAddress(item.inviteeAddress) }}</p>
         </div>
         <p class="text-primary-500">
-          + {{ formatAmount(item.totalRebateAmount, 2) }} BOOL
+          + {{ formatAmount(item.totalRebateAmount.toString(), 2) }} BOOL
         </p>
       </div>
     </div>
