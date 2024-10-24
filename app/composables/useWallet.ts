@@ -98,7 +98,7 @@ export default function useWallet() {
     finally {
       signing = false;
     }
-  });
+  }, { immediate: true });
   async function switchNetwork(chain: number) {
     if (chain === Number(chainId.value)) return true;
     if (!walletProvider.value) {
