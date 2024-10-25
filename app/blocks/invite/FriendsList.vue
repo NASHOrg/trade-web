@@ -3,6 +3,8 @@ import BigNumber from 'bignumber.js';
 import { shortAddress, formatAmount } from '~/utils/helpers';
 import type { UserInviterRebates } from '~/types/swagger';
 
+const emit = defineEmits<{ collected: [] }>();
+
 const { t } = useI18n();
 const { $api } = useNuxtApp();
 
@@ -66,6 +68,7 @@ async function onCollect() {
       else {
         refresh();
       }
+      emit('collected');
     })
     .finally(() => {
       collecting.value = false;

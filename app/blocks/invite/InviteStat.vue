@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { toast } from 'vue-sonner';
+import { formatAmount } from '~/utils/helpers';
 
 const { t } = useI18n();
 const { user } = storeToRefs(useUserStore());
@@ -55,7 +56,7 @@ const onCopy = () => {
           v-else
           class="data-text"
         >
-          {{ Number(user?.inviterStakingAmount).toLocaleString() }}
+          {{ formatAmount(user?.inviterStakingAmount, 2) }}
         </span>
       </div>
       <div class="flex flex-col items-center space-y-[16px]">
@@ -68,7 +69,7 @@ const onCopy = () => {
           v-else
           class="data-text"
         >
-          {{ user.rebateWithdrawAmount.toLocaleString() }}
+          {{ formatAmount(user?.rebateWithdrawAmount.toString(), 2) }}
         </span>
       </div>
     </div>
