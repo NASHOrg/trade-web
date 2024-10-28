@@ -4,7 +4,7 @@ import { formatAmount } from '~/utils/helpers';
 
 const { t } = useI18n();
 const { $api } = useNuxtApp();
-const { user, token } = useUserStore();
+const { user, token } = storeToRefs(useUserStore());
 
 const props = defineProps<{ mode: 'team' | 'self' }>();
 
@@ -14,19 +14,24 @@ type PowerListItem = PowerList['items'][0];
 
 const rewardsHistoryList = ref<PowerListItem[]>([]);
 
+watch(props, () => {
+  if (pageNo.value !== 1) pageNo.value = 1;
+  rewardsHistoryList.value = [];
+});
+
 const { data: rewardsData, status: rewardsStatus } = useAsyncData(
   `rewards-history-${pageNo.value}`,
   () => {
-    if (!token) return Promise.resolve(undefined);
+    if (!token.value || !user.value) return Promise.resolve(undefined);
     return $api.powerList({
-      address: user!.userAddress,
+      address: user.value!.userAddress,
       // address: '0x56d9dfc0ce2e16a9cc9c0c04829df2de03f458a6',
       type: props.mode === 'team' ? '0' : '1',
       pageNumber: pageNo.value.toString(),
       pageSize: 20,
-    }, token);
+    }, token.value);
   },
-  { watch: [pageNo, props], immediate: true, server: false },
+  { watch: [pageNo, props, token, user] },
 );
 
 watch(rewardsData, () => {
@@ -59,10 +64,10 @@ function claimBtnOnTap(item: PowerListItem) {
   claiming.value = item.businDate;
   $api
     .powerWithdrawPost({
-      address: user!.userAddress,
+      address: user.value!.userAddress,
       businDate: item.businDate,
       type: props.mode === 'team' ? 0 : 1,
-    }, token)
+    }, token.value)
     .then(() => {
       pageNo.value = 1;
     })

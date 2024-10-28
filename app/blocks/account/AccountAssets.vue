@@ -1,28 +1,30 @@
 <script setup lang="ts">
 import BN from 'bignumber.js';
-import { formatAmount } from '../../utils/helpers';
+import { formatAmount } from '~/utils/helpers';
 
 const { t } = useI18n();
 const { $api } = useNuxtApp();
 const { bool, usdt } = useNetworkConfig();
 const { address } = useWallet();
 
-const { user, token } = useUserStore();
+const { user, token } = storeToRefs(useUserStore());
 
 const { data: teamData } = useAsyncData(
   `power-single-team`,
   () => {
-    if (!token) return Promise.resolve(undefined);
-    return $api.powerSingle({ address: user!.userAddress, type: '0' }, token);
+    if (!token.value || !user.value) return Promise.resolve(undefined);
+    return $api.powerSingle({ address: user.value!.userAddress, type: '0' }, token.value);
   },
+  { watch: [token, user] },
 );
 
 const { data: personalData } = useAsyncData(
   'power-single-self',
   () => {
-    if (!token) return Promise.resolve(undefined);
-    return $api.powerSingle({ address: user!.userAddress, type: '1' }, token);
+    if (!token.value || !user.value) return Promise.resolve(undefined);
+    return $api.powerSingle({ address: user.value!.userAddress, type: '1' }, token.value);
   },
+  { watch: [token, user] },
 );
 
 const boolBalance = ref();

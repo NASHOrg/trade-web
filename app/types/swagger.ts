@@ -872,7 +872,7 @@ export interface paths {
                             teamStake: string;
                             reward: string;
                             businDateStr: string;
-                            level: string;
+                            level: number;
                             /** 算力分布图 */
                             powerRange: {
                                 /** 低值 */

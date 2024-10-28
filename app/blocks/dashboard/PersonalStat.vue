@@ -83,7 +83,7 @@ const { data } = useAsyncData(
     </div>
     <div class="flex justify-between items-center">
       <p class="text-[16px] text-[#999]">
-        {{ t('airdropClaimed') }}
+        {{ t('totalMined') }}
       </p>
       <p class="text-[24px]">
         + {{ Number(data?.reward ?? 0).toLocaleString() }}

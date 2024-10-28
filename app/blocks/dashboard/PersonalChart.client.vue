@@ -3,19 +3,19 @@ import { Bar } from 'vue-chartjs';
 import type { ChartData, ChartOptions } from 'chart.js';
 
 const { $api } = useNuxtApp();
-const { token } = useUserStore();
+const { token, user } = storeToRefs(useUserStore());
 
 const { data: powerData, status: powerDataStatus } = useAsyncData(
   `power-single`,
   () => {
-    if (!token) return Promise.resolve(undefined);
+    if (!token.value || !user.value) return Promise.resolve(undefined);
     return $api.powerSingle({
-      // address: user!.userAddress,
-      address: '0x56d9dfc0ce2e16a9cc9c0c04829df2de03f458a6',
+      address: user.value!.userAddress,
+      // address: '0x56d9dfc0ce2e16a9cc9c0c04829df2de03f458a6',
       type: '1',
-    }, token);
+    }, token.value);
   },
-  { immediate: true, server: false },
+  { watch: [token, token] },
 );
 
 const chartData = computed<ChartData<'bar', (number | [number, number] | null)[]>>(() => ({

@@ -4,21 +4,21 @@ import type { ChartData, ChartOptions, Point } from 'chart.js';
 import BigNumber from 'bignumber.js';
 
 const { $api } = useNuxtApp();
-const { user, token } = useUserStore();
+const { user, token } = storeToRefs(useUserStore());
 
 const { data: rewardsData, status: rewardsStatus } = useAsyncData(
   `rewards-history-last-8-days`,
   () => {
-    if (!token) return Promise.resolve(undefined);
+    if (!token.value || !user.value) return Promise.resolve(undefined);
     return $api.powerList({
-      address: user!.userAddress,
+      address: user.value!.userAddress,
       // address: '0x56d9dfc0ce2e16a9cc9c0c04829df2de03f458a6',
       type: '0',
       pageNumber: '1',
       pageSize: 8,
-    }, token);
+    }, token.value);
   },
-  { immediate: true, server: false },
+  { watch: [token, user] },
 );
 
 const chartData = computed<ChartData<'line', (number | Point | null)[]>>(() => ({

@@ -7,7 +7,7 @@ const emit = defineEmits(['switch']);
 
 const { t } = useI18n();
 const { $api } = useNuxtApp();
-const { user, token } = useUserStore();
+const { user, token } = storeToRefs(useUserStore());
 
 const rank = computed(() => {
   switch (data.value?.level) {
@@ -74,13 +74,13 @@ const stakeAmount = computed(() => Number(data.value?.stake ?? 0));
 const { data } = useAsyncData(
   `user-level-${props.mode}`,
   () => {
-    if (!user) return Promise.resolve(undefined);
+    if (!user.value || !token.value) return Promise.resolve(undefined);
     return $api.userUserLevel(
-      { address: user!.userAddress, type: props.mode === 'team' ? '0' : '1' },
-      token,
+      { address: user.value!.userAddress, type: props.mode === 'team' ? '0' : '1' },
+      token.value,
     );
   },
-  { watch: [props], immediate: true },
+  { watch: [props, user, token] },
 );
 </script>
 
@@ -124,7 +124,7 @@ const { data } = useAsyncData(
           class="text-[14px]"
         >
           <!--          {{ nextRankMinimumStakeRequireAmount - stakeAmount }} BOOL -->
-          {{ data?.upgradeAmount ?? 0 }} BOOL
+          {{ formatAmount(data?.upgradeAmount?.toString() ?? '0', 2) ?? 0 }} BOOL
         </p>
         <UProgress
           v-if="data?.level !== 7"
