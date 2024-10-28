@@ -39,6 +39,7 @@ const { data } = useAsyncData(
     if (!token.value) return Promise.resolve(undefined);
     return $api.powerSingle({ address: user.value!.userAddress, type: '0' }, token.value);
   },
+  { watch: [token, user] },
 );
 </script>
 

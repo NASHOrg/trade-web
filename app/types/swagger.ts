@@ -279,6 +279,52 @@ export interface paths {
             };
         };
     };
+    "/bot/inviter-rebates": {
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * 页码
+                     * 从 1 开始
+                     * 不传默认为第一页
+                     */
+                    pageNo: number;
+                    /**
+                     * 每页个数
+                     * 不传默认为 20
+                     * 最大为 1000
+                     */
+                    pageSize: number;
+                    /** 邀请类型。LEVEL_1、LEVEL_2 */
+                    type: string;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        code: string;
+                        msg: string;
+                        data: {
+                            items: {
+                                inviteeAddress: string;
+                                totalRebateAmount: string;
+                                username: string;
+                                verify: boolean;
+                            }[];
+                            pageNo: number;
+                            pageSize: number;
+                            totalPage: number;
+                            totalCount: string;
+                            hasPrev: boolean;
+                            hasNext: boolean;
+                        };
+                        fail: boolean;
+                    };
+                };
+            };
+        };
+    };
     "/user/inviter-rebates": {
         get: {
             parameters: {
@@ -1194,9 +1240,11 @@ export interface paths {
     };
 }
 
-export interface operations { }
+export interface operations {
+}
 
-export interface external { }
+export interface external {
+}
 
 export type UserBotLoginPostParams = paths["/user/bot:login"]['post']['parameters']['body']['root'];
 export type UserBotLoginPost = paths["/user/bot:login"]['post']['responses'][200]['schema']['data'];
@@ -1214,6 +1262,8 @@ export type UserInvitationRelationsGetParams = paths["/user/invitation-relations
 export type UserInvitationRelations = paths["/user/invitation-relations"]['get']['responses'][200]['schema']['data'];
 export type UserInvitationRelationGetParams = paths["/user/invitation-relation"]['get']['parameters']['query'];
 export type UserInvitationRelation = paths["/user/invitation-relation"]['get']['responses'][200]['schema']['data'];
+export type BotInviterRebatesGetParams = paths["/bot/inviter-rebates"]['get']['parameters']['query'];
+export type BotInviterRebates = paths["/bot/inviter-rebates"]['get']['responses'][200]['schema']['data'];
 export type UserInviterRebatesGetParams = paths["/user/inviter-rebates"]['get']['parameters']['query'];
 export type UserInviterRebates = paths["/user/inviter-rebates"]['get']['responses'][200]['schema']['data'];
 export type UserInviteStakeRebatesGetParams = paths["/user/invite-stake-rebates"]['get']['parameters']['query'];

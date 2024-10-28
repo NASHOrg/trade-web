@@ -22,9 +22,10 @@ const userName = computed(() => shortAddress(user.value?.userAddress));
 const { data } = useAsyncData(
   'power-single-self',
   () => {
-    if (!token.value) return Promise.resolve(undefined);
+    if (!token.value || !user.value) return Promise.resolve(undefined);
     return $api.powerSingle({ address: user.value?.userAddress, type: '1' }, token.value);
   },
+  { watch: [token, user] },
 );
 </script>
 
