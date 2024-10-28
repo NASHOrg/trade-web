@@ -37,7 +37,7 @@ const { data } = useAsyncData(
   `power-single-team`,
   () => {
     if (!token.value) return Promise.resolve(undefined);
-    return $api.powerSingle({ address: user.value.userAddress, type: '0' }, token.value);
+    return $api.powerSingle({ address: user.value!.userAddress, type: '0' }, token.value);
   },
 );
 </script>

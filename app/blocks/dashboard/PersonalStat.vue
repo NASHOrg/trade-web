@@ -4,11 +4,9 @@ import { formatAmount } from '~/utils/helpers';
 
 const { $api } = useNuxtApp();
 const { t } = useI18n();
-const { user, token } = useUserStore();
+const { user, token } = storeToRefs(useUserStore());
 
-const userStore = useUserStore();
-
-const userName = computed(() => shortAddress(userStore.user?.userAddress));
+const userName = computed(() => shortAddress(user.value?.userAddress));
 
 // const badgeLevel = 4;
 // const modal = useModal();
@@ -24,8 +22,8 @@ const userName = computed(() => shortAddress(userStore.user?.userAddress));
 const { data } = useAsyncData(
   'power-single-self',
   () => {
-    if (!token) return Promise.resolve(undefined);
-    return $api.powerSingle({ address: user!.userAddress, type: '1' }, token);
+    if (!token.value) return Promise.resolve(undefined);
+    return $api.powerSingle({ address: user.value?.userAddress, type: '1' }, token.value);
   },
 );
 </script>

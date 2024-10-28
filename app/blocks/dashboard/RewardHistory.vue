@@ -88,7 +88,10 @@ function formatDate(dateString: string) {
       <h3 class="text-white text-[24px]">
         {{ t('rewardsHistory') }}
       </h3>
-      <div class="flex items-center space-x-[8px]">
+      <div
+        v-if="props.mode === 'team'"
+        class="flex items-center space-x-[8px]"
+      >
         <UTooltip
           :popper="{ placement: 'top', arrow: true }"
           :ui="{
@@ -172,7 +175,7 @@ function formatDate(dateString: string) {
           />
           <p>{{ formatDate(item.businDate.toString()) }}</p>
         </div>
-        <p>{{ formatAmount(item.power, 2) }} BTP</p>
+        <p>{{ formatAmount(item.power, 2) }} {{ props.mode === 'team' ? 'BTP' : 'BPP' }}</p>
         <div class="flex space-x-[8px] items-center">
           <p class="text-primary-500">
             + {{ formatAmount(item.reward, 2) }} BOOL
