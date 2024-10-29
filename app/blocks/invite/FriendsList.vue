@@ -147,7 +147,7 @@ async function onCollect() {
           BOOL
         </p>
         <UButton
-          color="black"
+          color="white"
           class="px-[8px] py-[6px] text-[16px] rounded-[4px]"
           :disabled="BigNumber((selectedTierTab === 'LEVEL_1'
             ? user?.rebateBalanceMap?.INVITER_L1

@@ -80,7 +80,7 @@ const usdtValue = computed(() => {
           </p>
         </div>
         <UButton
-          color="black"
+          color="white"
           class="p-[6px] min-w-[72px] justify-center text-[16px] rounded-[4px]"
           to="/trade"
         >
@@ -115,7 +115,7 @@ const usdtValue = computed(() => {
           </p>
         </div>
         <UButton
-          color="black"
+          color="white"
           class="p-[6px] min-w-[72px] justify-center text-[16px] rounded-[4px]"
           to="https://test.hellobtu.com/borrow"
           target="_blank"
@@ -142,7 +142,7 @@ const usdtValue = computed(() => {
           {{ formatAmount(teamData?.power ?? '0', 2) }}
         </p>
         <UButton
-          color="black"
+          color="white"
           class="p-[6px] min-w-[72px] justify-center text-[16px] rounded-[4px]"
           to="/stake"
         >
@@ -170,7 +170,7 @@ const usdtValue = computed(() => {
         <div class="w-[72px]" />
         <div class="absolute -end-0 flex space-x-[8px]">
           <!--          <UButton -->
-          <!--            color="black" -->
+          <!--            color="white" -->
           <!--            class="p-[6px] min-w-[72px] justify-center text-[16px] rounded-[4px]" -->
           <!--            @click="bppListBtnOnTap" -->
           <!--          > -->

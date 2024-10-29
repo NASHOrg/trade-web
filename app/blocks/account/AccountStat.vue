@@ -129,7 +129,7 @@ const { data } = useAsyncData(
         <UProgress
           v-if="data?.level !== 7"
           :value="stakeAmount"
-          :max="Number(data?.upgradeAmount ?? 0)"
+          :max="Number(data?.upgradeAmount ?? 0) + stakeAmount"
           size="xs"
           class="w-[100px]"
         />

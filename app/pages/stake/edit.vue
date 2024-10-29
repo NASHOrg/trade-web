@@ -258,7 +258,7 @@ async function onStake() {
     </div>
     <div class="mt-[83px] mb-[50px] grid grid-cols-2 justify-center space-x-[34px] mx-[60px]">
       <UButton
-        color="black"
+        color="white"
         variant="outline"
         block
         class="h-[44px]"
@@ -273,7 +273,7 @@ async function onStake() {
             || Number(amountField) === Number(formatEther(currentStaking ?? 0)))
             && !removeStake
         "
-        color="black"
+        color="white"
         :loading="isStaking"
         block
         class="h-[44px]"

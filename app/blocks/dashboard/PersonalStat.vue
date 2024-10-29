@@ -51,7 +51,7 @@ const { data } = useAsyncData(
         </h1>
         <!--        <UButton -->
         <!--          size="xs" -->
-        <!--          color="black" -->
+        <!--          color="white" -->
         <!--          class="rounded-[4px]" -->
         <!--          @click="onClaim" -->
         <!--        > -->
@@ -73,7 +73,7 @@ const { data } = useAsyncData(
       <!--          width="108" -->
       <!--        /> -->
       <!--        <UButton -->
-      <!--          color="black" -->
+      <!--          color="white" -->
       <!--          class="absolute bottom-[8px] end-[19px] px-[16px] py-[8px] text-[14px]" -->
       <!--          @click="onCheckRules" -->
       <!--        > -->

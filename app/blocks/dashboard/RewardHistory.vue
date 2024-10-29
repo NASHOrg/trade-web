@@ -19,7 +19,7 @@ watch(props, () => {
   rewardsHistoryList.value = [];
 });
 
-const { data: rewardsData, status: rewardsStatus } = useAsyncData(
+const { data: rewardsData, status: rewardsStatus, refresh } = useAsyncData(
   `rewards-history-${pageNo.value}`,
   () => {
     if (!token.value || !user.value) return Promise.resolve(undefined);
@@ -69,7 +69,9 @@ function claimBtnOnTap(item: PowerListItem) {
       type: props.mode === 'team' ? 0 : 1,
     }, token.value)
     .then(() => {
-      pageNo.value = 1;
+      rewardsHistoryList.value = [];
+      if (pageNo.value !== 1) pageNo.value = 1;
+      else refresh();
     })
     .finally(() => {
       claiming.value = undefined;
@@ -186,7 +188,7 @@ function formatDate(dateString: string) {
             + {{ formatAmount(item.reward, 2) }} BOOL
           </p>
           <UButton
-            color="black"
+            color="white"
             class="px-[8px] py-[6px] text-[16px] text-[#333] rounded-[4px]"
             :disabled="item.claimed || Number(user?.oneselfStakingAmount ?? 0) < 500"
             :loading="claiming === item.businDate"

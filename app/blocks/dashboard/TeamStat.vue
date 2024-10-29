@@ -87,7 +87,7 @@ const { data } = useAsyncData(
           width="196"
         />
         <UButton
-          color="black"
+          color="white"
           class="absolute bottom-[8px] right-[19px] px-[16px] py-[8px] text-[14px]"
           :ui="{ rounded: 'rounded-full' }"
           @click="onCheckRules"

@@ -121,7 +121,7 @@ function onStake(item: DHCListItem) {
         <UButton
           class="h-[26px] rounded-[4px] text-[12px] px-[8px] leading-[12px]"
           :disabled="!accountInfo?.staking"
-          color="black"
+          color="white"
           :label="t('stake')"
         />
       </div>
