@@ -15,7 +15,7 @@ const { data: powerData, status: powerDataStatus } = useAsyncData(
       type: '1',
     }, token.value);
   },
-  { watch: [token, token] },
+  { watch: [token, user] },
 );
 
 const chartData = computed<ChartData<'bar', (number | [number, number] | null)[]>>(() => ({
