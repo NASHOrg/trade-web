@@ -155,13 +155,15 @@ function formatDate(dateString: string) {
     </div>
     <div class="mt-[28px] flex text-center text-[#999] text-[16px] mb-2">
       <p>{{ mode === 'team' ? t('rank') : t('agency') }}</p>
-      <p class="grow">
+      <p class="ms-[16px]">
         {{ t('time') }}
       </p>
-      <p class="grow">
+      <div class="grow" />
+      <p>
         {{ t('power') }}
       </p>
-      <p class="grow">
+      <div class="grow" />
+      <p>
         {{ t('reward') }}
       </p>
     </div>
