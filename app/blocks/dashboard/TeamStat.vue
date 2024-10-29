@@ -1,31 +1,31 @@
 <script setup lang="ts">
-import BigNumber from 'bignumber.js';
 import { CheckRulesModal } from '#components';
+import { formatAmount } from '~/utils/helpers';
 
 const { $api } = useNuxtApp();
 const { t } = useI18n();
 const { token, user } = storeToRefs(useUserStore());
 
 const userName = computed(() => shortAddress(user.value?.userAddress));
-const powerMultiplier = computed<number>(() => {
-  switch (data.value?.level) {
-    case 2:
-      return 1;
-    case 3:
-      return 1.1;
-    case 4:
-      return 1.2;
-    case 5:
-      return 1.3;
-    case 6:
-      return 1.4;
-    case 7:
-      return 1.5;
-    case 1:
-    default:
-      return 0;
-  }
-});
+// const powerMultiplier = computed<number>(() => {
+//   switch (data.value?.level) {
+//     case 2:
+//       return 1;
+//     case 3:
+//       return 1.1;
+//     case 4:
+//       return 1.2;
+//     case 5:
+//       return 1.3;
+//     case 6:
+//       return 1.4;
+//     case 7:
+//       return 1.5;
+//     case 1:
+//     default:
+//       return 0;
+//   }
+// });
 
 const modal = useModal();
 
@@ -60,13 +60,13 @@ const { data } = useAsyncData(
         {{ t('userNamesTeam', { userName }) }}
       </div>
       <h1 class="mt-[16px] text-[54px]">
-        {{ (BigNumber(data?.power ?? 0).dp(6, 1).toNumber() * powerMultiplier).toLocaleString() }} BTP
+        {{ formatAmount(data?.power ?? '0') }} BTP
       </h1>
       <p
-        v-if="powerMultiplier !== 0"
+        v-if="Number(data?.coefficient) !== 0"
         class="mt-[8px] mb-[30px] text-[16px] text-[#666]"
       >
-        = {{ Number(data?.power ?? 0).toLocaleString() }} * {{ powerMultiplier }} Staking BOOL
+        = {{ Number(data?.baseStake ?? 0).toLocaleString() }} * {{ data?.coefficient }} Staking BOOL
       </p>
       <div
         v-else

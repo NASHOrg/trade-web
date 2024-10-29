@@ -884,6 +884,10 @@ export interface paths {
                             }[];
                             /** 个人在分布图位置 */
                             powerIndex: number;
+                            /** 公式中基础算力 */
+                            baseStake: string;
+                            /** 系数 */
+                            coefficient: string;
                         };
                     };
                 };
