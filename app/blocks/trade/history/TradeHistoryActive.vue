@@ -2,36 +2,15 @@
 import { toast } from 'vue-sonner';
 import { tradeApi } from '~/utils/contracts';
 
+// const tradeStore = useTradeStore();
+
+// const { currantToken } = storeToRefs(tradeStore);
 const { address, chainId, switchNetwork } = useWallet();
-const { $api } = useNuxtApp();
 const { network } = useNetworkConfig();
 const { t } = useI18n();
-const columns = [
-  {
-    key: 'pair',
-    label: t('pair'),
-  },
-  {
-    key: 'type',
-    label: t('side'),
-  },
-  {
-    key: 'price',
-    label: t('targetPrice'),
-  },
-  {
-    key: 'filledQty',
-    label: t('filledQty'),
-  },
-  {
-    key: 'qty',
-    label: t('totalQty'),
-  },
-  {
-    key: 'action',
-    label: t('action'),
-  },
-];
+const { $api } = useNuxtApp();
+
+const isCanceling = ref<string | undefined>(undefined);
 
 const queryparams = ref({
   pageNo: 1,
@@ -42,6 +21,16 @@ const { data, status } = useAsyncData(
   `trade-orders-${address}`,
   () => {
     if (!address.value) return Promise.resolve(undefined);
+    // const { pageNo, pageSize } = queryparams.value;
+    // const begin = (pageNo - 1) * pageSize;
+    // const end = begin + pageSize;
+    // return tradeApi.orderList({
+    //   address: address.value,
+    //   begin,
+    //   end,
+    //   token0: currantToken.value.tokens[0]!,
+    //   token1: currantToken.value.tokens[1]!,
+    // });
     return $api.blockchainUserOrders({
       address: address.value,
       ...queryparams.value,
@@ -54,7 +43,35 @@ const { data, status } = useAsyncData(
   },
 );
 
-const isCanceling = ref<string | undefined>(undefined);
+const columns = computed(() => {
+  return [
+    {
+      key: 'pair',
+      label: t('pair'),
+    },
+    {
+      key: 'type',
+      label: t('side'),
+    },
+    {
+      key: 'price',
+      label: t('targetPrice'),
+    },
+    {
+      key: 'filledQty',
+      label: t('filledQty'),
+    },
+    {
+      key: 'qty',
+      label: t('totalQty'),
+    },
+    {
+      key: 'action',
+      label: t('action'),
+    },
+  ];
+});
+
 async function onCancelOrder(id: string, type: number) {
   isCanceling.value = id + type.toString();
   try {
@@ -91,8 +108,8 @@ async function onCancelOrder(id: string, type: number) {
 <template>
   <div class="w-full flex flex-col items-center">
     <div
-      v-if="status === 'pending' || !data"
-      class="my-[50px] w-[68px] h-[68px] flex flex-col justify-center items-center"
+      v-if="!data && status === 'pending'"
+      class="my-[78px] w-[68px] h-[68px] flex flex-col justify-center items-center"
     >
       <UIcon
         class="animate-spin text-primary-500 w-6 h-6 flex justify-center"
@@ -100,7 +117,7 @@ async function onCancelOrder(id: string, type: number) {
       />
     </div>
     <NuxtPicture
-      v-else-if="Number(data.totalCount) === 0"
+      v-else-if="data && Number(data.totalCount) === 0"
       class="my-[50px] flex justify-center"
       src="images/empty_box.png"
       densities="1x 2x"
@@ -111,7 +128,7 @@ async function onCancelOrder(id: string, type: number) {
       v-else
       class="w-full"
       :columns="columns"
-      :rows="data.items"
+      :rows="data!.items"
     >
       <template #action-data="{ row }">
         <UButton
@@ -136,7 +153,7 @@ async function onCancelOrder(id: string, type: number) {
       v-if="data && data.totalPage > 0"
       class="mt-[30px]"
       :total="data.totalPage"
-      :current="data.pageNo"
+      :current="queryparams.pageNo"
       :disabled="status === 'pending'"
       @change="
         (value) => {

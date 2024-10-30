@@ -50,14 +50,14 @@ const onSelectPrice = (price: string) => {
       </div>
     </div>
     <template v-if="data">
-      <div class="space-y-2.5 mt-3.5">
+      <div class="grow mt-3.5 flex flex-col justify-end">
         <div
-          v-for="item in data.orderBuyBList"
+          v-for="item in data.orderSellBList"
           :key="JSON.stringify(item)"
-          class="grid grid-cols-3 text-[14px] text-start cursor-pointer hover:bg-gray-50/10"
+          class="grid py-2.5 grid-cols-3 text-[14px] text-start cursor-pointer hover:bg-gray-50/10"
           @click="onSelectPrice(item.price)"
         >
-          <span class="text-buy">{{ formatAmount(item.price, 5) }}</span>
+          <span class="text-sell">{{ formatAmount(item.price, 5) }}</span>
           <span class="text-center"> {{ formatAmount(item.qty, 2) }}</span>
           <span class="text-end">{{ formatAmount(item.value, 2) }}</span>
         </div>
@@ -72,14 +72,14 @@ const onSelectPrice = (price: string) => {
         </span>
       </div>
 
-      <div class="space-y-2.5">
+      <div class="grow">
         <div
-          v-for="item in data.orderSellBList"
+          v-for="item in data.orderBuyBList"
           :key="JSON.stringify(item)"
-          class="grid grid-cols-3 text-[14px] text-start cursor-pointer hover:bg-gray-50/10"
+          class="grid py-2.5 grid-cols-3 text-[14px] text-start cursor-pointer hover:bg-gray-50/10"
           @click="onSelectPrice(item.price)"
         >
-          <span class="text-sell">{{ formatAmount(item.price, 5) }}</span>
+          <span class="text-buy">{{ formatAmount(item.price, 5) }}</span>
           <span class="text-center"> {{ formatAmount(item.qty, 2) }}</span>
           <span class="text-end">{{ formatAmount(item.value, 2) }}</span>
         </div>

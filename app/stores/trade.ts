@@ -1,8 +1,14 @@
+import type { Token } from '~/types/common';
+
 export const useTradeStore = defineStore('trade-store', () => {
   const { currentRoute } = useRouter();
   const { usdt, bool } = useNetworkConfig();
 
-  const tokenOptions = [
+  const tokenOptions: {
+    value: string;
+    label: string;
+    tokens: [Token, Token];
+  }[] = [
     {
       value: 'BOOL/USDT',
       label: 'BOOL/USDT',

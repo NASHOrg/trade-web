@@ -22,8 +22,6 @@ export const errorHandling = (error: any): Error => {
   if (error instanceof Error) {
     let message = error.message;
 
-    console.log(error.message);
-
     try {
       const errs = error.message
         ?.split?.('info=')?.[1]
@@ -138,7 +136,14 @@ export function handleJsonRpcError(error: any, message: any) {
       message.error('JsonRpc error, please try again later');
     }
     else {
-      message.error(error.message);
+      try {
+        errorHandling(error);
+      }
+      catch (err) {
+        if (err instanceof Error) {
+          message.error(err.message);
+        }
+      }
     }
   }
 }

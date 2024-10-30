@@ -16,7 +16,7 @@ const modes = [
 ];
 
 const tradeStore = useTradeStore();
-const balance = ref<bigint | undefined>();
+const balance = ref<string | undefined>();
 
 const { address, open, chainId, switchNetwork } = useWallet();
 const { t } = useI18n();
@@ -42,7 +42,7 @@ const amountPercent = computed({
       return 0;
     }
     return BN(state.quantity ?? 0)
-      .div(BN(balance.value.toString()).div(10 ** 18))
+      .div(BN(balance.value.toString()))
       .times(100)
       .toNumber();
   },
@@ -188,6 +188,7 @@ async function onSelectMode(mode: (typeof modes)[number]) {
           v-model="state.price"
           placeholder="0.0"
           :precision="5"
+          type="number"
           input-class="!text-[16px] !bg-transparent !text-end"
         />
         <span class="text-white"> {{ tokenSymbolList[1] }}</span>
@@ -200,6 +201,7 @@ async function onSelectMode(mode: (typeof modes)[number]) {
           v-model="state.quantity"
           placeholder="0.0"
           :precision="2"
+          type="number"
           input-class="!text-[16px] !bg-transparent !text-end"
         />
         <span class="text-white"> {{ tokenSymbolList[0] }}</span>

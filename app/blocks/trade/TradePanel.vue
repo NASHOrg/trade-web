@@ -84,8 +84,8 @@ const { data } = useNuxtData('order-book');
               {{ item.label }}
             </div>
           </div>
-          <TradePanelOrders v-show="selectedOrderType === 'latestTrades'" />
-          <TradePanelBook v-show="selectedOrderType === 'orderBook'" />
+          <TradePanelOrders v-if="selectedOrderType === 'latestTrades'" />
+          <TradePanelBook v-else-if="selectedOrderType === 'orderBook'" />
         </div>
       </div>
     </div>

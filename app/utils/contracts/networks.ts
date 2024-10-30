@@ -9,15 +9,17 @@ export const betaTestnet = {
   feeRate: 3000,
   explorer: 'https://beta-testnet.boolscan.com',
   contracts: {
-    trade: '0x04E0C80EDba9026EFdFE6966DAb7272b3af67eEf',
+    trade: '0xcBdD434B6eCccdBD5DD4264FD7473A38EfFbE294',
   },
   tokens: {
     bool: {
+      name: 'BOOL',
       symbol: 'tBOL',
       decimals: 18,
       icon: '/images/bool_circle_fill_pink.png',
     },
     usdt: {
+      name: 'USDT',
       address: '0x3fFa3237b30b15eF3368132a2AC9D262d8502bB3',
       icon: '/images/usdt.png',
       symbol: 'USDT',

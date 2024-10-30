@@ -1,5 +1,3 @@
-import type { UserDevices, UserCrowdfundingDevices } from './swagger';
-
 export type AccountInfo = {
   myRewards: string;
   myBalance: string;
@@ -9,4 +7,10 @@ export type AccountInfo = {
   incommingUnstaked: string;
 };
 
-export type DHCListItem = UserDevices['items'][0] & UserCrowdfundingDevices['items'][0];
+export interface Token {
+  address?: string;
+  icon: string;
+  symbol: string;
+  decimals: number;
+  name: string;
+}

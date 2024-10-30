@@ -29,8 +29,8 @@ const selected = ref('orders');
         {{ item.label }}
       </div>
     </div>
-    <TradeHistoryActive v-show="selected === 'orders'" />
-    <TradeHistoryCompleted v-show="selected === 'history'" />
+    <TradeHistoryActive v-if="selected === 'orders'" />
+    <TradeHistoryCompleted v-if="selected === 'history'" />
   </div>
 </template>
 
