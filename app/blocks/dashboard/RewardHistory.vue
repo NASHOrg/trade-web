@@ -34,6 +34,15 @@ const { data: rewardsData, status: rewardsStatus, refresh } = useAsyncData(
   { watch: [pageNo, props, token, user] },
 );
 
+const { data: teamStat } = useAsyncData(
+  `power-single-team`,
+  () => {
+    if (!token.value || !user.value) return Promise.resolve(undefined);
+    return $api.powerSingle({ address: user.value!.userAddress, type: '0' }, token.value);
+  },
+  { watch: [token, user] },
+);
+
 watch(rewardsData, () => {
   if (rewardsData?.value?.items) {
     rewardsHistoryList.value = [...rewardsHistoryList.value, ...rewardsData.value.items];
@@ -128,9 +137,8 @@ function formatDate(dateString: string) {
               <li class="justify-between text-[#666] text-[16px]">
                 <div class="flex justify-between">
                   <span class="me-[16px]">{{ t('unlockRewardsCondition2') }}</span>
-                  <!-- TODO: 补充条件所需的数据 -->
                   <NuxtImg
-                    v-if="false"
+                    v-if="Number(teamStat?.teamStake) >= 10000"
                     src="images/icon_checkmark_circle_green.png"
                   />
                   <NuxtImg
@@ -192,7 +200,7 @@ function formatDate(dateString: string) {
           <UButton
             color="white"
             class="px-[8px] py-[6px] text-[16px] text-[#333] rounded-[4px]"
-            :disabled="item.claimed || Number(user?.oneselfStakingAmount ?? 0) < 500"
+            :disabled="item.claimed || Number(user?.oneselfStakingAmount ?? 0) < 500 || Number(teamStat?.teamStake) < 10000"
             :loading="claiming === item.businDate"
             @click="claimBtnOnTap(item)"
           >
