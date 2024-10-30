@@ -115,7 +115,7 @@ const usdtValue = computed(() => {
           </p>
         </div>
         <UButton
-          color="white"
+          color="black"
           class="p-[6px] min-w-[72px] justify-center text-[16px] rounded-[4px]"
           to="https://test.hellobtu.com/borrow"
           target="_blank"
@@ -142,7 +142,7 @@ const usdtValue = computed(() => {
           {{ formatAmount(teamData?.power ?? '0', 2) }}
         </p>
         <UButton
-          color="white"
+          color="black"
           class="p-[6px] min-w-[72px] justify-center text-[16px] rounded-[4px]"
           to="/stake"
         >

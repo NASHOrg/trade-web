@@ -30,7 +30,7 @@ const metadata = {
   url: 'https://xbit.finance',
   icons: ['https://xbit.finance/favicon.png'],
 };
-let signing = false;
+let signing: string | undefined;
 createWeb3Modal({
   ethersConfig: defaultConfig({
     metadata,
@@ -53,23 +53,25 @@ createWeb3Modal({
 });
 
 export default function useWallet() {
+  const { open } = useWeb3Modal();
   const { address, isConnected, chainId } = useWeb3ModalAccount();
   const { disconnect } = useDisconnect();
-  const { open } = useWeb3Modal();
   const { walletProvider } = useWeb3ModalProvider();
   const store = useUserStore();
 
   watch(address, (newAddress, oldAddress) => {
-    if (oldAddress === newAddress) {
+    console.log({ newAddress, oldAddress });
+    if (import.meta.server) {
+      return;
+    }
+    if (oldAddress === newAddress && newAddress) {
       return;
     }
     if (signing) {
       return;
     }
-    signing = true;
     if (!newAddress) {
       store.token = undefined;
-      signing = false;
       const tokens = JSON.parse(localStorage.getItem('tokens') ?? '{}');
       if (oldAddress) tokens[oldAddress] = undefined;
       localStorage.setItem('tokens', JSON.stringify(tokens));
@@ -80,13 +82,16 @@ export default function useWallet() {
       return;
     }
     try {
+      signing = newAddress;
       const tokens = JSON.parse(localStorage.getItem('tokens') ?? '{}');
       const _token = tokens[newAddress];
+      console.log({ token: _token });
+      const modal = useModal();
       if (!_token) {
-        const modal = useModal();
         modal.open(SignInModal);
         return;
       }
+      modal.close();
       store.token = _token;
     }
     catch (error: any) {
@@ -96,9 +101,10 @@ export default function useWallet() {
       }
     }
     finally {
-      signing = false;
+      signing = undefined;
     }
   }, { immediate: true });
+
   async function switchNetwork(chain: number) {
     if (chain === Number(chainId.value)) return true;
     if (!walletProvider.value) {

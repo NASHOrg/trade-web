@@ -167,9 +167,12 @@ async function onStake() {
           {{ t("annualYield") }}:
         </span>
         <div class="flex flex-row items-center">
-          <UPopover :popper="{ placement: 'top' }">
+          <UPopover
+            :popper="{ placement: 'top' }"
+            mode="hover"
+          >
             <UIcon
-              class="text-primary-500 mt-[6px]"
+              class="text-primary-500"
               name="ic:outline-info"
             />
             <template #panel>
@@ -273,7 +276,7 @@ async function onStake() {
             || Number(amountField) === Number(formatEther(currentStaking ?? 0)))
             && !removeStake
         "
-        color="white"
+        color="black"
         :loading="isStaking"
         block
         class="h-[44px]"

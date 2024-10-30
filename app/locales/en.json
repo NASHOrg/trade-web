@@ -90,6 +90,7 @@
   "dhcStaking": "DHC Staking",
   "totalVoters": "Total Voters",
   "annualYield": "Annual Yield",
+  "annualYieldDesc": "Moving average of APY for 7 days period",
   "availableBalance": "Available Balance",
   "updateStaking": "Update Staking",
   "max": "Max",

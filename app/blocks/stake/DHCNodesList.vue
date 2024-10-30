@@ -89,20 +89,22 @@ function getOrderByValue() {
 
 const { data, status: allStakeListStatus } = useAsyncData(
   `stake-list-${props.type}-${dhcListState.orderBy}-${dhcListState.pageNo}`,
-  () => {
+  async () => {
+    let data: { items: DHCListItem[]; totalCount: string; totalPage: number };
     if (props.type === 'mine') {
-      return $api.userDevices({
+      data = await $api.userDevices({
         pageNo: dhcListState.pageNo,
         pageSize: 20,
         ...getOrderByValue(),
-      });
+      }) as any;
     }
     else {
-      return $api.userCrowdfundingDevices({
+      data = await $api.userCrowdfundingDevices({
         pageNo: dhcListState.pageNo,
         pageSize: 20,
-      });
+      }) as any;
     }
+    return data;
   },
   { watch: [dhcListState], immediate: true, server: false },
 );
@@ -131,12 +133,11 @@ const { data: stakedData, status: stakedStatus } = useAsyncData(
         pageSize: 100,
       });
     }
-    return data;
   },
   { watch: [address], immediate: true, server: false },
 );
 const stakedList = computed<DHCListItem[]>(() => {
-  return stakedData.value?.items ?? [];
+  return stakedData.value?.items as any ?? [];
 });
 </script>
 
@@ -226,7 +227,7 @@ const stakedList = computed<DHCListItem[]>(() => {
       <template v-else>
         <NodeCard
           v-for="item in dhcList"
-          :key="item.deviceId ?? item.deviceID"
+          :key="item.deviceID"
           :item="item"
           :account-info="accountInfo"
           :staked-filter="stakedFilter"

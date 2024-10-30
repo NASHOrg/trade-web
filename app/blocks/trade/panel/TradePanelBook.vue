@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { formatAmount } from '#imports';
+
 const tradeStore = useTradeStore();
 const { replace, currentRoute } = useRouter();
 const { $api } = useNuxtApp();
