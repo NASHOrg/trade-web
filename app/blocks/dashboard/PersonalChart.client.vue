@@ -71,7 +71,6 @@ const chartOptions: ChartOptions<'bar'> = {
       ticks: {
         padding: 10,
         stepSize: 1000,
-        format: { style: 'currency', currency: 'USD' },
         callback: value => value === 0 ? '0' : `${Number(value) / 1000}K`,
       },
       grid: { display: true, color: '#2E2E2E', lineWidth: 1 },
@@ -90,6 +89,7 @@ const chartOptions: ChartOptions<'bar'> = {
       class="w-full h-[212px]"
     />
     <Bar
+      v-else
       :data="chartData"
       :options="chartOptions"
     />
