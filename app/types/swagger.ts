@@ -784,7 +784,7 @@ export interface paths {
                     schema: {
                         msg?: string;
                         code?: string;
-                        data?: {
+                        data: {
                             hasPrev?: boolean;
                             pageNo?: number;
                             totalPage?: number;
@@ -820,7 +820,7 @@ export interface paths {
                     schema: {
                         msg?: string;
                         code?: string;
-                        data?: {
+                        data: {
                             hasPrev?: boolean;
                             pageNo?: number;
                             totalPage?: number;
@@ -888,6 +888,8 @@ export interface paths {
                             baseStake: string;
                             /** 系数 */
                             coefficient: string;
+                            /** 总领取收益 */
+                            totalClaimed: string;
                         };
                     };
                 };
@@ -1244,11 +1246,9 @@ export interface paths {
     };
 }
 
-export interface operations {
-}
+export interface operations { }
 
-export interface external {
-}
+export interface external { }
 
 export type UserBotLoginPostParams = paths["/user/bot:login"]['post']['parameters']['body']['root'];
 export type UserBotLoginPost = paths["/user/bot:login"]['post']['responses'][200]['schema']['data'];

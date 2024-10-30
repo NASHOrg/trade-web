@@ -111,7 +111,7 @@ const { data } = useAsyncData(
       </div>
       <div class="flex flex-col text-center space-y-[16px]">
         <p id="number">
-          {{ Number(data?.reward ?? 0).toLocaleString() }}
+          {{ Number(data?.totalClaimed ?? 0).toLocaleString() }}
         </p>
         <p>{{ t('totalMined') }}</p>
       </div>
