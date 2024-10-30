@@ -27,6 +27,9 @@ export default defineAppConfig({
         solid: '!text-white ring-[1px] ring-inset ring-white/10',
       },
       color: {
+        white: {
+          solid: 'text-[#333] bg-white dark:bg-white dark:text-[#333]',
+        },
         sell: {
           solid: 'shadow-sm ring-1 ring-inset ring-sell-300 dark:ring-sell-700 text-white bg-sell-400 hover:bg-sell-500 disabled:bg-gray-900 aria-disabled:bg-white dark:disabled:bg-gray-900 dark:aria-disabled:bg-gray-900 focus-visible:ring-2 focus-visible:ring-sell-500 dark:focus-visible:ring-sell-400',
         },

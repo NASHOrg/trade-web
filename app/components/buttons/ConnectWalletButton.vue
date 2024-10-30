@@ -20,7 +20,7 @@ const { data: balance } = useAsyncData(
   <div>
     <div
       v-if="userStore.user || address"
-      class="flex border rounded-[8px] p-[8px] space-x-[8px] bg-transparent cursor-pointer"
+      class="flex border rounded-[8px] p-[4px] md:p-[8px] space-x-[8px] bg-transparent cursor-pointer"
       @click="() => open({ view: 'Account' })"
     >
       <NuxtPicture
@@ -29,7 +29,7 @@ const { data: balance } = useAsyncData(
         height="32"
         width="32"
       />
-      <div class="flex flex-col text-[18px] space-y-[4px]">
+      <div class="hidden md:flex flex-col text-[18px] space-y-[4px]">
         <p>{{ shortAddress(address) }}</p>
         <p class="text-[#999] text-[14px]">
           Balance: {{ balance }} BOOL

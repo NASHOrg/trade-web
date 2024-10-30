@@ -4,7 +4,7 @@ import { formatAmount } from '~/utils/helpers';
 
 const { t } = useI18n();
 const { $api } = useNuxtApp();
-const { user, token } = useUserStore();
+const { user, token } = storeToRefs(useUserStore());
 
 const props = defineProps<{ mode: 'team' | 'self' }>();
 
@@ -14,19 +14,33 @@ type PowerListItem = PowerList['items'][0];
 
 const rewardsHistoryList = ref<PowerListItem[]>([]);
 
-const { data: rewardsData, status: rewardsStatus } = useAsyncData(
+watch(props, () => {
+  if (pageNo.value !== 1) pageNo.value = 1;
+  rewardsHistoryList.value = [];
+});
+
+const { data: rewardsData, status: rewardsStatus, refresh } = useAsyncData(
   `rewards-history-${pageNo.value}`,
   () => {
-    if (!token) return Promise.resolve(undefined);
+    if (!token.value || !user.value) return Promise.resolve(undefined);
     return $api.powerList({
-      address: user!.userAddress,
+      address: user.value!.userAddress,
       // address: '0x56d9dfc0ce2e16a9cc9c0c04829df2de03f458a6',
       type: props.mode === 'team' ? '0' : '1',
       pageNumber: pageNo.value.toString(),
       pageSize: 20,
-    }, token);
+    }, token.value);
   },
-  { watch: [pageNo, props], immediate: true, server: false },
+  { watch: [pageNo, props, token, user] },
+);
+
+const { data: teamStat } = useAsyncData(
+  `power-single-team`,
+  () => {
+    if (!token.value || !user.value) return Promise.resolve(undefined);
+    return $api.powerSingle({ address: user.value!.userAddress, type: '0' }, token.value);
+  },
+  { watch: [token, user] },
 );
 
 watch(rewardsData, () => {
@@ -59,12 +73,14 @@ function claimBtnOnTap(item: PowerListItem) {
   claiming.value = item.businDate;
   $api
     .powerWithdrawPost({
-      address: user!.userAddress,
+      address: user.value!.userAddress,
       businDate: item.businDate,
       type: props.mode === 'team' ? 0 : 1,
-    }, token)
+    }, token.value)
     .then(() => {
-      pageNo.value = 1;
+      rewardsHistoryList.value = [];
+      if (pageNo.value !== 1) pageNo.value = 1;
+      else refresh();
     })
     .finally(() => {
       claiming.value = undefined;
@@ -88,7 +104,10 @@ function formatDate(dateString: string) {
       <h3 class="text-white text-[24px]">
         {{ t('rewardsHistory') }}
       </h3>
-      <div class="flex items-center space-x-[8px]">
+      <div
+        v-if="props.mode === 'team'"
+        class="flex items-center space-x-[8px]"
+      >
         <UTooltip
           :popper="{ placement: 'top', arrow: true }"
           :ui="{
@@ -118,7 +137,14 @@ function formatDate(dateString: string) {
               <li class="justify-between text-[#666] text-[16px]">
                 <div class="flex justify-between">
                   <span class="me-[16px]">{{ t('unlockRewardsCondition2') }}</span>
-                  <NuxtImg src="images/icon_xmark_circle_red.png" />
+                  <NuxtImg
+                    v-if="Number(teamStat?.teamStake) >= 10000"
+                    src="images/icon_checkmark_circle_green.png"
+                  />
+                  <NuxtImg
+                    v-else
+                    src="images/icon_xmark_circle_red.png"
+                  />
                 </div>
               </li>
             </ul>
@@ -137,13 +163,15 @@ function formatDate(dateString: string) {
     </div>
     <div class="mt-[28px] flex text-center text-[#999] text-[16px] mb-2">
       <p>{{ mode === 'team' ? t('rank') : t('agency') }}</p>
-      <p class="grow">
+      <p class="ms-[16px]">
         {{ t('time') }}
       </p>
-      <p class="grow">
+      <div class="grow" />
+      <p>
         {{ t('power') }}
       </p>
-      <p class="grow">
+      <div class="grow" />
+      <p>
         {{ t('reward') }}
       </p>
     </div>
@@ -164,15 +192,15 @@ function formatDate(dateString: string) {
           />
           <p>{{ formatDate(item.businDate.toString()) }}</p>
         </div>
-        <p>{{ formatAmount(item.power, 2) }} BTP</p>
+        <p>{{ formatAmount(item.power, 2) }} {{ props.mode === 'team' ? 'BTP' : 'BPP' }}</p>
         <div class="flex space-x-[8px] items-center">
           <p class="text-primary-500">
             + {{ formatAmount(item.reward, 2) }} BOOL
           </p>
           <UButton
-            color="black"
+            color="white"
             class="px-[8px] py-[6px] text-[16px] text-[#333] rounded-[4px]"
-            :disabled="item.claimed"
+            :disabled="item.claimed || Number(user?.oneselfStakingAmount ?? 0) < 500 || Number(teamStat?.teamStake) < 10000"
             :loading="claiming === item.businDate"
             @click="claimBtnOnTap(item)"
           >

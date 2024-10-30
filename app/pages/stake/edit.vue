@@ -167,9 +167,12 @@ async function onStake() {
           {{ t("annualYield") }}:
         </span>
         <div class="flex flex-row items-center">
-          <UPopover :popper="{ placement: 'top' }">
+          <UPopover
+            :popper="{ placement: 'top' }"
+            mode="hover"
+          >
             <UIcon
-              class="text-primary-500 mt-[6px]"
+              class="text-primary-500"
               name="ic:outline-info"
             />
             <template #panel>
@@ -258,7 +261,7 @@ async function onStake() {
     </div>
     <div class="mt-[83px] mb-[50px] grid grid-cols-2 justify-center space-x-[34px] mx-[60px]">
       <UButton
-        color="black"
+        color="white"
         variant="outline"
         block
         class="h-[44px]"

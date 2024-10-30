@@ -8,6 +8,9 @@ refreshUser();
 <template>
   <div class="flex flex-col items-center pt-[40px] w-full">
     <InviteStat />
-    <FriendsList class="mt-[28px]" />
+    <FriendsList
+      class="mt-[28px]"
+      @collected="refreshUser"
+    />
   </div>
 </template>

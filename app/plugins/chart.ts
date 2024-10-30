@@ -6,5 +6,5 @@ export default defineNuxtPlugin(() => {
   Chart.defaults.font.size = 16;
   Chart.defaults.font.lineHeight = 1;
   Chart.defaults.color = 'white';
-  Chart.defaults.plugins.tooltip.enabled = false;
+  // Chart.defaults.plugins.tooltip.enabled = false;
 });

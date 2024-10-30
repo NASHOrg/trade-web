@@ -4,11 +4,9 @@ import { formatAmount } from '~/utils/helpers';
 
 const { $api } = useNuxtApp();
 const { t } = useI18n();
-const { user, token } = useUserStore();
+const { user, token } = storeToRefs(useUserStore());
 
-const userStore = useUserStore();
-
-const userName = computed(() => shortAddress(userStore.user?.userAddress));
+const userName = computed(() => shortAddress(user.value?.userAddress));
 
 // const badgeLevel = 4;
 // const modal = useModal();
@@ -24,9 +22,10 @@ const userName = computed(() => shortAddress(userStore.user?.userAddress));
 const { data } = useAsyncData(
   'power-single-self',
   () => {
-    if (!token) return Promise.resolve(undefined);
-    return $api.powerSingle({ address: user!.userAddress, type: '1' }, token);
+    if (!token.value || !user.value) return Promise.resolve(undefined);
+    return $api.powerSingle({ address: user.value?.userAddress, type: '1' }, token.value);
   },
+  { watch: [token, user] },
 );
 </script>
 
@@ -52,7 +51,7 @@ const { data } = useAsyncData(
         </h1>
         <!--        <UButton -->
         <!--          size="xs" -->
-        <!--          color="black" -->
+        <!--          color="white" -->
         <!--          class="rounded-[4px]" -->
         <!--          @click="onClaim" -->
         <!--        > -->
@@ -74,7 +73,7 @@ const { data } = useAsyncData(
       <!--          width="108" -->
       <!--        /> -->
       <!--        <UButton -->
-      <!--          color="black" -->
+      <!--          color="white" -->
       <!--          class="absolute bottom-[8px] end-[19px] px-[16px] py-[8px] text-[14px]" -->
       <!--          @click="onCheckRules" -->
       <!--        > -->
@@ -84,7 +83,7 @@ const { data } = useAsyncData(
     </div>
     <div class="flex justify-between items-center">
       <p class="text-[16px] text-[#999]">
-        {{ t('airdropClaimed') }}
+        {{ t('totalMined') }}
       </p>
       <p class="text-[24px]">
         + {{ Number(data?.reward ?? 0).toLocaleString() }}

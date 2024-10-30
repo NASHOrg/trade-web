@@ -279,6 +279,52 @@ export interface paths {
             };
         };
     };
+    "/bot/inviter-rebates": {
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * 页码
+                     * 从 1 开始
+                     * 不传默认为第一页
+                     */
+                    pageNo: number;
+                    /**
+                     * 每页个数
+                     * 不传默认为 20
+                     * 最大为 1000
+                     */
+                    pageSize: number;
+                    /** 邀请类型。LEVEL_1、LEVEL_2 */
+                    type: string;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        code: string;
+                        msg: string;
+                        data: {
+                            items: {
+                                inviteeAddress: string;
+                                totalRebateAmount: string;
+                                username: string;
+                                verify: boolean;
+                            }[];
+                            pageNo: number;
+                            pageSize: number;
+                            totalPage: number;
+                            totalCount: string;
+                            hasPrev: boolean;
+                            hasNext: boolean;
+                        };
+                        fail: boolean;
+                    };
+                };
+            };
+        };
+    };
     "/user/inviter-rebates": {
         get: {
             parameters: {
@@ -738,7 +784,7 @@ export interface paths {
                     schema: {
                         msg?: string;
                         code?: string;
-                        data?: {
+                        data: {
                             hasPrev?: boolean;
                             pageNo?: number;
                             totalPage?: number;
@@ -774,7 +820,7 @@ export interface paths {
                     schema: {
                         msg?: string;
                         code?: string;
-                        data?: {
+                        data: {
                             hasPrev?: boolean;
                             pageNo?: number;
                             totalPage?: number;
@@ -826,7 +872,7 @@ export interface paths {
                             teamStake: string;
                             reward: string;
                             businDateStr: string;
-                            level: string;
+                            level: number;
                             /** 算力分布图 */
                             powerRange: {
                                 /** 低值 */
@@ -838,6 +884,12 @@ export interface paths {
                             }[];
                             /** 个人在分布图位置 */
                             powerIndex: number;
+                            /** 公式中基础算力 */
+                            baseStake: string;
+                            /** 系数 */
+                            coefficient: string;
+                            /** 总领取收益 */
+                            totalClaimed: string;
                         };
                     };
                 };
@@ -1214,6 +1266,8 @@ export type UserInvitationRelationsGetParams = paths["/user/invitation-relations
 export type UserInvitationRelations = paths["/user/invitation-relations"]['get']['responses'][200]['schema']['data'];
 export type UserInvitationRelationGetParams = paths["/user/invitation-relation"]['get']['parameters']['query'];
 export type UserInvitationRelation = paths["/user/invitation-relation"]['get']['responses'][200]['schema']['data'];
+export type BotInviterRebatesGetParams = paths["/bot/inviter-rebates"]['get']['parameters']['query'];
+export type BotInviterRebates = paths["/bot/inviter-rebates"]['get']['responses'][200]['schema']['data'];
 export type UserInviterRebatesGetParams = paths["/user/inviter-rebates"]['get']['parameters']['query'];
 export type UserInviterRebates = paths["/user/inviter-rebates"]['get']['responses'][200]['schema']['data'];
 export type UserInviteStakeRebatesGetParams = paths["/user/invite-stake-rebates"]['get']['parameters']['query'];

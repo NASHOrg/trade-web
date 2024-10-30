@@ -3,19 +3,19 @@ import { Bar } from 'vue-chartjs';
 import type { ChartData, ChartOptions } from 'chart.js';
 
 const { $api } = useNuxtApp();
-const { token } = useUserStore();
+const { token, user } = storeToRefs(useUserStore());
 
 const { data: powerData, status: powerDataStatus } = useAsyncData(
   `power-single`,
   () => {
-    if (!token) return Promise.resolve(undefined);
+    if (!token.value || !user.value) return Promise.resolve(undefined);
     return $api.powerSingle({
-      // address: user!.userAddress,
-      address: '0x56d9dfc0ce2e16a9cc9c0c04829df2de03f458a6',
+      address: user.value!.userAddress,
+      // address: '0x56d9dfc0ce2e16a9cc9c0c04829df2de03f458a6',
       type: '1',
-    }, token);
+    }, token.value);
   },
-  { immediate: true, server: false },
+  { watch: [token, user] },
 );
 
 const chartData = computed<ChartData<'bar', (number | [number, number] | null)[]>>(() => ({
@@ -71,7 +71,6 @@ const chartOptions: ChartOptions<'bar'> = {
       ticks: {
         padding: 10,
         stepSize: 1000,
-        format: { style: 'currency', currency: 'USD' },
         callback: value => value === 0 ? '0' : `${Number(value) / 1000}K`,
       },
       grid: { display: true, color: '#2E2E2E', lineWidth: 1 },
@@ -90,6 +89,7 @@ const chartOptions: ChartOptions<'bar'> = {
       class="w-full h-[212px]"
     />
     <Bar
+      v-else
       :data="chartData"
       :options="chartOptions"
     />

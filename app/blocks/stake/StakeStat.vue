@@ -4,6 +4,7 @@ import { formatEther } from 'ethers';
 import { toast } from 'vue-sonner';
 import type { AccountInfo } from '~/types/common';
 import { network, stakeApi } from '~/utils/contracts';
+import { formatAmount } from '#imports';
 
 const { $botApi } = useNuxtApp();
 const { t } = useI18n();

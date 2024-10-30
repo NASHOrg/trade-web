@@ -3,6 +3,7 @@ import { formatEther } from 'ethers';
 import { formatAmount } from '~/utils/helpers';
 import type { AccountInfo, DHCListItem } from '~/types/common';
 import { NODE_CAPACITY } from '~/utils/contracts';
+import { shortAddress } from '#imports';
 
 const router = useRouter();
 const { t } = useI18n();
@@ -94,7 +95,7 @@ function onStake(item: DHCListItem) {
         />
         <div class="ms-[8px] flex flex-col items-start font-normal">
           <p class="text-base leading-4">
-            {{ shortAddress(item.deviceId ?? item.deviceID, 6) }}
+            {{ shortAddress(item.deviceID, 6) }}
           </p>
           <p class="mt-1.5 text-sm leading-[14px] text-[#999]">
             <span v-if="type === 'mine' || stakedFilter">

@@ -3,6 +3,8 @@ import BigNumber from 'bignumber.js';
 import { shortAddress, formatAmount } from '~/utils/helpers';
 import type { UserInviterRebates } from '~/types/swagger';
 
+const emit = defineEmits<{ collected: [] }>();
+
 const { t } = useI18n();
 const { $api } = useNuxtApp();
 
@@ -66,6 +68,7 @@ async function onCollect() {
       else {
         refresh();
       }
+      emit('collected');
     })
     .finally(() => {
       collecting.value = false;
@@ -144,7 +147,7 @@ async function onCollect() {
           BOOL
         </p>
         <UButton
-          color="black"
+          color="white"
           class="px-[8px] py-[6px] text-[16px] rounded-[4px]"
           :disabled="BigNumber((selectedTierTab === 'LEVEL_1'
             ? user?.rebateBalanceMap?.INVITER_L1

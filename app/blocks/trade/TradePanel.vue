@@ -58,7 +58,7 @@ const { data } = useNuxtData('order-book');
           </span>
         </div>
         <!-- <UButton -->
-        <!--   color="black" -->
+        <!--   color="white" -->
         <!--   class="h-[44px]" -->
         <!--   :ui="{ rounded: 'rounded-[8px]' }" -->
         <!-- > -->

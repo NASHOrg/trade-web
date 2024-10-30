@@ -1,31 +1,31 @@
 <script setup lang="ts">
-import BigNumber from 'bignumber.js';
 import { CheckRulesModal } from '#components';
+import { formatAmount } from '~/utils/helpers';
 
 const { $api } = useNuxtApp();
 const { t } = useI18n();
 const { token, user } = storeToRefs(useUserStore());
 
 const userName = computed(() => shortAddress(user.value?.userAddress));
-const powerMultiplier = computed<number>(() => {
-  switch (data.value?.level) {
-    case '1':
-      return 1;
-    case '2':
-      return 1.1;
-    case '3':
-      return 1.2;
-    case '4':
-      return 1.3;
-    case '5':
-      return 1.4;
-    case '6':
-      return 1.5;
-    case '0':
-    default:
-      return 0;
-  }
-});
+// const powerMultiplier = computed<number>(() => {
+//   switch (data.value?.level) {
+//     case 2:
+//       return 1;
+//     case 3:
+//       return 1.1;
+//     case 4:
+//       return 1.2;
+//     case 5:
+//       return 1.3;
+//     case 6:
+//       return 1.4;
+//     case 7:
+//       return 1.5;
+//     case 1:
+//     default:
+//       return 0;
+//   }
+// });
 
 const modal = useModal();
 
@@ -36,9 +36,10 @@ function onCheckRules() {
 const { data } = useAsyncData(
   `power-single-team`,
   () => {
-    if (!token.value) return Promise.resolve(undefined);
-    return $api.powerSingle({ address: user.value.userAddress, type: '0' }, token.value);
+    if (!token.value || !user.value) return Promise.resolve(undefined);
+    return $api.powerSingle({ address: user.value!.userAddress, type: '0' }, token.value);
   },
+  { watch: [token, user] },
 );
 </script>
 
@@ -59,13 +60,13 @@ const { data } = useAsyncData(
         {{ t('userNamesTeam', { userName }) }}
       </div>
       <h1 class="mt-[16px] text-[54px]">
-        {{ (BigNumber(data?.teamStake ?? 0).dp(6, 1).toNumber() * powerMultiplier).toLocaleString() }} BTP
+        {{ formatAmount(data?.power ?? '0') }} BTP
       </h1>
       <p
-        v-if="powerMultiplier !== 0"
+        v-if="Number(data?.coefficient) !== 0"
         class="mt-[8px] mb-[30px] text-[16px] text-[#666]"
       >
-        = {{ Number(data?.power ?? 0).toLocaleString() }} * {{ powerMultiplier }} Staking BOOL
+        = {{ Number(data?.baseStake ?? 0).toLocaleString() }} * {{ data?.coefficient }} Staking BOOL
       </p>
       <div
         v-else
@@ -80,13 +81,13 @@ const { data } = useAsyncData(
         />
         <NuxtPicture
           class="absolute -top-[57px]"
-          :src="`images/badge_rank_${data?.level ?? 0}.png`"
+          :src="`images/badge_rank_${data?.level ?? 1}.png`"
           densities="1x 2x"
           height="148"
           width="196"
         />
         <UButton
-          color="black"
+          color="white"
           class="absolute bottom-[8px] right-[19px] px-[16px] py-[8px] text-[14px]"
           :ui="{ rounded: 'rounded-full' }"
           @click="onCheckRules"
@@ -110,7 +111,7 @@ const { data } = useAsyncData(
       </div>
       <div class="flex flex-col text-center space-y-[16px]">
         <p id="number">
-          {{ Number(data?.reward ?? 0).toLocaleString() }}
+          {{ Number(data?.totalClaimed ?? 0).toLocaleString() }}
         </p>
         <p>{{ t('totalMined') }}</p>
       </div>

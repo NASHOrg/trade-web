@@ -37,6 +37,10 @@ export class Yapi extends Api {
     return this.ft.path('/user/invitation-relation').method('get').create()!;
   }
 
+  get botInviterRebates() {
+    return this.ft.path('/bot/inviter-rebates').method('get').create()!;
+  }
+
   get userInviterRebates() {
     return this.ft.path('/user/inviter-rebates').method('get').create()!;
   }

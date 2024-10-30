@@ -7,23 +7,23 @@ const emit = defineEmits(['switch']);
 
 const { t } = useI18n();
 const { $api } = useNuxtApp();
-const { user, token } = useUserStore();
+const { user, token } = storeToRefs(useUserStore());
 
 const rank = computed(() => {
   switch (data.value?.level) {
-    case 1:
-      return 'bronze';
     case 2:
-      return 'silver';
+      return 'bronze';
     case 3:
-      return 'gold';
+      return 'silver';
     case 4:
-      return 'platinum';
+      return 'gold';
     case 5:
-      return 'diamond';
+      return 'platinum';
     case 6:
+      return 'diamond';
+    case 7:
       return 'master';
-    case 0:
+    case 1:
     default:
       return 'iron';
   }
@@ -74,13 +74,13 @@ const stakeAmount = computed(() => Number(data.value?.stake ?? 0));
 const { data } = useAsyncData(
   `user-level-${props.mode}`,
   () => {
-    if (!user) return Promise.resolve(undefined);
+    if (!user.value || !token.value) return Promise.resolve(undefined);
     return $api.userUserLevel(
-      { address: user!.userAddress, type: props.mode === 'team' ? '0' : '1' },
-      token,
+      { address: user.value!.userAddress, type: props.mode === 'team' ? '0' : '1' },
+      token.value,
     );
   },
-  { watch: [props], immediate: true },
+  { watch: [props, user, token] },
 );
 </script>
 
@@ -124,12 +124,12 @@ const { data } = useAsyncData(
           class="text-[14px]"
         >
           <!--          {{ nextRankMinimumStakeRequireAmount - stakeAmount }} BOOL -->
-          {{ data?.upgradeAmount ?? 0 }} BOOL
+          {{ formatAmount(data?.upgradeAmount?.toString() ?? '0', 2) ?? 0 }} BOOL
         </p>
         <UProgress
           v-if="data?.level !== 7"
           :value="stakeAmount"
-          :max="Number(data?.upgradeAmount ?? 0)"
+          :max="Number(data?.upgradeAmount ?? 0) + stakeAmount"
           size="xs"
           class="w-[100px]"
         />
