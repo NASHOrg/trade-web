@@ -3,10 +3,11 @@ const tradeStore = useTradeStore();
 const { currantToken } = storeToRefs(tradeStore);
 
 const { $api } = useNuxtApp();
+const { counter } = useInterval(10000, { controls: true });
 
 const queryParams = ref({
   pageNo: 1,
-  pageSize: 10,
+  pageSize: 100,
 });
 const { data } = useAsyncData(
   `trade-orders`,
@@ -17,7 +18,7 @@ const { data } = useAsyncData(
     });
   },
   {
-    watch: [queryParams, currantToken],
+    watch: [queryParams, currantToken, counter],
     immediate: true,
     deep: true,
     server: false,
@@ -42,39 +43,6 @@ const columns = computed(() => {
     },
   ];
 });
-
-// const data = [
-//   {
-//     price: "0.45468",
-//     qtl: "1000",
-//     time: "12:00:00",
-//     type: "sell",
-//   },
-//   {
-//     price: "0.45468",
-//     qtl: "1000",
-//     time: "12:00:00",
-//     type: "buy",
-//   },
-//   {
-//     price: "0.45468",
-//     qtl: "1000",
-//     time: "12:00:00",
-//     type: "sell",
-//   },
-//   {
-//     price: "0.45468",
-//     qtl: "1000",
-//     time: "12:00:00",
-//     type: "buy",
-//   },
-//   {
-//     price: "0.45468",
-//     qtl: "1000",
-//     time: "12:00:00",
-//     type: "sell",
-//   },
-// ];
 </script>
 
 <template>
@@ -98,8 +66,8 @@ const columns = computed(() => {
         <span :class="item.type === 0 ? 'text-sell' : 'text-buy'">
           {{ item.price }}
         </span>
-        <span class="text-center">{{ item.price }}</span>
-        <span class="text-end">{{ item.tradeTime }}</span>
+        <span class="text-center">{{ item.qty }}</span>
+        <span class="text-end">{{ formatDate(Number(item.tradeTime), 'HH:mm:ss') }}</span>
       </div>
     </div>
   </div>

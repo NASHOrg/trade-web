@@ -606,7 +606,7 @@ export interface paths {
                                 price?: string;
                                 qty: string;
                                 tradeTime: string;
-                                type: string;
+                                type: number;
                             }[];
                         };
                     };

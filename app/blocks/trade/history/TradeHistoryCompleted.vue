@@ -1,27 +1,34 @@
 <script setup lang="ts">
 const { $api } = useNuxtApp();
-
-const columns = [
-  {
-    key: 'id',
-    label: 'ID',
-  },
-  {
-    key: 'name',
-    label: 'User name',
-  },
-  {
-    key: 'title',
-    label: 'Job position',
-  },
-  {
-    key: 'email',
-    label: 'Email',
-  },
-  {
-    key: 'role',
-  },
-];
+const { t } = useI18n();
+const columns = computed(() => {
+  return [
+    // {
+    //   key: 'id',
+    //   label: 'ID',
+    // },
+    {
+      key: 'pair',
+      label: t('pair'),
+    },
+    {
+      key: 'type',
+      label: t('side'),
+    },
+    {
+      key: 'price',
+      label: t('price'),
+    },
+    {
+      key: 'qty',
+      label: t('totalQty'),
+    },
+    {
+      key: 'time',
+      label: t('time'),
+    },
+  ];
+});
 const { address } = useWallet();
 const queryParams = ref({
   pageNo: 1,
@@ -69,7 +76,17 @@ const { data, status } = useAsyncData(
       class="w-full"
       :columns="columns"
       :rows="data?.items ?? []"
-    />
+    >
+      <template #type-data="{ row }">
+        <div>
+          <span v-if="row.type === 0">{{ t("sell") }}</span>
+          <span v-else>{{ t("buy") }}</span>
+        </div>
+      </template>
+      <template #time-data="{ row }">
+        {{ formatDate(Number(row.tradeTime)) }}
+      </template>
+    </UTable>
     <TablePagination
       v-if="data && data.totalPage > 0"
       class="mt-[30px]"

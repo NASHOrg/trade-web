@@ -156,5 +156,6 @@
   "verifyTip": "Verify wallet ownership to access xbit.",
   "referalCode": "Referal Code",
   "changeWallet": "Change Wallet",
-  "signIn": "Sign In"
+  "signIn": "Sign In",
+  "price": "Price"
 }

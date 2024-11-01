@@ -52,7 +52,7 @@ const onSelectPrice = (price: string) => {
       </div>
     </div>
     <template v-if="data">
-      <div class="grow mt-3.5 flex flex-col justify-end">
+      <div class="grow mt-3.5 flex flex-col-reverse">
         <div
           v-for="item in data.orderSellBList"
           :key="JSON.stringify(item)"
@@ -74,7 +74,7 @@ const onSelectPrice = (price: string) => {
         </span>
       </div>
 
-      <div class="grow">
+      <div class="grow flex justify-end flex-col-reverse">
         <div
           v-for="item in data.orderBuyBList"
           :key="JSON.stringify(item)"
