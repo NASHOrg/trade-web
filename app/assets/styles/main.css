@@ -1,6 +1,6 @@
 html {
-  background-color: black;
-  font-family: "Ark Pixel", serif;
+  background: #121212;
+  /* font-family: "Ark Pixel", serif; */
   line-height: 1;
   color: white;
 }
@@ -38,7 +38,14 @@ h2 {
 
 .scrollbar {
   overflow: auto;
-  &::-webkit-scrollbar {
-    display: none;
-  }
+}
+.scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+.scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 10px; /* Optional for rounded thumb */
+  @apply bg-gray-500/30;
 }

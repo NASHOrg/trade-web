@@ -1,33 +1,31 @@
-import type { Token } from '~/types/common';
-
 export const useTradeStore = defineStore('trade-store', () => {
   const { currentRoute } = useRouter();
   const { usdt, bool } = useNetworkConfig();
 
-  const tokenOptions: {
-    value: string;
-    label: string;
-    tokens: [Token, Token];
-  }[] = [
-    {
-      value: 'BOOL/USDT',
-      label: 'BOOL/USDT',
-      tokens: [bool, usdt],
-    },
-    // {
-    //   value: "BOOL/USDC",
-    //   label: "BOOL/USDC",
-    // },
-    // {
-    //   value: "BOOL/BTU",
-    //   label: "BOOL/BTU",
-    // },
-  ];
+  const tokenOptions = computed(() => {
+    return [
+      {
+        value: 'bool-usdt',
+        label: 'BOOL / USDT',
+        type: 0,
+        price: '0.01',
+        tokens: [bool, usdt],
+      },
+      // {
+      //   value: "BOOL/USDC",
+      //   label: "BOOL/USDC",
+      //   type: 0,
+      //   price: "0.01",
+      //   tokens: [bool, usdt],
+      // },
+    ];
+  });
 
   const currantToken = computed(() => {
-    const queryToken = currentRoute.value.query?.token as string | undefined;
+    const value = currentRoute.value.params?.value as string | undefined;
     return (
-      tokenOptions.find(item => item.value === queryToken) ?? tokenOptions[0]!
+      tokenOptions.value.find(item => item.value === value)
+      ?? tokenOptions.value[0]
     );
   });
 

@@ -5,14 +5,14 @@ import { tradeApi } from '~/utils/contracts';
 // const tradeStore = useTradeStore();
 
 // const { currantToken } = storeToRefs(tradeStore);
-const { address, chainId, switchNetwork } = useWallet();
+const { address, chainId, switchNetwork, open } = useWallet();
 const { network } = useNetworkConfig();
 const { t } = useI18n();
 const { $api } = useNuxtApp();
 
 const isCanceling = ref<string | undefined>(undefined);
 
-const queryparams = ref({
+const queryParams = ref({
   pageNo: 1,
   pageSize: 10,
 });
@@ -33,13 +33,14 @@ const { data, status } = useAsyncData(
     // });
     return $api.blockchainUserOrders({
       address: address.value,
-      ...queryparams.value,
+      ...queryParams.value,
     });
   },
   {
-    watch: [address, () => queryparams.value.pageNo],
+    watch: [address, () => queryParams.value.pageNo],
     immediate: true,
     server: false,
+    deep: true,
   },
 );
 
@@ -106,9 +107,22 @@ async function onCancelOrder(id: string, type: number) {
 </script>
 
 <template>
-  <div class="w-full flex flex-col items-center">
+  <div class="w-full max-w-[1663px] mx-auto flex flex-col items-center">
     <div
-      v-if="!data && status === 'pending'"
+      v-if="!address"
+      class="mt-[100px] flex items-center justify-center text-sm text-primary font-medium text-center"
+    >
+      <UButton
+        block
+        color="gray"
+        class="h-[40px] px-10 rounded-full border-0 ring-0 text-sm font-normal bg-[#272727]"
+        @click="open"
+      >
+        <span class="text-primary"> Connect Wallet</span>
+      </UButton>
+    </div>
+    <div
+      v-else-if="!data && status === 'pending'"
       class="my-[78px] w-[68px] h-[68px] flex flex-col justify-center items-center"
     >
       <UIcon
@@ -116,19 +130,26 @@ async function onCancelOrder(id: string, type: number) {
         name="quill:loading-spin"
       />
     </div>
-    <NuxtPicture
+    <div
       v-else-if="data && Number(data.totalCount) === 0"
-      class="my-[50px] flex justify-center"
-      src="images/empty_box.png"
-      densities="1x 2x"
-      height="68"
-      width="80"
-    />
+      class="my-[50px]"
+    >
+      <NuxtPicture
+        class="mb-4 flex justify-center"
+        src="images/empty_box.png"
+        densities="1x 2x"
+        height="68"
+        width="80"
+      />
+      <div class="text-sm font-medium text-gray-500">
+        No transactions
+      </div>
+    </div>
     <UTable
       v-else
-      class="w-full"
+      class="w-full mt-2.5"
       :columns="columns"
-      :rows="data!.items"
+      :rows="data?.items ?? []"
     >
       <template #action-data="{ row }">
         <UButton
@@ -144,22 +165,24 @@ async function onCancelOrder(id: string, type: number) {
       </template>
       <template #type-data="{ row }">
         <div>
-          <span v-if="row.type === 0">{{ t("sell") }}</span>
-          <span v-else>{{ t("buy") }}</span>
+          <span
+            v-if="row.type === 0"
+            class="text-sell"
+          >{{ t("sell") }}</span>
+          <span
+            v-else
+            class="text-buy"
+          >{{ t("buy") }}</span>
         </div>
       </template>
     </UTable>
+
     <TablePagination
-      v-if="data && data.totalPage > 0"
+      v-if="data && data.totalPage > 1"
+      v-model:current="queryParams.pageNo"
       class="mt-[30px]"
-      :total="data.totalPage"
-      :current="queryparams.pageNo"
+      :total="data?.totalPage ?? 1"
       :disabled="status === 'pending'"
-      @change="
-        (value) => {
-          queryparams.pageNo = value;
-        }
-      "
     />
   </div>
 </template>

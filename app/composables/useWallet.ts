@@ -76,7 +76,7 @@ export default function useWallet() {
       if (oldAddress) tokens[oldAddress] = undefined;
       localStorage.setItem('tokens', JSON.stringify(tokens));
       if (useRoute().path !== '/') {
-        navigateTo('/');
+        // navigateTo('/');
       }
       store.user = undefined;
       return;

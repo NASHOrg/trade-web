@@ -9,7 +9,7 @@ export const useUserStore = defineStore('user-store', () => {
   const currentNetwork = computed<(typeof networks)[0]>(() => {
     const { currentRoute } = router;
     const network
-            = currentRoute.value.query.network ?? nuxtApp.$config.public.network;
+      = currentRoute.value.query.network ?? nuxtApp.$config.public.network;
 
     return networks.find(item => item.network === network)!;
   });
@@ -29,23 +29,23 @@ export const useUserStore = defineStore('user-store', () => {
   const user = ref<UserUser | undefined>(undefined);
   async function refreshUser() {
     if (!token.value) return;
-    user.value = await nuxtApp.$api.userUser({}, token.value);
+    user.value = await nuxtApp.$api.userUser({ tgId: '' }, token.value);
     if (useRoute().path === '/') {
-      navigateTo('/dashboard');
+      navigateTo('/trade');
     }
   }
 
   function logout() {
-    const { address, disconnect } = useWallet();
-    const tokens = JSON.parse(localStorage.getItem('tokens') ?? '{}');
-    if (address.value) {
-      tokens[address.value] = undefined;
-      localStorage.setItem('tokens', JSON.stringify(tokens));
-      disconnect();
-    }
-    token.value = undefined;
-    user.value = undefined;
-    navigateTo('/');
+    // const { address, disconnect } = useWallet();
+    // const tokens = JSON.parse(localStorage.getItem("tokens") ?? "{}");
+    // if (address.value) {
+    //   tokens[address.value] = undefined;
+    //   localStorage.setItem("tokens", JSON.stringify(tokens));
+    //   disconnect();
+    // }
+    // token.value = undefined;
+    // user.value = undefined;
+    // navigateTo("/");
   }
 
   return {
