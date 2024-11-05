@@ -1,7 +1,7 @@
 {
   "hello": "Hello, {name}!",
   "language": "Language",
-  "connect": "Connect wallet",
+  "connect": "Connect Wallet",
   "copied": "Copied",
   "inviteCode": "Invite Code",
   "dashboard": "Dashboard",
@@ -157,5 +157,7 @@
   "referalCode": "Referal Code",
   "changeWallet": "Change Wallet",
   "signIn": "Sign In",
-  "price": "Price"
+  "price": "Price",
+  "market": "Market",
+  "avgPrice": "Avg Price"
 }

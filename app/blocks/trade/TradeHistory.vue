@@ -15,12 +15,14 @@ const selected = ref('orders');
 </script>
 
 <template>
-  <div class="card w-full p-[20px] pt-[30px]">
-    <div class="flex justify-start space-x-[30px]">
+  <div class="w-full h-full flex flex-col">
+    <div
+      class="flex px-4 justify-start space-x-[30px] border-b-[1px] border-[#2E2E2E] pt-1"
+    >
       <div
         v-for="item in tabs"
         :key="item.value"
-        class="relative text-[#999] hover:text-white text-[24px] pb-[10px] cursor-pointer"
+        class="py-4 relative text-[#999] hover:text-white text-sm leading-4 font-normal cursor-pointer"
         :class="{
           'text-white selected after:bg-white': selected === item.value,
         }"
@@ -29,8 +31,10 @@ const selected = ref('orders');
         {{ item.label }}
       </div>
     </div>
-    <TradeHistoryActive v-if="selected === 'orders'" />
-    <TradeHistoryCompleted v-if="selected === 'history'" />
+    <div class="w-full grow">
+      <TradeHistoryActive v-if="selected === 'orders'" />
+      <TradeHistoryCompleted v-if="selected === 'history'" />
+    </div>
   </div>
 </template>
 

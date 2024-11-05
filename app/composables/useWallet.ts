@@ -60,7 +60,6 @@ export default function useWallet() {
   const store = useUserStore();
 
   watch(address, (newAddress, oldAddress) => {
-    console.log({ newAddress, oldAddress });
     if (import.meta.server) {
       return;
     }
@@ -75,9 +74,9 @@ export default function useWallet() {
       const tokens = JSON.parse(localStorage.getItem('tokens') ?? '{}');
       if (oldAddress) tokens[oldAddress] = undefined;
       localStorage.setItem('tokens', JSON.stringify(tokens));
-      if (useRoute().path !== '/') {
-        navigateTo('/');
-      }
+      // if (useRoute().path !== '/') {
+      //   navigateTo('/');
+      // }
       store.user = undefined;
       return;
     }
@@ -85,7 +84,7 @@ export default function useWallet() {
       signing = newAddress;
       const tokens = JSON.parse(localStorage.getItem('tokens') ?? '{}');
       const _token = tokens[newAddress];
-      console.log({ token: _token });
+
       const modal = useModal();
       if (!_token) {
         modal.open(SignInModal);

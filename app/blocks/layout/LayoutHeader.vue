@@ -1,51 +1,55 @@
 <script setup lang="ts">
-const { t } = useI18n();
-const router = useRouter();
+// const { t } = useI18n();
+// const router = useRouter();
 
-const navigations = [
-  {
-    id: 'dashboard',
-    href: '/dashboard',
-    label: t('dashboard'),
-  },
-  {
-    id: 'stake',
-    href: '/stake',
-    label: t('stake'),
-  },
-  {
-    id: 'trade',
-    href: '/trade',
-    label: t('trade'),
-  },
-  {
-    id: 'invite',
-    href: '/invite',
-    label: t('invite'),
-  },
-  {
-    id: 'account',
-    href: '/account',
-    label: t('account'),
-  },
-];
+// const navigators = computed<{ id: string; href: string; label: string }[]>(
+//   () => {
+//     return [
+//       // {
+//       //   id: 'dashboard',
+//       //   href: '/dashboard',
+//       //   label: t('dashboard'),
+//       // },
+//       // {
+//       //   id: 'stake',
+//       //   href: '/stake',
+//       //   label: t('stake'),
+//       // },
+//       // {
+//       //   id: 'trade',
+//       //   href: '/trade',
+//       //   label: t('trade'),
+//       // },
+//       // {
+//       //   id: 'invite',
+//       //   href: '/invite',
+//       //   label: t('invite'),
+//       // },
+//       // {
+//       //   id: 'account',
+//       //   href: '/account',
+//       //   label: t('account'),
+//       // },
+//     ];
+//   },
+// );
 
-const showMenu = ref(false);
-const isLocked = useScrollLock(document);
-function toggleMenu() {
-  showMenu.value = !showMenu.value;
-  isLocked.value = showMenu.value;
-}
+// const showMenu = ref(false);
+// const isLocked = useScrollLock(document);
+// function toggleMenu() {
+//   showMenu.value = !showMenu.value;
+//   isLocked.value = showMenu.value;
+// }
 </script>
 
 <template>
-  <div class="sticky top-0 flex justify-center items-center w-full bg-[#0E0E0E]/10 h-[80px] z-10 backdrop-blur">
-    <IconBool
-      class="absolute left-[26px]"
-    />
-    <div class="hidden lg:flex space-x-[40px] items-center text-[20px]">
+  <div
+    class="w-full h-[46px] py-2.5 px-5 fixed left-0 top-0 flex justify-between items-center z-10 backdrop-blur "
+  >
+    <IconXbit />
+    <!-- <div class="hidden lg:flex space-x-[40px] items-center text-[20px]">
       <ULink
-        v-for="item in navigations"
+        v-for="item in navigators"
         :key="item.id"
         :to="item.href"
         active-class="text-primary"
@@ -53,8 +57,8 @@ function toggleMenu() {
       >
         {{ item.label }}
       </ULink>
-    </div>
-    <div class="absolute right-[26px] flex items-center space-x-[16px]">
+    </div> -->
+    <div class="flex items-center space-x-[16px]">
       <!--      <ULink -->
       <!--        to="/language" -->
       <!--        class="text-white hover:text-primary" -->
@@ -62,7 +66,7 @@ function toggleMenu() {
       <!--        <IconLanguage /> -->
       <!--      </ULink> -->
       <ConnectWalletButton />
-      <div
+      <!-- <div
         class="w-5 h-5 block lg:hidden relative text-white mx-2 cursor-pointer"
         @click="toggleMenu"
       >
@@ -85,21 +89,26 @@ function toggleMenu() {
             :class="{ '-rotate-45': showMenu, ' translate-y-1.5': !showMenu }"
           />
         </div>
-      </div>
+      </div> -->
     </div>
-    <div
+    <!-- <div
       v-if="showMenu"
       class="transition-opacity px-[20px] text-[24px] fixed top-[80px] w-full min-h-screen bg-black z-50 flex flex-col pt-[60px] font-bold items-start space-y-5"
     >
       <ULink
-        v-for="item in navigations"
+        v-for="item in navigators"
         :key="item.id"
         :to="item.href"
         active-class="text-primary"
-        @click.prevent="() => { toggleMenu(); router.push(item.href) }"
+        @click.prevent="
+          () => {
+            toggleMenu();
+            router.push(item.href);
+          }
+        "
       >
         {{ item.label }}
       </ULink>
-    </div>
+    </div> -->
   </div>
 </template>

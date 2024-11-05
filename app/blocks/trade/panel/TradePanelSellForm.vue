@@ -4,20 +4,12 @@ import { toast } from 'vue-sonner';
 import { parseEther } from 'ethers';
 import { network, tradeApi } from '~/utils/contracts';
 
-const modes = [
-  {
-    value: 'limit',
-    label: 'Limit',
-  },
-  {
-    value: 'market',
-    label: 'Market',
-  },
-];
+const props = defineProps<{
+  mode: 'limit' | 'market';
+}>();
 
 const tradeStore = useTradeStore();
 const balance = ref<string | undefined>();
-const selectedMode = ref('limit');
 
 const { address, open, chainId, switchNetwork } = useWallet();
 const { t } = useI18n();
@@ -34,12 +26,12 @@ const state = reactive<{
 });
 
 const tokenSymbolList = computed(() => {
-  return currantToken.value.value.split('/');
+  return currantToken.value?.value.toUpperCase().split('-') ?? [];
 });
 
 const amountPercent = computed({
   get() {
-    if (!balance.value) {
+    if (!balance.value || !state.quantity) {
       return 0;
     }
     return BN(state.quantity ?? 0)
@@ -50,7 +42,6 @@ const amountPercent = computed({
   set(value) {
     if (!balance.value) return;
     state.quantity = BN(balance.value.toString())
-      .div(10 ** 18)
       .times(BN(value ?? 0))
       .div(100)
       .dp(2, 1)
@@ -124,26 +115,27 @@ async function onSell() {
     isSelling.value = false;
   }
 }
-
-async function onSelectMode(mode: (typeof modes)[number]) {
-  selectedMode.value = mode.value;
-  if (mode.value === 'limit') {
-    state.price = undefined;
-  }
-  else {
-    try {
-      state.price = data.value?.latestPrice;
-    }
-    catch {
+watch(
+  () => props.mode,
+  async () => {
+    state.quantity = undefined;
+    if (props.mode === 'limit') {
       state.price = undefined;
     }
-  }
-}
+    else {
+      state.price = data.value?.latestPrice;
+      refreshNuxtData('order-book');
+    }
+  },
+  {
+    immediate: true,
+  },
+);
 </script>
 
 <template>
-  <div class="flex flex-col grow space-y-4">
-    <div class="form-item">
+  <div class="flex flex-col grow space-y-3">
+    <!-- <div class="form-item">
       <span>Mode</span>
       <div class="flex justify-end space-x-[10px]">
         <div
@@ -165,9 +157,9 @@ async function onSelectMode(mode: (typeof modes)[number]) {
           >{{ item.label }}</span>
         </div>
       </div>
-    </div>
+    </div> -->
     <div
-      v-if="selectedMode === 'limit'"
+      v-if="mode === 'limit'"
       class="form-item"
     >
       <span>Price</span>
@@ -195,8 +187,8 @@ async function onSelectMode(mode: (typeof modes)[number]) {
         <span class="text-white"> {{ tokenSymbolList[0] }}</span>
       </div>
     </div>
-    <div class="pb-[16px]">
-      <AmountSlider v-model="amountPercent" />
+    <div>
+      <AmountSlider v-model:value="amountPercent" />
     </div>
     <div class="form-item">
       <span>Value</span>
@@ -205,16 +197,21 @@ async function onSelectMode(mode: (typeof modes)[number]) {
         <span class="text-white"> {{ tokenSymbolList[1] }}</span>
       </div>
     </div>
-    <div class="flex justify-between items-center !mt-[6px]">
-      <div class="text-white text-[14px] flex space-x-1">
+    <div class="flex justify-between items-center !mt-3">
+      <div
+        v-if="address"
+        key="balance"
+        class="text-white text-[14px] flex space-x-1"
+      >
         <span>Balance:</span>
         <TokenBalance
-          v-if="currantToken.tokens[0]"
+          v-if="currantToken?.tokens[0]"
           :address="address"
-          :token="currantToken.tokens[0]"
+          :token="currantToken?.tokens[0]"
           @change="(value) => (balance = value)"
         />
       </div>
+      <div v-else />
       <UButton
         to=""
         variant="outline"
@@ -225,20 +222,33 @@ async function onSelectMode(mode: (typeof modes)[number]) {
       </UButton>
     </div>
     <div class="grow" />
-    <UButton
-      color="sell"
-      block
-      class="h-[44px] rounded-[8px]"
-      :loading="isSelling"
-      @click="onSell"
-    >
-      Sell Bool
-    </UButton>
+    <div class="pt-5 w-full pb-6">
+      <UButton
+        v-if="!address"
+        block
+        color="gray"
+        class="h-[40px] rounded-full border-0 ring-0 text-sm font-normal bg-[#272727]"
+        @click="open"
+      >
+        <span class="text-primary"> Connect Wallet</span>
+      </UButton>
+      <UButton
+        v-else
+        color="sell"
+        block
+        class="h-[40px] rounded-full border-0 ring-0 text-sm font-medium"
+        :loading="isSelling"
+        @click="onSell"
+      >
+        Sell Bool
+      </UButton>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .form-item {
-  @apply h-[40px] bg-[#242424] text-[#999] rounded-[4px] flex justify-between items-center px-[16px] text-[16px];
+  @apply h-[40px] bg-[#242424] text-[#B0B0B0] rounded-[4px] flex justify-between items-center px-[16px] text-sm font-normal;
+  @apply border-[1px] border-[#4D4D4D];
 }
 </style>

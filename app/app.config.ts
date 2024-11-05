@@ -31,10 +31,12 @@ export default defineAppConfig({
           solid: 'text-[#333] bg-white dark:bg-white dark:text-[#333]',
         },
         sell: {
-          solid: 'shadow-sm ring-1 ring-inset ring-sell-300 dark:ring-sell-700 text-white bg-sell-400 hover:bg-sell-500 disabled:bg-gray-900 aria-disabled:bg-white dark:disabled:bg-gray-900 dark:aria-disabled:bg-gray-900 focus-visible:ring-2 focus-visible:ring-sell-500 dark:focus-visible:ring-sell-400',
+          solid:
+            'shadow-sm ring-1 ring-inset ring-sell-300 dark:ring-sell-700 text-white bg-sell-400 hover:bg-sell-500 disabled:bg-gray-900 aria-disabled:bg-white dark:disabled:bg-gray-900 dark:aria-disabled:bg-gray-900 focus-visible:ring-2 focus-visible:ring-sell-500 dark:focus-visible:ring-sell-400',
         },
         buy: {
-          solid: 'shadow-sm ring-1 ring-inset ring-buy-300 dark:ring-buy-700 text-white bg-buy-400 hover:bg-buy-500 disabled:bg-white aria-disabled:bg-white  dark:disabled:bg-gray-900 dark:aria-disabled:bg-gray-900 focus-visible:ring-2 focus-visible:ring-buy-500 dark:focus-visible:ring-pbuy-400',
+          solid:
+            'shadow-sm ring-1 ring-inset ring-buy-300 dark:ring-buy-700 text-white bg-buy-400 hover:bg-buy-500 disabled:bg-white aria-disabled:bg-white  dark:disabled:bg-gray-900 dark:aria-disabled:bg-gray-900 focus-visible:ring-2 focus-visible:ring-buy-500 dark:focus-visible:ring-pbuy-400',
         },
       },
       size: {
@@ -72,11 +74,16 @@ export default defineAppConfig({
       base: '!bg-transparent rounded-lg text-nowrap',
       divide: '!divide-none',
       th: {
+        base: 'text-center first:text-left',
         color: 'text-gray-500 dark:text-[#999]',
+        size: 'text-xs font-normal',
+        padding: 'py-1.5',
       },
       td: {
+        base: 'text-center first:text-left',
         color: 'text-white',
-        size: 'text-[16px]',
+        size: 'text-sm leading-4 font-normal',
+        padding: 'py-[15px]',
       },
     },
     progress: {
@@ -86,15 +93,15 @@ export default defineAppConfig({
         size: { md: 'h-2.5', xs: 'h-[6px]' },
         rounded: 'rounded-full [&::-webkit-progress-bar]:rounded-full',
         track:
-            '[&::-webkit-progress-bar]:bg-transparent [&::-webkit-progress-bar]:dark:bg-transparent [@supports(selector(&::-moz-progress-bar))]:bg-transparent [@supports(selector(&::-moz-progress-bar))]:bg-transparent',
+          '[&::-webkit-progress-bar]:bg-transparent [&::-webkit-progress-bar]:dark:bg-transparent [@supports(selector(&::-moz-progress-bar))]:bg-transparent [@supports(selector(&::-moz-progress-bar))]:bg-transparent',
         bar: '[&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:ease-in-out [&::-moz-progress-bar]:rounded-full',
         color: 'text-primary dark:text-primary',
         background:
-            '[&::-webkit-progress-value]:bg-current [&::-moz-progress-bar]:bg-current',
+          '[&::-webkit-progress-value]:bg-current [&::-moz-progress-bar]:bg-current',
         indeterminate: {
           base: 'indeterminate:relative',
           rounded:
-              'indeterminate:after:rounded-full [&:indeterminate::-webkit-progress-value]:rounded-full [&:indeterminate::-moz-progress-bar]:rounded-full',
+            'indeterminate:after:rounded-full [&:indeterminate::-webkit-progress-value]:rounded-full [&:indeterminate::-moz-progress-bar]:rounded-full',
         },
       },
     },

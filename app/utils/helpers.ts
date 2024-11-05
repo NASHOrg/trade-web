@@ -85,8 +85,55 @@ export const errorHandling = (error: any): Error => {
   }
 };
 
-export function formatAmount(value: string, decimal = 6) {
-  return BigNumber(value).dp(decimal, 1).toFormat();
+export function formatAmount(
+  value: string,
+  decimal = 6,
+  options?: { endPad?: boolean; format?: boolean },
+) {
+  const amount = new BigNumber(value);
+
+  if (!options?.format) {
+    return amount
+      .dp(decimal, 1)
+      .toFormat(options?.endPad ? decimal : undefined);
+  }
+  const units = {
+    tenThousand: new BigNumber('10000'),
+    million: new BigNumber('1000000'),
+    billion: new BigNumber('1000000000'),
+    trillion: new BigNumber('1000000000000'),
+  };
+
+  if (amount.isGreaterThanOrEqualTo(units.trillion)) {
+    return `${amount
+      .dividedBy(units.trillion)
+      .dp(decimal)
+      .toFormat(options?.endPad ? decimal : undefined)}T`;
+  }
+  else if (amount.isGreaterThanOrEqualTo(units.billion)) {
+    return `${amount
+      .dividedBy(units.billion)
+      .dp(decimal)
+      .toFormat(options?.endPad ? decimal : undefined)}B`;
+  }
+  else if (amount.isGreaterThanOrEqualTo(units.million)) {
+    return `${amount
+      .dividedBy(units.million)
+      .dp(decimal)
+      .toFormat(options?.endPad ? decimal : undefined)}M`;
+  }
+  else if (amount.isGreaterThanOrEqualTo(units.tenThousand)) {
+    return `${amount
+      .dividedBy(units.tenThousand)
+      .multipliedBy('10')
+      .dp(decimal)
+      .toFormat(options?.endPad ? decimal : undefined)}K`;
+  }
+  else {
+    return `${amount
+      .dp(decimal)
+      .toFormat(options?.endPad ? decimal : undefined)}`;
+  }
 }
 
 export function shortFloatNum(i: number | string, position: number): string {
