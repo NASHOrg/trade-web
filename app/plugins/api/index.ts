@@ -11,6 +11,7 @@ const api = defineNuxtPlugin((nuxtApp) => {
       headers: {
         'Content-Type': 'application/json',
         'accept-language': 'en-US',
+        // "Authorization": userStore.token ? `Bearer ${userStore.token}` : ''
       },
       retry: 3,
       retryDelay: 500,

@@ -40,9 +40,10 @@ const sellBList = computed(() => {
     return (sum += Number(item.qty));
   }, 0);
   return (data.value?.orderSellBList ?? [])
-    .map((item) => {
+    .map((item, index) => {
       return {
         ...item,
+        qty: index % 3 ? '10000.2' : item.qty,
         style: {
           '--sell-bar-width': `${(Number(item.qty) / allQty) * 100}%`,
         },
@@ -93,9 +94,15 @@ const onSelectPrice = (price: string) => {
           :style="item.style"
           @click="onSelectPrice(item.price)"
         >
-          <span class="text-sell">{{ formatAmount(item.price, 5) }}</span>
-          <span class="text-center"> {{ formatAmount(item.qty, 2) }}</span>
-          <span class="text-end">{{ formatAmount(item.value, 2) }}</span>
+          <span class="text-sell">
+            {{ formatAmount(item.price, 5, { endPad: true }) }}
+          </span>
+          <span class="text-end">
+            {{ formatAmount(item.qty, 2, { endPad: true }) }}
+          </span>
+          <span class="text-end">
+            {{ formatAmount(item.value, 2, { endPad: true, format: true }) }}
+          </span>
         </div>
       </div>
 
@@ -119,9 +126,15 @@ const onSelectPrice = (price: string) => {
           :style="item.style"
           @click="onSelectPrice(item.price)"
         >
-          <span class="text-buy">{{ formatAmount(item.price, 5) }}</span>
-          <span class="text-center"> {{ formatAmount(item.qty, 2) }}</span>
-          <span class="text-end">{{ formatAmount(item.value, 2) }}</span>
+          <span class="text-buy">
+            {{ formatAmount(item.price, 5, { endPad: true }) }}
+          </span>
+          <span class="text-end">
+            {{ formatAmount(item.qty, 2, { endPad: true }) }}
+          </span>
+          <span class="text-end">
+            {{ formatAmount(item.value, 2, { endPad: true, format: true }) }}
+          </span>
         </div>
       </div>
     </template>

@@ -9,6 +9,7 @@ const { address, chainId, switchNetwork, open } = useWallet();
 const { network } = useNetworkConfig();
 const { t } = useI18n();
 const { $api } = useNuxtApp();
+const userStore = useUserStore();
 
 const isCanceling = ref<string | undefined>(undefined);
 
@@ -31,10 +32,14 @@ const { data, status } = useAsyncData(
     //   token0: currantToken.value.tokens[0]!,
     //   token1: currantToken.value.tokens[1]!,
     // });
-    return $api.blockchainUserOrders({
-      address: address.value,
-      ...queryParams.value,
-    });
+
+    return $api.blockchainUserOrders(
+      {
+        address: address.value,
+        ...queryParams.value,
+      },
+      userStore.token,
+    );
   },
   {
     watch: [address, () => queryParams.value.pageNo],
@@ -131,7 +136,7 @@ async function onCancelOrder(id: string, type: number) {
       />
     </div>
     <div
-      v-else-if="data && Number(data.totalCount) === 0"
+      v-else-if="!data || (data?.items ?? []).length === 0"
       class="my-[50px]"
     >
       <NuxtPicture

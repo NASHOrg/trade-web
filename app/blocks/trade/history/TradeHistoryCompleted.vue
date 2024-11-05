@@ -37,14 +37,19 @@ const queryParams = ref({
   pageSize: 10,
 });
 
+const userStore = useUserStore();
+
 const { data, status } = useAsyncData(
   `trade-history-${address}-${queryParams.value.pageNo}`,
   () => {
     if (!address.value) return Promise.resolve(undefined);
-    return $api.blockchainTradeHistory({
-      ...queryParams.value,
-      address: address.value,
-    });
+    return $api.blockchainTradeHistory(
+      {
+        ...queryParams.value,
+        address: address.value,
+      },
+      userStore.token,
+    );
   },
   {
     watch: [address, () => queryParams.value.pageNo],
