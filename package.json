@@ -20,7 +20,7 @@
     "@nuxt/eslint": "^0.4.0",
     "@nuxt/fonts": "^0.7.0",
     "@nuxt/image": "^1.7.0",
-    "@nuxt/ui": "^2.18.4",
+    "@nuxt/ui": "^2.19.2",
     "@pinia/nuxt": "^0.5.1",
     "@tonconnect/sdk": "^3.0.3",
     "@web3modal/ethers": "^5.0.0",

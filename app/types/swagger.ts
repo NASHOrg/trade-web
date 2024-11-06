@@ -607,6 +607,9 @@ export interface paths {
                                 qty: string;
                                 tradeTime: string;
                                 type: number;
+                                orderId: string;
+                                pair: string;
+                                u: string;
                             }[];
                         };
                     };
@@ -709,6 +712,44 @@ export interface paths {
                                 value: string;
                             }[];
                             latestPrice: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "/blockchain/trade-history-detail": {
+        get: {
+            parameters: {
+                query: {
+                    pageNo: number;
+                    pageSize: number;
+                    orderId: string;
+                    type: string;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        msg?: string;
+                        code?: string;
+                        data?: {
+                            hasPrev?: boolean;
+                            pageNo?: number;
+                            totalPage?: number;
+                            pageSize?: number;
+                            hasNext?: boolean;
+                            totalCount?: number;
+                            items?: {
+                                price: string;
+                                qty: string;
+                                tradeTime: string;
+                                type: number;
+                                pair: string;
+                                u: number;
+                                orderId: number;
+                            }[];
                         };
                     };
                 };
@@ -1284,6 +1325,8 @@ export type BlockchainUserOrdersGetParams = paths["/blockchain/user-orders"]['ge
 export type BlockchainUserOrders = paths["/blockchain/user-orders"]['get']['responses'][200]['schema']['data'];
 export type BlockchainOrderBooksGetParams = paths["/blockchain/order-books"]['get']['parameters']['query'];
 export type BlockchainOrderBooks = paths["/blockchain/order-books"]['get']['responses'][200]['schema']['data'];
+export type BlockchainTradeHistoryDetailGetParams = paths["/blockchain/trade-history-detail"]['get']['parameters']['query'];
+export type BlockchainTradeHistoryDetail = paths["/blockchain/trade-history-detail"]['get']['responses'][200]['schema']['data'];
 export type UserDevicesGetParams = paths["/user/devices"]['get']['parameters']['query'];
 export type UserDevices = paths["/user/devices"]['get']['responses'][200]['schema']['data'];
 export type UserCrowdfundingDevicesGetParams = paths["/user/crowdfunding-devices"]['get']['parameters']['query'];

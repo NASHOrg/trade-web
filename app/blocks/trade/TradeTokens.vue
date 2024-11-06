@@ -1,4 +1,7 @@
 <script setup lang="ts">
+const emits = defineEmits<{
+  (e: 'select', value: string): void;
+}>();
 const tradeStore = useTradeStore();
 const { tokenOptions } = tradeStore;
 const { currantToken } = storeToRefs(tradeStore);
@@ -14,6 +17,7 @@ const cols = computed(() => {
 });
 
 function onSelect(id: string) {
+  emits('select', id);
   router.replace(`/trade/${id}`);
 }
 </script>

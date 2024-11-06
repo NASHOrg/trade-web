@@ -1,5 +1,15 @@
 <script setup lang="ts">
+import { TokensSlideover, UAvatar, UIcon } from '#components';
+
 // const { address } = useWallet();
+const tradeStore = useTradeStore();
+const { currantToken } = storeToRefs(tradeStore);
+const { isXL } = useDevice();
+
+const slideover = useSlideover();
+function openTokens() {
+  slideover.open(TokensSlideover);
+}
 </script>
 
 <template>
@@ -8,10 +18,31 @@
       class="w-full h-[840px] grid grid-cols-10 grid-rows-10 border-b-[2px] border-[#2E2E2E]"
     >
       <div
-        class="xl:col-span-2 md:col-span-3 row-span-10 h-full border-r-[2px] border-[#2E2E2E]"
+        class="h-full border-r-[2px] border-[#2E2E2E]"
+        :class="['xl:col-span-2', 'col-span-3 row-span-10'].join(' ')"
       >
-        <TradeTokens />
+        <TradeTokens v-if="isXL" />
+        <template v-else>
+          <div
+            class="flex items-center space-x-2 cursor-pointer px-3 py-2 border-b-[2px] border-[#2E2E2E]"
+            @click="openTokens"
+          >
+            <UIcon
+              name="i-weui-arrow-filled"
+              class="w-5 h-5"
+            />
+            <UAvatar
+              :alt="currantToken?.label || 'Token'"
+              size="xs"
+            />
+            <span>
+              {{ currantToken?.label ?? "" }}
+            </span>
+          </div>
+          <TradeForm />
+        </template>
       </div>
+
       <div
         :class="
           [
@@ -25,18 +56,20 @@
       </div>
 
       <div
-        class="border-l-[2px] border-[#2E2E2E]"
+        class="xl:border-l-[2px] border-[#2E2E2E]"
         :class="
           [
             'xl:col-span-2 xl:row-span-10',
-            'md:col-span-4 md:row-span-5',
+            'md:col-span-7 md:row-span-5',
             '',
           ].join(' ')
         "
       >
         <TradeOrders />
       </div>
+
       <div
+        v-if="isXL"
         class="border-t-[1px] border-[#2E2E2E]"
         :class="
           [

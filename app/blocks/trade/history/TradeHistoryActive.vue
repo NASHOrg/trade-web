@@ -22,17 +22,6 @@ const { data, status } = useAsyncData(
   `trade-orders-${address}`,
   () => {
     if (!address.value) return Promise.resolve(undefined);
-    // const { pageNo, pageSize } = queryparams.value;
-    // const begin = (pageNo - 1) * pageSize;
-    // const end = begin + pageSize;
-    // return tradeApi.orderList({
-    //   address: address.value,
-    //   begin,
-    //   end,
-    //   token0: currantToken.value.tokens[0]!,
-    //   token1: currantToken.value.tokens[1]!,
-    // });
-
     return $api.blockchainUserOrders(
       {
         address: address.value,
@@ -154,11 +143,12 @@ async function onCancelOrder(id: string, type: number) {
       v-else
       class="w-full mt-2.5"
       :columns="columns"
-      :rows="data?.items ?? []"
+      :rows="data.items ?? []"
+      :ui="{ th: { base: 'w-1/6' }, td: { base: 'w-1/6' } }"
     >
       <template #action-data="{ row }">
         <UButton
-          class="rounded-[4px]"
+          class="rounded-[4px] h-[26px]"
           size="sm"
           :loading="isCanceling === row.orderId + row.type.toString()"
           @click="onCancelOrder(row.orderId, row.type)"

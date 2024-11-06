@@ -5,10 +5,6 @@ const { open, address } = useWallet();
 
 const columns = computed(() => {
   return [
-    // {
-    //   key: 'id',
-    //   label: 'ID',
-    // },
     {
       key: 'time',
       label: t('time'),
@@ -58,10 +54,36 @@ const { data, status } = useAsyncData(
     deep: true,
   },
 );
+
+const datas = computed(() => {
+  return (data.value?.items ?? []).map((item) => {
+    return { ...item };
+  });
+});
+
+const expandRows = ref<{
+  openedRows: typeof datas.value;
+  row: (typeof datas.value)[number] | null;
+}>({
+      openedRows: [],
+      row: null,
+    });
+
+function onSelect(info: (typeof datas.value)[number]) {
+  const index = expandRows.value.openedRows.findIndex(
+    item => item['orderId'] === info['orderId'],
+  );
+  if (index !== -1) {
+    expandRows.value.openedRows.splice(index, 1);
+  }
+  else {
+    expandRows.value.openedRows.push(info);
+  }
+}
 </script>
 
 <template>
-  <div class="w-full flex flex-col items-center">
+  <div class="w-full flex flex-col items-center select-none">
     <div
       v-if="!address"
       class="mt-[100px] flex items-center justify-center text-sm text-primary font-medium text-center"
@@ -100,11 +122,19 @@ const { data, status } = useAsyncData(
       </div>
     </div>
     <UTable
-      v-else-if="data"
+      v-else-if="datas.length > 0"
+      v-model:expand="expandRows"
+      by="orderId"
       class="w-full"
       :columns="columns"
-      :rows="data?.items ?? []"
-      :ui="{ th: { base: 'w-1/5' }, td: { base: 'w-1/5' } }"
+      :rows="datas"
+      :ui="{
+        th: { base: 'w-1/6' },
+        td: {
+          base: 'w-1/6',
+        },
+      }"
+      @select="onSelect"
     >
       <template #type-data="{ row }">
         <div>
@@ -118,9 +148,24 @@ const { data, status } = useAsyncData(
           >{{ t("buy") }}</span>
         </div>
       </template>
-      <template #time-data="{ row }">
-        {{ formatDate(Number(row.tradeTime)) }}
+
+      <template #expand="{ row }">
+        <TradeHistoryChildren :trade="row" />
       </template>
+
+      <template #time-data="{ row }">
+        <span> {{ formatDate(Number(row.tradeTime)) }}</span>
+      </template>
+
+      <!-- <template #expand-action="{ row, isExpanded }">
+        <div class="flex items-center space-x-2">
+          <UIcon
+            name="i-heroicons-chevron-down"
+            :class="{ 'rotate-180 transition-[0.3s]': isExpanded }"
+          />
+          <span> {{ formatDate(Number(row.tradeTime)) }}</span>
+        </div>
+      </template> -->
     </UTable>
     <TablePagination
       v-if="data && data.totalPage > 1"

@@ -12,5 +12,6 @@ import { Toaster } from 'vue-sonner';
       rich-colors
     />
     <UModals />
+    <USlideovers />
   </div>
 </template>

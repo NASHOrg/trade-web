@@ -56,16 +56,14 @@ const buyBList = computed(() => {
   const allQty = (data.value?.orderBuyBList ?? []).reduce((sum, item) => {
     return (sum += Number(item.qty));
   }, 0);
-  return (data.value?.orderBuyBList ?? [])
-    .map((item) => {
-      return {
-        ...item,
-        style: {
-          '--buy-bar-width': `${(Number(item.qty) / allQty) * 100}%`,
-        },
-      };
-    })
-    .reverse();
+  return (data.value?.orderBuyBList ?? []).map((item) => {
+    return {
+      ...item,
+      style: {
+        '--buy-bar-width': `${(Number(item.qty) / allQty) * 100}%`,
+      },
+    };
+  });
 });
 
 const onSelectPrice = (price: string) => {
