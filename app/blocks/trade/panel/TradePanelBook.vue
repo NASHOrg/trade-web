@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatAmount } from '#imports';
+import { formatAmount } from "#imports";
 
 const tradeStore = useTradeStore();
 const { replace, currentRoute } = useRouter();
@@ -10,23 +10,23 @@ const columns = computed(() => {
   const token1 = currantToken.value?.tokens[1];
   return [
     {
-      value: 'price',
-      label: `Price(${token1?.symbol ?? '-'})`,
+      value: "price",
+      label: `Price(${token1?.symbol ?? "-"})`,
     },
     {
-      value: 'qty',
-      label: `Qty(${token0?.symbol ?? '-'})`,
+      value: "qty",
+      label: `Qty(${token0?.symbol ?? "-"})`,
     },
     {
-      value: 'value',
-      label: `Value(${token1?.symbol ?? '-'})`,
+      value: "value",
+      label: `Value(${token1?.symbol ?? "-"})`,
     },
   ];
 });
 
 const { counter } = useInterval(10000, { controls: true });
 const { data } = useAsyncData(
-  'order-book',
+  "order-book",
   () => {
     return $api.blockchainOrderBooks({});
   },
@@ -45,7 +45,7 @@ const sellBList = computed(() => {
         ...item,
         qty: item.qty,
         style: {
-          '--sell-bar-width': `${(Number(item.qty) / allQty) * 100}%`,
+          "--sell-bar-width": `${(Number(item.qty) / allQty) * 100}%`,
         },
       };
     })
@@ -60,7 +60,7 @@ const buyBList = computed(() => {
     return {
       ...item,
       style: {
-        '--buy-bar-width': `${(Number(item.qty) / allQty) * 100}%`,
+        "--buy-bar-width": `${(Number(item.qty) / allQty) * 100}%`,
       },
     };
   });
@@ -83,8 +83,12 @@ const onSelectPrice = (price: string) => {
       </div>
     </div>
 
-    <template v-if="data">
-      <div class="grow flex flex-col justify-end space-y-2.5">
+    <div
+      v-if="data"
+      class="grow w-full grid"
+      style="grid-template-rows: 1fr auto 1fr"
+    >
+      <div class="h-full flex flex-col justify-end space-y-2.5">
         <div
           v-for="item in sellBList"
           :key="JSON.stringify(item)"
@@ -116,7 +120,7 @@ const onSelectPrice = (price: string) => {
         </span>
       </div>
 
-      <div class="grow flex flex-col justify-start space-y-2.5">
+      <div class="h-full flex flex-col justify-start space-y-2.5">
         <div
           v-for="item in buyBList"
           :key="JSON.stringify(item)"
@@ -135,7 +139,7 @@ const onSelectPrice = (price: string) => {
           </span>
         </div>
       </div>
-    </template>
+    </div>
   </div>
 </template>
 
