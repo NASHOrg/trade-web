@@ -40,10 +40,10 @@ const sellBList = computed(() => {
     return (sum += Number(item.qty));
   }, 0);
   return (data.value?.orderSellBList ?? [])
-    .map((item, index) => {
+    .map((item) => {
       return {
         ...item,
-        qty: index % 3 ? '10000.2' : item.qty,
+        qty: item.qty,
         style: {
           '--sell-bar-width': `${(Number(item.qty) / allQty) * 100}%`,
         },
