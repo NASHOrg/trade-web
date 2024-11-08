@@ -160,5 +160,6 @@
   "price": "Price",
   "market": "Market",
   "avgPrice": "Avg Price",
-  "trades": "Trades"
+  "trades": "Trades",
+  "value": "Value"
 }

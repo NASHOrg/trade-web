@@ -25,6 +25,10 @@ const columns = computed(() => {
       key: 'qty',
       label: t('totalQty'),
     },
+    {
+      key: 'u',
+      label: t('value'),
+    },
   ];
 });
 
@@ -128,12 +132,7 @@ function onSelect(info: (typeof datas.value)[number]) {
       class="w-full"
       :columns="columns"
       :rows="datas"
-      :ui="{
-        th: { base: 'w-1/6' },
-        td: {
-          base: 'w-1/6',
-        },
-      }"
+      :ui="{ th: { base: 'w-1/6' }, td: { base: 'w-1/6' } }"
       @select="onSelect"
     >
       <template #type-data="{ row }">

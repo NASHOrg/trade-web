@@ -32,6 +32,10 @@ const columns = computed(() => {
       key: 'qty',
       label: t('totalQty'),
     },
+    {
+      key: 'u',
+      label: t('value'),
+    },
   ];
 });
 
@@ -83,8 +87,8 @@ const { data, status } = useAsyncData(`trade-${props.trade.orderId}`, () =>
       :columns="columns"
       :rows="data?.items ?? []"
       :ui="{
-        th: { base: 'w-1/6' },
-        td: { base: 'w-1/6' },
+        th: { base: '!w-1/6' },
+        td: { base: '!w-1/6' },
         tbody: 'divide-none',
         divide: 'divide-none',
       }"

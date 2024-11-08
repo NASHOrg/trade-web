@@ -41,15 +41,17 @@ const timeSpecifiedTrade = computed(() => {
 });
 
 const tradeData = computed(() => {
-  return (data.value?.items ?? []).map((item) => {
-    return {
-      time: formatDate(item.time, 'YYYY-MM-DD'),
-      open: Number(item.openPrice),
-      high: Number(item.highPrice),
-      low: Number(item.lowPrice),
-      close: Number(item.closePrice),
-    };
-  });
+  return (data.value?.items ?? [])
+    .map((item) => {
+      return {
+        time: Number(item.time),
+        open: Number(item.openPrice),
+        high: Number(item.highPrice),
+        low: Number(item.lowPrice),
+        close: Number(item.closePrice),
+      };
+    })
+    .reverse();
 });
 
 const maxVisibleBars = 50;

@@ -52,13 +52,17 @@ const columns = computed(() => {
       key: 'price',
       label: t('targetPrice'),
     },
-    {
-      key: 'filledQty',
-      label: t('filledQty'),
-    },
+    // {
+    //   key: 'filledQty',
+    //   label: t('filledQty'),
+    // },
     {
       key: 'qty',
       label: t('totalQty'),
+    },
+    {
+      key: 'originalU',
+      label: t('value'),
     },
     {
       key: 'action',
