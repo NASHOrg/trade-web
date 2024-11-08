@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { IChartApi } from 'lightweight-charts';
 import { createChart } from 'lightweight-charts';
+import dayjs from 'dayjs';
 import { TokensSlideover } from '#components';
 
 const tradeStore = useTradeStore();
@@ -13,13 +14,13 @@ const mainChart = ref<null | IChartApi>();
 const timeSpecified = ref('0');
 
 const charting = ref(true);
-const { counter } = useInterval(10000, { controls: true });
+// const { counter } = useInterval(10000, { controls: true });
 
 const { data, status } = useAsyncData(
   () => $api.blockchainTradeStatistic({ type: timeSpecified.value }),
   {
     server: false,
-    watch: [timeSpecified, counter],
+    watch: [timeSpecified],
   },
 );
 
@@ -36,15 +37,35 @@ const timeSpecifiedTrade = computed(() => {
   return [
     { id: '0', label: '1hour' },
     { id: '1', label: '1day' },
-    { id: '2', label: '1month' },
+    // { id: "2", label: "1month" },
   ];
 });
 
+function testData(baseTime: number) {
+  console.log(dayjs(baseTime).format('YYYY-MM-DD HH:mm:ss'));
+
+  const list = [];
+  for (let i = 0; i < 1000; i++) {
+    const time = dayjs(baseTime)
+      .subtract(i + 1, timeSpecified.value === '0' ? 'h' : 'd')
+      .valueOf();
+    list.push({
+      time: Math.floor(time / 1000),
+      open: Math.floor(Math.random() * (30 - 10 + 1)) + 10,
+      high: Math.floor(Math.random() * (30 - 10 + 1)) + 10,
+      low: Math.floor(Math.random() * (30 - 10 + 1)) + 10,
+      close: Math.floor(Math.random() * (30 - 10 + 1)) + 10,
+    });
+  }
+
+  return list.reverse();
+}
+
 const tradeData = computed(() => {
-  return (data.value?.items ?? [])
+  const list = (data.value?.items ?? [])
     .map((item) => {
       return {
-        time: Number(item.time),
+        time: Number(item.time) / 1000,
         open: Number(item.openPrice),
         high: Number(item.highPrice),
         low: Number(item.lowPrice),
@@ -52,6 +73,20 @@ const tradeData = computed(() => {
       };
     })
     .reverse();
+
+  if (list.length > 0) {
+    const test = testData(list[0]!.time * 1000);
+    console.log(
+      [...test, ...list].map(item => ({
+        ...item,
+        time: dayjs(item.time * 1000).format('YYYY-MM-DD HH:mm:ss'),
+      })),
+    );
+
+    return [...test, ...list];
+  }
+
+  return list;
 });
 
 const maxVisibleBars = 50;
@@ -72,6 +107,75 @@ function changeChartRange() {
   }
 }
 
+// function setTooltip(series) {
+//   if (!mainChartContainer.value || !mainChart.value) return;
+//   const toolTipWidth = 80;
+//   const toolTipHeight = 80;
+//   const toolTipMargin = 15;
+
+//   const container = mainChartContainer.value;
+
+//   // Create and style the tooltip html element
+//   const toolTip = document.createElement('div');
+//   toolTip.style = `width: 96px; height: 80px; position: absolute; display: none; padding: 8px; box-sizing: border-box; font-size: 12px; text-align: left; z-index: 1000; top: 12px; left: 12px; pointer-events: none; border: 1px solid; border-radius: 2px;font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;`;
+//   toolTip.style.background = 'white';
+//   toolTip.style.color = 'black';
+//   toolTip.style.borderColor = '#2962FF';
+//   container.appendChild(toolTip);
+
+//   // update tooltip
+//   mainChart.value.subscribeCrosshairMove((param) => {
+//     if (
+//       param.point === undefined
+//       || !param.time
+//       || param.point.x < 0
+//       || param.point.x > container.clientWidth
+//       || param.point.y < 0
+//       || param.point.y > container.clientHeight
+//     ) {
+//       toolTip.style.display = 'none';
+//     }
+//     else {
+//       // time will be in the same format that we supplied to setData.
+//       // thus it will be YYYY-MM-DD
+//       const dateStr = param.time;
+//       toolTip.style.display = 'block';
+
+//       const data = param.seriesData.get(series);
+//       console.log(data);
+
+//       const price = data.value !== undefined ? data.value : data.close;
+//       toolTip.innerHTML = `<div style="color: ${'#2962FF'}">Apple Inc.</div><div style="font-size: 24px; margin: 4px 0px; color: ${'black'}">
+//             ${Math.round(100 * price) / 100}
+//             </div><div style="color: ${'black'}">
+//             ${dateStr}
+//             </div>`;
+
+//       const coordinate = series.priceToCoordinate(price);
+//       let shiftedCoordinate = param.point.x;
+//       if (coordinate === null) {
+//         return;
+//       }
+//       shiftedCoordinate = Math.max(
+//         0,
+//         Math.min(container.clientWidth - toolTipWidth, shiftedCoordinate),
+//       );
+//       const coordinateY
+//         = coordinate - toolTipHeight - toolTipMargin > 0
+//           ? coordinate - toolTipHeight - toolTipMargin
+//           : Math.max(
+//             0,
+//             Math.min(
+//               container.clientHeight - toolTipHeight - toolTipMargin,
+//               coordinate + toolTipMargin,
+//             ),
+//           );
+//       toolTip.style.left = shiftedCoordinate + 'px';
+//       toolTip.style.top = coordinateY + 'px';
+//     }
+//   });
+// }
+
 function initChart() {
   if (!mainChart.value) {
     charting.value = true;
@@ -90,6 +194,11 @@ function initChart() {
         textColor: '#999999',
         background: { color: '#121212' },
       },
+      timeScale: {
+        visible: true,
+        timeVisible: true,
+        secondsVisible: true,
+      },
     });
   }
 
@@ -107,22 +216,25 @@ function initChart() {
   candlestickSeries.priceScale().applyOptions({
     scaleMargins: {
       top: 0.1,
-      bottom: 0.2,
+      bottom: 0.1,
     },
   });
 
   mainChart.value.timeScale().subscribeVisibleTimeRangeChange(changeChartRange);
-  mainChart.value.timeScale().fitContent();
 
+  // setTooltip(candlestickSeries);
+  mainChart.value.timeScale().fitContent();
   setTimeout(() => {
-    changeChartRange();
+    mainChart.value!.timeScale().setVisibleLogicalRange({
+      from:
+        tradeData.value.length > maxVisibleBars
+          ? tradeData.value.length - 1 - maxVisibleBars
+          : 0,
+      to: tradeData.value.length - 1,
+    });
+    // changeChartRange();
     charting.value = false;
   }, 200);
-}
-
-const slideover = useSlideover();
-function openTokens() {
-  slideover.open(TokensSlideover);
 }
 
 watch(
@@ -137,6 +249,11 @@ watch(
     immediate: true,
   },
 );
+
+const slideover = useSlideover();
+function openTokens() {
+  slideover.open(TokensSlideover);
+}
 </script>
 
 <template>
