@@ -718,6 +718,47 @@ export interface paths {
             };
         };
     };
+    "/blockchain/trade-statistic": {
+        get: {
+            parameters: {
+                query: {
+                    /** type {0:hour, 1:day, 2:month} */
+                    type: string;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        msg?: string;
+                        code?: string;
+                        data?: {
+                            hasPrev?: boolean;
+                            pageNo?: number;
+                            totalPage?: number;
+                            pageSize?: number;
+                            hasNext?: boolean;
+                            totalCount?: number;
+                            items?: {
+                                /** @description 交易数量 */
+                                tradeAmount: number;
+                                /** @description 最高价 */
+                                highPrice: number;
+                                /** @description 最低价 */
+                                lowPrice: number;
+                                /** @description 开盘价 */
+                                openPrice: number;
+                                /** @description 收盘价 */
+                                closePrice: number;
+                                /** @description 时间节点 */
+                                time: number;
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
     "/blockchain/trade-history-detail": {
         get: {
             parameters: {
@@ -1325,6 +1366,8 @@ export type BlockchainUserOrdersGetParams = paths["/blockchain/user-orders"]['ge
 export type BlockchainUserOrders = paths["/blockchain/user-orders"]['get']['responses'][200]['schema']['data'];
 export type BlockchainOrderBooksGetParams = paths["/blockchain/order-books"]['get']['parameters']['query'];
 export type BlockchainOrderBooks = paths["/blockchain/order-books"]['get']['responses'][200]['schema']['data'];
+export type BlockchainTradeStatisticGetParams = paths["/blockchain/trade-statistic"]['get']['parameters']['query'];
+export type BlockchainTradeStatistic = paths["/blockchain/trade-statistic"]['get']['responses'][200]['schema']['data'];
 export type BlockchainTradeHistoryDetailGetParams = paths["/blockchain/trade-history-detail"]['get']['parameters']['query'];
 export type BlockchainTradeHistoryDetail = paths["/blockchain/trade-history-detail"]['get']['responses'][200]['schema']['data'];
 export type UserDevicesGetParams = paths["/user/devices"]['get']['parameters']['query'];

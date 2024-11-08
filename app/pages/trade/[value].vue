@@ -4,7 +4,7 @@ import { TokensSlideover, UAvatar, UIcon } from '#components';
 // const { address } = useWallet();
 const tradeStore = useTradeStore();
 const { currantToken } = storeToRefs(tradeStore);
-const { isXL } = useDevice();
+const { isXL, isMD } = useDevice();
 
 const slideover = useSlideover();
 function openTokens() {
@@ -15,6 +15,7 @@ function openTokens() {
 <template>
   <div class="w-full grow flex flex-col border-t-[2px] border-[#2E2E2E] pb-20">
     <div
+      v-if="isMD"
       class="w-full h-[840px] grid grid-cols-10 grid-rows-10 border-b-[2px] border-[#2E2E2E]"
     >
       <div
@@ -52,11 +53,11 @@ function openTokens() {
           ].join(' ')
         "
       >
-        Chart
+        <TradeChart />
       </div>
 
       <div
-        class="xl:border-l-[2px] border-[#2E2E2E]"
+        class="xl:border-l-[2px] border-t-[2px] border-[#2E2E2E]"
         :class="
           [
             'xl:col-span-2 xl:row-span-10',
@@ -80,6 +81,19 @@ function openTokens() {
         "
       >
         <TradeForm />
+      </div>
+    </div>
+
+    <div
+      v-else
+      class="w-full"
+    >
+      <TradeChart />
+      <div
+        class="w-full flex px-2.5 border-y-[2px] border-[#2E2E2E] gap-1 overflow-hidden"
+      >
+        <TradeForm class="w-[60%]" />
+        <TradeOrders class="w-[40%] !h-[430px]" />
       </div>
     </div>
     <div class="w-full min-h-[270px]">

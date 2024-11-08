@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+const { isMD } = useDevice();
 const slideover = useSlideover();
 
 function onClose() {
@@ -8,7 +9,7 @@ function onClose() {
 
 <template>
   <USlideover
-    side="left"
+    :side="isMD ? 'left' : 'bottom'"
     :ui="{
       background: '!bg-black',
     }"

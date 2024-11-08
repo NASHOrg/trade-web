@@ -28,7 +28,7 @@ const tradeFormModes = computed(() => {
 <template>
   <div class="w-full h-full flex flex-col lg:px-4 md:px-2">
     <div
-      class="flex justify-start space-x-[30px] border-b-[1px] border-[#2E2E2E] pt-1 mb-4"
+      class="flex justify-start space-x-[30px] md:border-b-[1px] border-[#2E2E2E] md:mb-4"
     >
       <div
         v-for="item in tabs"
@@ -57,14 +57,22 @@ const tradeFormModes = computed(() => {
         >
           <IconActiveRadio
             v-if="selectedMode === item.value"
-            class="size-[16px] text-white"
+            class="size-[16px]"
+            :class="{
+              'text-buy': item.value === 'buy',
+              'text-sell': item.value === 'sell',
+            }"
           />
           <IconInactiveRadio
             v-else
             class="size-[16px]"
           />
           <span
-            :class="selectedMode === item.value ? 'text-white' : 'text-[#999]'"
+            class="text-[#999]"
+            :class="{
+              '!text-buy': selectedMode === 'buy' && item.value === 'buy',
+              '!text-sell': selectedMode === 'sell' && item.value === 'sell',
+            }"
           >
             {{ item.label }}
           </span>

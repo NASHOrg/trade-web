@@ -28,6 +28,7 @@
     "chart.js": "^4.4.4",
     "dayjs": "^1.11.11",
     "ethers": "^6.12.2",
+    "lightweight-charts": "^4.2.1",
     "nuxt": "^3.13.2",
     "nuxt-svgo": "^4.0.1",
     "tonweb": "^0.0.66",
@@ -35,6 +36,7 @@
     "vue-chartjs": "^5.3.1",
     "vue-router": "^4.3.2",
     "vue-sonner": "^1.1.2",
+    "vue3-echarts": "^1.1.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

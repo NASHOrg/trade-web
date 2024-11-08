@@ -26,7 +26,7 @@ const columns = computed(() => {
     },
     {
       key: 'price',
-      label: t('avgPrice'),
+      label: t('price'),
     },
     {
       key: 'qty',

@@ -159,5 +159,6 @@
   "signIn": "Sign In",
   "price": "Price",
   "market": "Market",
-  "avgPrice": "Avg Price"
+  "avgPrice": "Avg Price",
+  "trades": "Trades"
 }

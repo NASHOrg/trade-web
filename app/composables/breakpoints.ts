@@ -15,6 +15,8 @@ export function useDevice() {
     return breakpoints.lg.value;
   });
   const isXL = computed(() => {
+    console.log(breakpoints);
+
     return breakpoints.xl.value;
   });
   return {
