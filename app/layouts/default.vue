@@ -4,6 +4,8 @@
 //   const imgUrl = img('images/background_lg.png');
 //   return { backgroundImage: `url('${imgUrl}')` };
 // });
+const mode = useColorMode();
+mode.value = 'dark';
 </script>
 
 <template>

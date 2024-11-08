@@ -73,6 +73,7 @@ export default defineAppConfig({
     table: {
       base: '!bg-transparent rounded-lg text-nowrap',
       divide: '!divide-none',
+      tbody: 'divide-[#2e2e2e]',
       th: {
         base: 'text-center first:text-left',
         color: 'text-gray-500 dark:text-[#999]',
