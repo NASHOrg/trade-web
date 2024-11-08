@@ -73,8 +73,8 @@ const { data, status } = useAsyncData(`trade-${props.trade.orderId}`, () =>
         class="mb-4 flex justify-center"
         src="images/empty_box.png"
         densities="1x 2x"
-        height="68"
-        width="80"
+        height="72"
+        width="72"
       />
       <div class="text-sm font-medium text-gray-500">
         No transactions

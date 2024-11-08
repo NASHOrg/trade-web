@@ -190,7 +190,7 @@ watch(
           placeholder="0.0"
           :precision="5"
           type="number"
-          input-class="!text-[16px] !bg-transparent !text-end"
+          input-class="!text-[16px] !bg-transparent !text-end !text-white"
         />
         <span class="text-white text-xs"> {{ tokenSymbolList[1] }}</span>
       </div>
@@ -203,7 +203,7 @@ watch(
           placeholder="0.0"
           :precision="2"
           type="number"
-          input-class="!text-[16px] !bg-transparent !text-end"
+          input-class="!text-[16px] !bg-transparent !text-end !text-white"
         />
         <span class="text-white text-xs"> {{ tokenSymbolList[0] }}</span>
       </div>

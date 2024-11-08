@@ -1,10 +1,10 @@
 export const walletConfig = {
   projectId: '07556f4c9346cbd23fa53dde19889e99',
   metadata: {
-    name: 'Bool Bridge Pools',
-    description: 'Bool Bridge Pools',
-    url: 'https://example.com',
-    icons: ['https://exmaple.com/icon.png'],
+    name: 'XBIT',
+    description: 'The first Decentralized, On-Chain Order Book Exchange with Bool DHC for Self-Custody.',
+    url: 'https://xbit.finance',
+    icons: ['https://xbit.finance/favicon.png'],
   },
 };
 
@@ -32,11 +32,11 @@ export default defineAppConfig({
         },
         sell: {
           solid:
-            'shadow-sm ring-1 ring-inset ring-sell-300 dark:ring-sell-700 text-white bg-sell-400 hover:bg-sell-500 disabled:bg-gray-900 aria-disabled:bg-white dark:disabled:bg-gray-900 dark:aria-disabled:bg-gray-900 focus-visible:ring-2 focus-visible:ring-sell-500 dark:focus-visible:ring-sell-400',
+            'shadow-sm ring-1 ring-inset ring-sell-300 dark:ring-sell-700 text-white bg-sell-400 hover:bg-sell-500 disabled:bg-gray-700 aria-disabled:bg-white dark:disabled:bg-gray-700 dark:aria-disabled:bg-gray-900 focus-visible:ring-2 focus-visible:ring-sell-500 dark:focus-visible:ring-sell-400',
         },
         buy: {
           solid:
-            'shadow-sm ring-1 ring-inset ring-buy-300 dark:ring-buy-700 text-white bg-buy-400 hover:bg-buy-500 disabled:bg-white aria-disabled:bg-white  dark:disabled:bg-gray-900 dark:aria-disabled:bg-gray-900 focus-visible:ring-2 focus-visible:ring-buy-500 dark:focus-visible:ring-pbuy-400',
+            'shadow-sm ring-1 ring-inset ring-buy-300 dark:ring-buy-700 text-white bg-buy-400 hover:bg-buy-500 disabled:bg-gray-700 aria-disabled:bg-white  dark:disabled:bg-gray-700 dark:aria-disabled:bg-gray-900 focus-visible:ring-2 focus-visible:ring-buy-500 dark:focus-visible:ring-pbuy-400',
         },
       },
       size: {
@@ -73,6 +73,7 @@ export default defineAppConfig({
     table: {
       base: '!bg-transparent rounded-lg text-nowrap',
       divide: '!divide-none',
+      tbody: 'divide-[#2e2e2e]',
       th: {
         base: 'text-center first:text-left',
         color: 'text-gray-500 dark:text-[#999]',
