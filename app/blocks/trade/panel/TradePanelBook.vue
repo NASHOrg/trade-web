@@ -41,6 +41,7 @@ const { data } = useAsyncData(
   },
   {
     watch: [counter],
+    server: false,
   },
 );
 

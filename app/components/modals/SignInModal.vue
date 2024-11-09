@@ -19,6 +19,7 @@ const { data } = useAsyncData(
   },
   {
     watch: [address],
+    server: false,
   },
 );
 
@@ -74,21 +75,19 @@ function cancel() {
 </script>
 
 <template>
-  <UModal
-    prevent-close
-  >
+  <UModal prevent-close>
     <div class="py-[48px] px-[66px] flex flex-col justify-center">
       <div class="flex flex-row item-center">
         <span class="text-[24px] font-bold text-primary">Sign In</span>
         <div
           class="h-fit rounded-full py-1 px-4 bg-gray-600 text-white text-center text-[14px] ml-4"
         >
-          {{ shortAddress(address ?? '') }}
+          {{ shortAddress(address ?? "") }}
         </div>
       </div>
 
       <div class="mt-2 text-[18px]">
-        {{ $t('verifyTip') }}
+        {{ $t("verifyTip") }}
       </div>
       <div
         v-if="!referral && data !== true"
@@ -98,7 +97,7 @@ function cancel() {
           for="referral"
           class="w-full flex flex-row justify-between"
         >
-          <span class="font-semibold">{{ $t('referalCode') }}</span>
+          <span class="font-semibold">{{ $t("referalCode") }}</span>
         </label>
         <UInput
           v-model="input"
@@ -116,7 +115,7 @@ function cancel() {
             color="white"
             @click="cancel"
           >
-            {{ $t('changeWallet') }}
+            {{ $t("changeWallet") }}
           </UButton>
           <UButton
             block
@@ -124,7 +123,7 @@ function cancel() {
             :loading="isLoading"
             @click="signIn"
           >
-            {{ $t('signIn') }}
+            {{ $t("signIn") }}
           </UButton>
         </div>
       </div>

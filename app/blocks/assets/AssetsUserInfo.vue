@@ -13,6 +13,9 @@ const { data } = useAsyncData(`user-assets-${address.value}`, async () => {
   return {
     balance,
   };
+}, {
+  server: false,
+  watch: [address],
 });
 
 const balanceFormat = computed(() => {
