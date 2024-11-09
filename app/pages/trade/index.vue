@@ -19,5 +19,7 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="container" />
+  <div class="container" >
+    Trade
+  </div>
 </template>
