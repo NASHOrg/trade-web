@@ -29,7 +29,3 @@ export const betaTestnet = {
 };
 
 export type Network = typeof betaTestnet;
-
-export default {
-  beta_testnet: betaTestnet,
-};
