@@ -4,8 +4,7 @@
 definePageMeta({
   middleware: () => {
     const tradeStore = useTradeStore();
-    const { tokenOptions } = storeToRefs(tradeStore);
-    const tokenValue = tokenOptions.value[0]?.value ?? 'bool-usdt';
+    const tokenValue = tradeStore.tokenOptions?.[0]?.value ?? 'bool-usdt';
     return navigateTo(`/trade/${tokenValue}`);
   },
 });
@@ -19,7 +18,7 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="container" >
+  <div class="container">
     Trade
   </div>
 </template>
