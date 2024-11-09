@@ -44,9 +44,11 @@
 
 <template>
   <div
-    class="w-full h-[46px] py-2.5 px-5 fixed left-0 top-0 flex justify-between items-center z-10 backdrop-blur "
+    class="w-full h-[46px] py-2.5 px-5 fixed left-0 top-0 flex justify-between items-center z-10 backdrop-blur"
   >
-    <IconXbit />
+    <NuxtLink to="/trade">
+      <IconXbit />
+    </NuxtLink>
     <!-- <div class="hidden lg:flex space-x-[40px] items-center text-[20px]">
       <ULink
         v-for="item in navigators"

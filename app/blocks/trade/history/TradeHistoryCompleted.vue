@@ -29,6 +29,12 @@ const columns = computed(() => {
       key: 'u',
       label: t('value'),
     },
+    {
+      key: 'expand',
+    },
+    {
+      key: 'action',
+    },
   ];
 });
 
@@ -37,19 +43,14 @@ const queryParams = ref({
   pageSize: 10,
 });
 
-const userStore = useUserStore();
-
 const { data, status } = useAsyncData(
   `trade-history-${address}-${queryParams.value.pageNo}`,
   () => {
     if (!address.value) return Promise.resolve(undefined);
-    return $api.blockchainTradeHistory(
-      {
-        ...queryParams.value,
-        address: address.value,
-      },
-      userStore.token,
-    );
+    return $api.blockchainTradeHistory({
+      ...queryParams.value,
+      address: address.value,
+    });
   },
   {
     watch: [address, () => queryParams.value.pageNo],
@@ -78,11 +79,19 @@ function onSelect(info: (typeof datas.value)[number]) {
     item => item['orderId'] === info['orderId'],
   );
   if (index !== -1) {
-    expandRows.value.openedRows.splice(index, 1);
+    expandRows.value.openedRows = [];
   }
   else {
-    expandRows.value.openedRows.push(info);
+    expandRows.value.openedRows = [info];
+
+    // expandRows.value.openedRows.push();
   }
+}
+
+function isExpanded(row: (typeof datas.value)[number]) {
+  return expandRows.value.openedRows.some(
+    item => item.orderId === row.orderId,
+  );
 }
 </script>
 
@@ -132,9 +141,25 @@ function onSelect(info: (typeof datas.value)[number]) {
       class="w-full"
       :columns="columns"
       :rows="datas"
-      :ui="{ th: { base: 'w-1/6' }, td: { base: 'w-1/6' } }"
       @select="onSelect"
     >
+      <template #caption>
+        <colgroup>
+          <col
+            v-for="count in columns.length + 1"
+            :key="count"
+            :style="{
+              width: [1, columns.length + 1, columns.length].includes(count)
+                ? '5%'
+                : `${(1 / (columns.length - 2)) * 85}%`,
+            }"
+            :data-index="count"
+          >
+        </colgroup>
+      </template>
+      <template #expand-action>
+        <span />
+      </template>
       <template #type-data="{ row }">
         <div>
           <span
@@ -156,15 +181,14 @@ function onSelect(info: (typeof datas.value)[number]) {
         <span> {{ formatDate(Number(row.tradeTime)) }}</span>
       </template>
 
-      <!-- <template #expand-action="{ row, isExpanded }">
+      <template #expand-data="{ row }">
         <div class="flex items-center space-x-2">
           <UIcon
             name="i-heroicons-chevron-down"
-            :class="{ 'rotate-180 transition-[0.3s]': isExpanded }"
+            :class="{ 'rotate-180 transition-[0.3s]': isExpanded(row) }"
           />
-          <span> {{ formatDate(Number(row.tradeTime)) }}</span>
         </div>
-      </template> -->
+      </template>
     </UTable>
     <TablePagination
       v-if="data && data.totalPage > 1"

@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { toast } from 'vue-sonner';
-import { tradeApi } from '~/utils/contracts';
 
 // const tradeStore = useTradeStore();
 
 // const { currantToken } = storeToRefs(tradeStore);
 const { address, chainId, switchNetwork, open } = useWallet();
-const { network } = useNetworkConfig();
+const { network, tradeApi } = useNetworkConfig();
 const { t } = useI18n();
 const { $api } = useNuxtApp();
-const userStore = useUserStore();
 
 const isCanceling = ref<string | undefined>(undefined);
 
@@ -22,13 +20,10 @@ const { data, status } = useAsyncData(
   `trade-orders-${address}`,
   () => {
     if (!address.value) return Promise.resolve(undefined);
-    return $api.blockchainUserOrders(
-      {
-        address: address.value,
-        ...queryParams.value,
-      },
-      userStore.token,
-    );
+    return $api.blockchainUserOrders({
+      address: address.value,
+      ...queryParams.value,
+    });
   },
   {
     watch: [address, () => queryParams.value.pageNo],
@@ -41,6 +36,10 @@ const { data, status } = useAsyncData(
 const columns = computed(() => {
   return [
     {
+      key: 'time',
+      label: t('time'),
+    },
+    {
       key: 'pair',
       label: t('pair'),
     },
@@ -52,24 +51,36 @@ const columns = computed(() => {
       key: 'price',
       label: t('targetPrice'),
     },
-    // {
-    //   key: 'filledQty',
-    //   label: t('filledQty'),
-    // },
     {
       key: 'qty',
-      label: t('totalQty'),
+      label: `${t('filled')}/${t('totalQty')}`,
     },
     {
-      key: 'originalU',
-      label: t('value'),
+      key: 'value',
+      label: `${t('filled')}/${t('totalValue')}`,
     },
     {
       key: 'action',
       label: t('action'),
     },
+
+    {
+      key: '1',
+    },
   ];
 });
+const datas = computed(() => {
+  return (data.value?.items ?? []).map((item) => {
+    return { ...item };
+  });
+});
+const expandRows = ref<{
+  openedRows: typeof datas.value;
+  row: (typeof datas.value)[number] | null;
+}>({
+      openedRows: [],
+      row: null,
+    });
 
 async function onCancelOrder(id: string, type: number) {
   isCanceling.value = id + type.toString();
@@ -78,8 +89,8 @@ async function onCancelOrder(id: string, type: number) {
       return open();
     }
     const provider = useWallet().provider();
-    if (chainId.value !== Number(network.chainId)) {
-      const result = await switchNetwork(Number(network.chainId));
+    if (chainId.value !== Number(network.value.chainId)) {
+      const result = await switchNetwork(Number(network.value.chainId));
       if (!result) return;
     }
     const tx = await tradeApi.cancelOrder(provider, {
@@ -102,6 +113,12 @@ async function onCancelOrder(id: string, type: number) {
     isCanceling.value = undefined;
   }
 }
+
+// function isExpanded(row: (typeof datas.value)[number]) {
+//   return expandRows.value.openedRows.some(
+//     (item) => item.orderId === row.orderId,
+//   );
+// }
 </script>
 
 <template>
@@ -145,22 +162,38 @@ async function onCancelOrder(id: string, type: number) {
     </div>
     <UTable
       v-else
+      v-model:expand="expandRows"
       class="w-full mt-2.5"
       :columns="columns"
-      :rows="data.items ?? []"
-      :ui="{ th: { base: 'w-1/6' }, td: { base: 'w-1/6' } }"
+      :rows="datas"
     >
-      <template #action-data="{ row }">
-        <UButton
-          class="rounded-[4px] h-[26px]"
-          size="sm"
-          :loading="isCanceling === row.orderId + row.type.toString()"
-          @click="onCancelOrder(row.orderId, row.type)"
-        >
-          <span v-if="isCanceling !== row.orderId + row.type.toString()">
-            {{ t("cancel") }}
-          </span>
-        </UButton>
+      <template #caption>
+        <colgroup>
+          <col
+            v-for="count in columns.length + 1"
+            :key="count"
+            :style="{
+              width: [1, columns.length + 1].includes(count)
+                ? '5%'
+                : `${(1 / (columns.length - 1)) * 90}%`,
+            }"
+            :data-index="count"
+          >
+        </colgroup>
+      </template>
+      <template #expand-action>
+        <span />
+      </template>
+
+      <template #qty-data="{ row }">
+        <span>{{ row["filledQty"] }}</span>
+        <span>/</span>
+        <span>{{ row["qty"] }}</span>
+      </template>
+      <template #value-data="{ row }">
+        <span>{{ row["filledU"] }}</span>
+        <span>/</span>
+        <span>{{ row["originalU"] }}</span>
       </template>
       <template #type-data="{ row }">
         <div>
@@ -174,6 +207,32 @@ async function onCancelOrder(id: string, type: number) {
           >{{ t("buy") }}</span>
         </div>
       </template>
+
+      <template #time-data="{ row }">
+        <span> {{ formatDate(Number(row.time)) }}</span>
+      </template>
+
+      <template #action-data="{ row }">
+        <UButton
+          class="rounded-[4px] h-[26px]"
+          size="sm"
+          :loading="isCanceling === row.orderId + row.type.toString()"
+          @click="onCancelOrder(row.orderId, row.type)"
+        >
+          <span v-if="isCanceling !== row.orderId + row.type.toString()">
+            {{ t("cancel") }}
+          </span>
+        </UButton>
+      </template>
+      <!--
+      <template #expand-data="{ row }">
+        <div class="flex items-center space-x-2">
+          <UIcon
+            name="i-heroicons-chevron-down"
+            :class="{ 'rotate-180 transition-[0.3s]': isExpanded(row) }"
+          />
+        </div>
+      </template> -->
     </UTable>
 
     <TablePagination

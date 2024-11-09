@@ -10,7 +10,7 @@ const { t } = useI18n();
 const columns = computed(() => {
   return [
     {
-      key: 'expand',
+      key: '1',
     },
     {
       key: 'time',
@@ -36,6 +36,9 @@ const columns = computed(() => {
       key: 'u',
       label: t('value'),
     },
+    {
+      key: '2',
+    },
   ];
 });
 
@@ -57,7 +60,7 @@ const { data, status } = useAsyncData(`trade-${props.trade.orderId}`, () =>
   <div class="w-full flex bg-gray-100 dark:bg-gray-800/30">
     <div
       v-if="!data && status === 'pending'"
-      class="h-[48px] flex justify-center items-center space-x-2 px-4"
+      class="h-[48px] w-full flex justify-center items-center space-x-2 px-4"
     >
       <UIcon
         class="animate-spin text-primary-500 w-6 h-6 flex justify-center"
@@ -87,12 +90,25 @@ const { data, status } = useAsyncData(`trade-${props.trade.orderId}`, () =>
       :columns="columns"
       :rows="data?.items ?? []"
       :ui="{
-        th: { base: '!w-1/6' },
-        td: { base: '!w-1/6' },
         tbody: 'divide-none',
         divide: 'divide-none',
       }"
     >
+      <template #caption>
+        <colgroup>
+          <col
+            v-for="count in columns.length + 1"
+            :key="count"
+            :style="{
+              width: [1, columns.length + 1, columns.length].includes(count)
+                ? '5%'
+                : `${(1 / (columns.length - 2)) * 85}%`,
+            }"
+            :data-index="count"
+          >
+        </colgroup>
+      </template>
+
       <template #type-data="{ row }">
         <div>
           <span

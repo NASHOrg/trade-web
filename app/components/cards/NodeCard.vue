@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { formatEther } from 'ethers';
 import { formatAmount } from '~/utils/helpers';
-import type { AccountInfo, DHCListItem } from '~/types/common';
+import type { AccountInfo } from '~/types/common';
 import { NODE_CAPACITY } from '~/utils/contracts';
 import { shortAddress } from '#imports';
 
 const router = useRouter();
 const { t } = useI18n();
 const props = defineProps<{
-  item: DHCListItem;
+  item: any;
   accountInfo: AccountInfo | undefined;
   stakedFilter: boolean;
   type: 'crowdfund' | 'mine';
 }>();
 
-function dhcListItemAvatarBg(item: DHCListItem) {
+function dhcListItemAvatarBg(item: any) {
   if (props.stakedFilter) {
     switch (item.deviceState) {
       case 'SERVING':
@@ -47,7 +47,7 @@ function dhcListItemStateDisplay(deviceState: string) {
   }
 }
 
-function onStake(item: DHCListItem) {
+function onStake(item: any) {
   const stakingData = props.accountInfo?.staking;
   const balance = props.accountInfo?.myBalance;
   if (!stakingData || !balance) return;

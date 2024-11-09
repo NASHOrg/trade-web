@@ -28,8 +28,39 @@ export const betaTestnet = {
   },
 };
 
+export const alphaTestnet = {
+  baseUrl: 'https://alpha-api.boolscan.com/bool-network',
+  rpc: 'https://alpha-rpc-node-http.bool.network/',
+  wss: 'wss://alpha-rpc-node-ws.bool.network',
+  chainId: 479,
+  symbol: 'tBOL',
+  name: 'Alpha Mainnet',
+  value: 'alpha_mainnet',
+  feeRate: 500,
+  explorer: 'https://alpha-mainnet.boolscan.com',
+  contracts: {
+    trade: '',
+  },
+  tokens: {
+    bool: {
+      name: 'BOOL',
+      symbol: 'BOL',
+      decimals: 18,
+      icon: '/images/bool_circle_fill_pink.png',
+    },
+    usdt: {
+      name: 'USDT',
+      address: '0x3fFa3237b30b15eF3368132a2AC9D262d8502bB3',
+      icon: '/images/usdt.png',
+      symbol: 'USDT',
+      decimals: 18,
+    },
+  },
+};
+
 export type Network = typeof betaTestnet;
 
 export default {
   beta_testnet: betaTestnet,
+  alpha_mainnet: alphaTestnet,
 };

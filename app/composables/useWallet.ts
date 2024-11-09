@@ -6,22 +6,24 @@ import {
   useDisconnect,
   useWeb3Modal,
 } from '@web3modal/ethers/vue';
-// import { toast } from 'vue-sonner';
 import { BrowserProvider } from 'ethers';
-// import { SignInModal } from '#components';
-import { network } from '~/utils/contracts';
+import NetworkConfig from '~/utils/networks';
+
+const network = NetworkConfig.beta_testnet;
 
 // 1. Get projectId at https://cloud.walletconnect.com
 const projectId = '07556f4c9346cbd23fa53dde19889e99';
 
 // 2. Set chains
-const mainnet = {
-  chainId: 481,
-  name: 'Bool Beta Testnet',
-  currency: 'tBOL',
-  explorerUrl: 'https://beta-testnet.boolscan.com',
-  rpcUrl: 'https://betatest-rpc-node-http.bool.network',
-};
+const chains = Object.values(NetworkConfig).map((item) => {
+  return {
+    chainId: item.chainId,
+    name: item.name,
+    currency: item.symbol,
+    explorerUrl: item.explorer,
+    rpcUrl: item.rpc,
+  };
+});
 
 // 3. Create modal
 const metadata = {
@@ -43,9 +45,10 @@ createWeb3Modal({
     '--w3m-z-index': 9999,
     '--w3m-font-family': 'Roboto',
   },
-  chains: [mainnet],
+  chains,
   chainImages: {
     481: 'https://bool.network/favicon.svg',
+    479: 'https://bool.network/favicon.svg',
   },
   projectId,
   enableSwaps: false,
@@ -57,52 +60,6 @@ export default function useWallet() {
   const { address, isConnected, chainId } = useWeb3ModalAccount();
   const { disconnect } = useDisconnect();
   const { walletProvider } = useWeb3ModalProvider();
-  // const store = useUserStore();
-
-  // watch(address, (newAddress, oldAddress) => {
-  //   if (import.meta.server) {
-  //     return;
-  //   }
-  //   if (oldAddress === newAddress && newAddress) {
-  //     return;
-  //   }
-  //   if (signing) {
-  //     return;
-  //   }
-  //   if (!newAddress) {
-  //     store.token = undefined;
-  //     const tokens = JSON.parse(localStorage.getItem('tokens') ?? '{}');
-  //     if (oldAddress) tokens[oldAddress] = undefined;
-  //     localStorage.setItem('tokens', JSON.stringify(tokens));
-  //     // if (useRoute().path !== '/') {
-  //     //   navigateTo('/');
-  //     // }
-  //     store.user = undefined;
-  //     return;
-  //   }
-  //   try {
-  //     signing = newAddress;
-  //     const tokens = JSON.parse(localStorage.getItem('tokens') ?? '{}');
-  //     const _token = tokens[newAddress];
-  //
-  //     const modal = useModal();
-  //     if (!_token) {
-  //       modal.open(SignInModal);
-  //       return;
-  //     }
-  //     modal.close();
-  //     store.token = _token;
-  //   }
-  //   catch (error: any) {
-  //     disconnect();
-  //     if ('message' in error && error.message) {
-  //       handleJsonRpcError(error, toast);
-  //     }
-  //   }
-  //   finally {
-  //     signing = undefined;
-  //   }
-  // }, { immediate: true });
 
   async function switchNetwork(chain: number) {
     if (chain === Number(chainId.value)) return true;

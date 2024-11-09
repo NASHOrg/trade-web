@@ -33,8 +33,8 @@ const selectedTab = ref('buy');
         />
       </span>
     </div>
-    <TradePanelBuyForm v-if="selectedTab === 'buy'" />
-    <TradePanelSellForm v-else />
+    <!-- <TradePanelBuyForm v-if="selectedTab === 'buy'" />
+    <TradePanelSellForm v-else /> -->
     <div class="flex justify-center items-center mt-[8px] space-x-[8px] text-[#999] text-[14px]">
       <UPopover
         :popper="{ placement: 'top' }"

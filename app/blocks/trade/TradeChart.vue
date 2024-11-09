@@ -76,12 +76,6 @@ const tradeData = computed(() => {
 
   if (list.length > 0) {
     const test = testData(list[0]!.time * 1000);
-    console.log(
-      [...test, ...list].map(item => ({
-        ...item,
-        time: dayjs(item.time * 1000).format('YYYY-MM-DD HH:mm:ss'),
-      })),
-    );
 
     return [...test, ...list];
   }
@@ -254,6 +248,35 @@ const slideover = useSlideover();
 function openTokens() {
   slideover.open(TokensSlideover);
 }
+
+async function resizeHandler() {
+  if (charting.value) {
+    return;
+  }
+  charting.value = true;
+  // throttle
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, 500);
+  });
+
+  if (mainChart.value) {
+    const rect = mainChartContainer.value?.getBoundingClientRect();
+    if (rect) {
+      mainChart.value.resize(rect.width, rect.height);
+    }
+  }
+  charting.value = false;
+}
+
+onMounted(() => {
+  window.addEventListener('resize', resizeHandler);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', resizeHandler);
+});
 </script>
 
 <template>

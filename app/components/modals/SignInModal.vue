@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { toast } from 'vue-sonner';
 
-const store = useUserStore();
+// const store = useUserStore();
 const isLoading = ref(false);
 const { $api } = useNuxtApp();
 const { signMessage, address, open, disconnect } = useWallet();
@@ -41,7 +41,7 @@ async function signIn() {
       });
       tokens[address.value!] = response;
       localStorage.setItem('tokens', JSON.stringify(tokens));
-      store.token = response;
+      // store.token = response;
       modal.close();
       return;
     }
@@ -53,7 +53,7 @@ async function signIn() {
     });
     tokens[address.value!] = response;
     localStorage.setItem('tokens', JSON.stringify(tokens));
-    store.token = response;
+    // store.token = response;
     modal.close();
   }
   catch (error: any) {

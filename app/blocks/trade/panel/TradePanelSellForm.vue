@@ -2,7 +2,6 @@
 import BN from 'bignumber.js';
 import { toast } from 'vue-sonner';
 import { parseEther } from 'ethers';
-import { network, tradeApi } from '~/utils/contracts';
 
 const props = defineProps<{
   mode: 'limit' | 'market';
@@ -15,6 +14,7 @@ const { address, open, chainId, switchNetwork } = useWallet();
 const { t } = useI18n();
 const { currantToken } = storeToRefs(tradeStore);
 const { currentRoute } = useRouter();
+const { network, tradeApi } = useNetworkConfig();
 
 const { data } = useNuxtData('order-book');
 const state = reactive<{

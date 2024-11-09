@@ -1,6 +1,6 @@
 export const useTradeStore = defineStore('trade-store', () => {
   const { currentRoute } = useRouter();
-  const { usdt, bool } = useNetworkConfig();
+  const { tokens } = useNetworkConfig();
 
   const tokenOptions = computed(() => {
     return [
@@ -9,7 +9,7 @@ export const useTradeStore = defineStore('trade-store', () => {
         label: 'BOOL / USDT',
         type: 0,
         price: '0.01',
-        tokens: [bool, usdt],
+        tokens: [tokens.value.bool, tokens.value.usdt],
       },
       // {
       //   value: "BOOL/USDC",

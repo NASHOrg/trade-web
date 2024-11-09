@@ -1,11 +1,18 @@
 <script setup lang="ts">
 import { formatUnits } from 'ethers';
-import { stakeApi } from '~/utils/contracts';
+import { BaseEvmApi } from '~/utils/contracts/api';
 
-const props = defineProps<{ address?: string; token: { address?: string; decimals?: number; symbol?: string }; config?: { showSymbol: boolean } }>();
+const props = defineProps<{
+  address?: string;
+  token: { address?: string; decimals?: number; symbol?: string };
+  config?: { showSymbol: boolean };
+}>();
 const emit = defineEmits<{
   (e: 'change', value: string): void;
 }>();
+
+const { network } = useNetworkConfig();
+const api = new BaseEvmApi(network.value.rpc);
 
 const { data: balance } = useAsyncData(
   `token-balance-${props.address}-${props.token.address ?? ''}`,
@@ -13,7 +20,7 @@ const { data: balance } = useAsyncData(
     if (!props.address) {
       return Promise.resolve(undefined);
     }
-    return stakeApi.getBalance({
+    return api.getBalance({
       address: props.address,
       contractAddress: props.token.address,
     });
@@ -24,16 +31,24 @@ const { data: balance } = useAsyncData(
 const formatedBalance = computed(() => {
   if (balance.value === undefined) return '';
   if (props.config?.showSymbol) {
-    return formatAmount(formatUnits(balance.value!, props.token.decimals), 2) + ' ' + props.token.symbol;
+    return (
+      formatAmount(formatUnits(balance.value!, props.token.decimals), 2)
+      + ' '
+      + props.token.symbol
+    );
   }
   return formatAmount(formatUnits(balance.value!, props.token.decimals), 2);
 });
 
-watch(balance, () => {
-  if (balance.value !== undefined) {
-    emit('change', formatUnits(balance.value, props.token.decimals));
-  }
-}, { immediate: true });
+watch(
+  balance,
+  () => {
+    if (balance.value !== undefined) {
+      emit('change', formatUnits(balance.value, props.token.decimals));
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <template>

@@ -161,5 +161,7 @@
   "market": "Market",
   "avgPrice": "Avg Price",
   "trades": "Trades",
-  "value": "Value"
+  "value": "Value",
+  "filled": "Filled",
+  "totalValue": "Total value"
 }

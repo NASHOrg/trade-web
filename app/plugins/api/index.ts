@@ -18,13 +18,7 @@ const api = defineNuxtPlugin((nuxtApp) => {
       parseResponse: (data) => {
         const response = JSON.parse(data);
         if (response.code !== '000' && response.code !== 200) {
-          if (response.code === '108.bool-stake-reward.UNAUTHENTICATED') {
-            const userStore = useUserStore();
-            userStore.logout();
-          }
-          else {
-            throw new Error(response.msg);
-          }
+          throw new Error(response.msg);
         }
         else {
           return response.data;
