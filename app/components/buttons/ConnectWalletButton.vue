@@ -7,10 +7,10 @@ const options = computed(() => {
   return [
     [
       {
-        label: 'Assets',
+        label: 'Account',
         icon: 'i-icon-park-outline-data',
         click: () => {
-          router.push($localePath({ path: '/assets' }));
+          router.push($localePath({ path: '/account' }));
         },
       },
     ],
