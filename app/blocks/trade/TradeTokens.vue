@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const emits = defineEmits<{
-  (e: 'select', value: string): void;
+  (e: "select", value: string): void;
 }>();
 const tradeStore = useTradeStore();
 const { tokenOptions } = tradeStore;
@@ -10,15 +10,18 @@ const router = useRouter();
 
 const cols = computed(() => {
   return [
-    { id: 'label', label: 'Pair' },
-    { id: 'type', label: 'Side' },
-    { id: 'price', label: 'Price' },
+    { id: "label", label: "Pair" },
+    { id: "type", label: "Side" },
+    { id: "price", label: "Price" },
   ];
 });
 
 function onSelect(id: string) {
-  emits('select', id);
-  router.replace(`/trade/${id}`);
+  emits("select", id);
+  router.replace({
+    path: "/trade",
+    query: { ...(router.currentRoute.value.query ?? {}), value: id },
+  });
 }
 </script>
 

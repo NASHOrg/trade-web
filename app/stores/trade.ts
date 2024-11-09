@@ -22,7 +22,7 @@ export const useTradeStore = defineStore('trade-store', () => {
   });
 
   const currantToken = computed(() => {
-    const value = currentRoute.value.params?.value as string | undefined;
+    const value = currentRoute.value.query?.value as string | undefined;
     return (
       tokenOptions.value.find(item => item.value === value)
       ?? tokenOptions.value[0]
