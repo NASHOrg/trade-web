@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { IChartApi } from 'lightweight-charts';
 import { createChart } from 'lightweight-charts';
-import dayjs from 'dayjs';
 import { TokensSlideover } from '#components';
 
 const tradeStore = useTradeStore();
@@ -41,26 +40,6 @@ const timeSpecifiedTrade = computed(() => {
   ];
 });
 
-function testData(baseTime: number) {
-  console.log(dayjs(baseTime).format('YYYY-MM-DD HH:mm:ss'));
-
-  const list = [];
-  for (let i = 0; i < 1000; i++) {
-    const time = dayjs(baseTime)
-      .subtract(i + 1, timeSpecified.value === '0' ? 'h' : 'd')
-      .valueOf();
-    list.push({
-      time: Math.floor(time / 1000),
-      open: Math.floor(Math.random() * (30 - 10 + 1)) + 10,
-      high: Math.floor(Math.random() * (30 - 10 + 1)) + 10,
-      low: Math.floor(Math.random() * (30 - 10 + 1)) + 10,
-      close: Math.floor(Math.random() * (30 - 10 + 1)) + 10,
-    });
-  }
-
-  return list.reverse();
-}
-
 const tradeData = computed(() => {
   const list = (data.value?.items ?? [])
     .map((item) => {
@@ -75,14 +54,7 @@ const tradeData = computed(() => {
     .reverse();
 
   if (list.length > 0) {
-    const test = testData(list[0]!.time * 1000);
-    console.log(
-      [...test, ...list].map(item => ({
-        ...item,
-        time: dayjs(item.time * 1000).format('YYYY-MM-DD HH:mm:ss'),
-      })),
-    );
-
+    const test = timeSpecified.value === '0' ? hourData : dayData;
     return [...test, ...list];
   }
 
@@ -212,7 +184,7 @@ function initChart() {
     priceScaleId: 'right', // 使用右侧价格刻度
   });
 
-  candlestickSeries.setData(tradeData.value);
+  candlestickSeries.setData(tradeData.value as any);
   candlestickSeries.priceScale().applyOptions({
     scaleMargins: {
       top: 0.1,
