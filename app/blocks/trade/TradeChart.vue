@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { IChartApi } from 'lightweight-charts';
+import type { IChartApi, ISeriesApi } from 'lightweight-charts';
 import { createChart } from 'lightweight-charts';
 import { TokensSlideover } from '#components';
 
@@ -9,17 +9,35 @@ const { $api } = useNuxtApp();
 
 const mainChartContainer = ref<null | HTMLElement>();
 const mainChart = ref<null | IChartApi>();
+const candlestickSeries = ref<null | ISeriesApi<'Candlestick'>>();
 
 const timeSpecified = ref('0');
 
 const charting = ref(true);
-// const { counter } = useInterval(10000, { controls: true });
+const { counter } = useInterval(10000, { controls: true });
 
 const { data, status } = useAsyncData(
+  generateRandomNumber(),
   () => $api.blockchainTradeStatistic({ type: timeSpecified.value }),
   {
     server: false,
     watch: [timeSpecified],
+  },
+);
+
+const { data: newData } = useAsyncData(
+  generateRandomNumber(),
+  () => {
+    if (!data.value) return Promise.resolve(null);
+    return $api.blockchainTradeStatistic({
+      type: timeSpecified.value,
+      pageNo: 1,
+      pageSize: 1,
+    });
+  },
+  {
+    server: false,
+    watch: [counter],
   },
 );
 
@@ -174,18 +192,21 @@ function initChart() {
     });
   }
 
-  const candlestickSeries = mainChart.value.addCandlestickSeries({
-    upColor: '#0AC49E',
-    downColor: '#E24444',
-    borderVisible: false,
-    wickUpColor: '#0AC49E',
-    wickDownColor: '#E24444',
-    priceLineColor: '#E24444',
-    priceScaleId: 'right', // 使用右侧价格刻度
-  });
+  if (!candlestickSeries.value) {
+    candlestickSeries.value = mainChart.value.addCandlestickSeries({
+      upColor: '#0AC49E',
+      downColor: '#E24444',
+      borderVisible: false,
+      wickUpColor: '#0AC49E',
+      wickDownColor: '#E24444',
+      priceLineColor: '#E24444',
+      priceScaleId: 'right', // 使用右侧价格刻度
+      priceLineVisible: false,
+    });
+  }
 
-  candlestickSeries.setData(tradeData.value as any);
-  candlestickSeries.priceScale().applyOptions({
+  candlestickSeries.value.setData(tradeData.value as any);
+  candlestickSeries.value.priceScale().applyOptions({
     scaleMargins: {
       top: 0.1,
       bottom: 0.1,
@@ -208,6 +229,29 @@ function initChart() {
     charting.value = false;
   }, 200);
 }
+
+function updateChart() {
+  console.log(candlestickSeries.value);
+
+  if (!candlestickSeries.value) {
+    return;
+  }
+  const item = newData.value?.items?.[0];
+
+  if (item) {
+    candlestickSeries.value.update({
+      time: Number(item.time) / 1000,
+      open: Number(item.openPrice),
+      high: Number(item.highPrice),
+      low: Number(item.lowPrice),
+      close: Number(item.closePrice),
+    });
+  }
+}
+
+watch(newData, () => {
+  updateChart();
+});
 
 watch(
   status,
@@ -238,13 +282,17 @@ async function resizeHandler() {
       resolve(true);
     }, 500);
   });
-  const rect = mainChartContainer.value?.getBoundingClientRect();
+  const rect = mainChartContainer.value?.getBoundingClientRect?.();
 
   if (mainChart.value && rect) {
     const widthRangeUp = rect.width + 30;
     const widthRangeLow = rect.width - 30;
 
-    if (!oldRect || oldRect.width > widthRangeUp || oldRect.width < widthRangeLow) {
+    if (
+      !oldRect
+      || oldRect.width > widthRangeUp
+      || oldRect.width < widthRangeLow
+    ) {
       charting.value = true;
       oldRect = rect;
 

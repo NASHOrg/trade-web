@@ -8,10 +8,12 @@ const { currantToken } = storeToRefs(tradeStore);
 
 const router = useRouter();
 
+const { data } = useNuxtData('order-book');
+
 const cols = computed(() => {
   return [
     { id: 'label', label: 'Pair' },
-    { id: 'type', label: 'Side' },
+    // { id: 'type', label: 'Side' },
     { id: 'price', label: 'Price' },
   ];
 });
@@ -42,11 +44,11 @@ function onSelect(id: string) {
       />
     </div>
 
-    <div class="grid grid-cols-8 text-[#999999] px-4 pt-4">
+    <div class="grid grid-cols-2 text-[#999999] px-4 pt-4">
       <span
         v-for="item in cols"
         :key="item.id"
-        class="first:col-span-4 last:col-span-3 col-span-1 text-xs font-normal leading-[14px] first:text-start last:text-end text-center"
+        class=" col-span-1 text-xs font-normal leading-[14px] first:text-start last:text-end text-center"
       >
         {{ item.label }}
       </span>
@@ -57,7 +59,7 @@ function onSelect(id: string) {
         <div
           v-for="token in tokenOptions"
           :key="token.value"
-          class="grid grid-cols-8 px-4 py-2 hover:bg-gray-500/20 cursor-pointer transition-[0.2s]"
+          class="grid grid-cols-2 px-4 py-2 hover:bg-gray-500/20 cursor-pointer transition-[0.2s]"
           :class="{ ' bg-gray-500/10': currantToken?.value === token.value }"
           @click="onSelect(token.value)"
         >
@@ -66,7 +68,7 @@ function onSelect(id: string) {
             :key="item.id"
             :class="
               [
-                'first:col-span-4 last:col-span-3 col-span-1',
+                'first:text-start last:text-end text-center',
                 'text-xs font-normal leading-[14px] first:text-start last:text-end text-center text-ellipsis overflow-hidden',
               ].join(' ')
             "
@@ -86,7 +88,7 @@ function onSelect(id: string) {
               <span v-else>{{ $t("buy") }}</span>
             </template>
             <template v-else-if="['price'].includes(item.id)">
-              {{ token[item.id] }}
+              {{ data?.latestPrice ?? '0' }}
             </template>
           </span>
         </div>
