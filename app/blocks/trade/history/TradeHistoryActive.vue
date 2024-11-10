@@ -8,6 +8,7 @@ const { address, chainId, switchNetwork, open } = useWallet();
 const { network, tradeApi } = useNetworkConfig();
 const { t } = useI18n();
 const { $api } = useNuxtApp();
+const { counter } = useInterval(10000, { controls: true });
 
 const isCanceling = ref<string | undefined>(undefined);
 
@@ -16,7 +17,7 @@ const queryParams = ref({
   pageSize: 10,
 });
 
-const { data, status } = useAsyncData(
+const { data, status, refresh } = useAsyncData(
   `trade-orders-${address}`,
   () => {
     if (!address.value) return Promise.resolve(undefined);
@@ -32,6 +33,12 @@ const { data, status } = useAsyncData(
     deep: true,
   },
 );
+
+watch(counter, () => {
+  if (queryParams.value.pageNo === 1) {
+    refresh();
+  }
+});
 
 const columns = computed(() => {
   return [

@@ -30,7 +30,7 @@ const columns = computed(() => {
   ];
 });
 
-const { counter } = useInterval(10000, { controls: true });
+const { counter } = useInterval(3000, { controls: true });
 
 const { data } = useAsyncData(
   'order-book',

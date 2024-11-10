@@ -10,11 +10,18 @@ const { $api } = useNuxtApp();
 
 const mainChartContainer = ref<null | HTMLElement>();
 const candlestickSeries = ref<null | ISeriesApi<'Candlestick'>>();
+const tooltipData = ref<{
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  time: number;
+} | undefined>();
 
 const timeSpecified = ref('0');
 
 const charting = ref(true);
-const { counter } = useInterval(10000, { controls: true });
+const { counter } = useInterval(3000, { controls: true });
 
 const { data, status } = useAsyncData(
   generateRandomNumber(),
@@ -31,8 +38,6 @@ const { data: newData } = useAsyncData(
     if (!data.value) return Promise.resolve(null);
     return $api.blockchainTradeStatistic({
       type: timeSpecified.value,
-      pageNo: 1,
-      pageSize: 1,
     });
   },
   {
@@ -99,74 +104,19 @@ function changeChartRange() {
   }
 }
 
-// function setTooltip(series) {
-//   if (!mainChartContainer.value || !mainChart.value) return;
-//   const toolTipWidth = 80;
-//   const toolTipHeight = 80;
-//   const toolTipMargin = 15;
+function setTooltip() {
+  if (!mainChartContainer.value || !mainChart.value) return;
+  const allData = candlestickSeries.value!.data();
+  const data = allData[allData.length - 1];
+  tooltipData.value = data as any;
 
-//   const container = mainChartContainer.value;
-
-//   // Create and style the tooltip html element
-//   const toolTip = document.createElement('div');
-//   toolTip.style = `width: 96px; height: 80px; position: absolute; display: none; padding: 8px; box-sizing: border-box; font-size: 12px; text-align: left; z-index: 1000; top: 12px; left: 12px; pointer-events: none; border: 1px solid; border-radius: 2px;font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;`;
-//   toolTip.style.background = 'white';
-//   toolTip.style.color = 'black';
-//   toolTip.style.borderColor = '#2962FF';
-//   container.appendChild(toolTip);
-
-//   // update tooltip
-//   mainChart.value.subscribeCrosshairMove((param) => {
-//     if (
-//       param.point === undefined
-//       || !param.time
-//       || param.point.x < 0
-//       || param.point.x > container.clientWidth
-//       || param.point.y < 0
-//       || param.point.y > container.clientHeight
-//     ) {
-//       toolTip.style.display = 'none';
-//     }
-//     else {
-//       // time will be in the same format that we supplied to setData.
-//       // thus it will be YYYY-MM-DD
-//       const dateStr = param.time;
-//       toolTip.style.display = 'block';
-
-//       const data = param.seriesData.get(series);
-//       console.log(data);
-
-//       const price = data.value !== undefined ? data.value : data.close;
-//       toolTip.innerHTML = `<div style="color: ${'#2962FF'}">Apple Inc.</div><div style="font-size: 24px; margin: 4px 0px; color: ${'black'}">
-//             ${Math.round(100 * price) / 100}
-//             </div><div style="color: ${'black'}">
-//             ${dateStr}
-//             </div>`;
-
-//       const coordinate = series.priceToCoordinate(price);
-//       let shiftedCoordinate = param.point.x;
-//       if (coordinate === null) {
-//         return;
-//       }
-//       shiftedCoordinate = Math.max(
-//         0,
-//         Math.min(container.clientWidth - toolTipWidth, shiftedCoordinate),
-//       );
-//       const coordinateY
-//         = coordinate - toolTipHeight - toolTipMargin > 0
-//           ? coordinate - toolTipHeight - toolTipMargin
-//           : Math.max(
-//             0,
-//             Math.min(
-//               container.clientHeight - toolTipHeight - toolTipMargin,
-//               coordinate + toolTipMargin,
-//             ),
-//           );
-//       toolTip.style.left = shiftedCoordinate + 'px';
-//       toolTip.style.top = coordinateY + 'px';
-//     }
-//   });
-// }
+  // update tooltip
+  mainChart.value.subscribeCrosshairMove((param) => {
+    const allData = candlestickSeries.value!.data();
+    const data = param.time ? allData.find(t => t.time === param.time)! : allData[allData.length - 1]!;
+    tooltipData.value = data as any;
+  });
+}
 
 function initChart() {
   if (!mainChart.value) {
@@ -208,6 +158,7 @@ function initChart() {
   }
 
   candlestickSeries.value.setData(tradeData.value as any);
+  setTooltip();
   candlestickSeries.value.priceScale().applyOptions({
     scaleMargins: {
       top: 0.1,
@@ -241,13 +192,17 @@ function updateChart() {
   const item = newData.value?.items?.[0];
 
   if (item) {
-    candlestickSeries.value.update({
-      time: Number(item.time) / 1000 as Time,
+    const data = {
+      time: timeToLocal(Number(item.time) / 1000) as Time,
       open: Number(item.openPrice),
       high: Number(item.highPrice),
       low: Number(item.lowPrice),
       close: Number(item.closePrice),
-    });
+    };
+    candlestickSeries.value.update(data);
+    if (tooltipData.value?.time === data.time) {
+      tooltipData.value = data as any;
+    }
   }
 }
 
@@ -367,19 +322,26 @@ onUnmounted(() => {
     </div>
 
     <div class="grow md:h-auto h-[200px] relative">
-      <div
-        ref="mainChartContainer"
-        class="w-full h-full"
-      />
-      <div
-        v-if="(tradeData.length === 0 && status === 'pending') || charting"
-        class="absolute top-0 left-0 w-full h-full bg-[#121212] z-10 flex justify-center items-center"
-      >
-        <UIcon
-          class="animate-spin text-primary-500 w-6 h-6 flex justify-center"
-          name="quill:loading-spin"
+      <ClientOnly>
+        <div
+          ref="mainChartContainer"
+          class="w-full h-full relative"
         />
-      </div>
+        <div
+          v-if="(tradeData.length === 0 && status === 'pending') || charting"
+          class="absolute top-0 left-0 w-full h-full bg-[#121212] z-10 flex justify-center items-center"
+        >
+          <UIcon
+            class="animate-spin text-primary-500 w-6 h-6 flex justify-center"
+            name="quill:loading-spin"
+          />
+        </div>
+      </ClientOnly>
+      <ChartTooltip
+        v-if="tooltipData"
+        class="absolute left-1 top-1 z-10"
+        :data="tooltipData"
+      />
     </div>
   </div>
 </template>

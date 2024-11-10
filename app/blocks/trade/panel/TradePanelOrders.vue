@@ -3,7 +3,7 @@ const tradeStore = useTradeStore();
 const { currantToken } = storeToRefs(tradeStore);
 
 const { $api } = useNuxtApp();
-const { counter } = useInterval(10000, { controls: true });
+const { counter } = useInterval(3000, { controls: true });
 const { isMD } = useDevice();
 
 const queryParams = ref({

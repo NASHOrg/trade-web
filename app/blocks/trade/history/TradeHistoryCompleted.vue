@@ -2,6 +2,7 @@
 const { $api } = useNuxtApp();
 const { t } = useI18n();
 const { open, address } = useWallet();
+const { counter } = useInterval(10000, { controls: true });
 
 const columns = computed(() => {
   return [
@@ -43,7 +44,7 @@ const queryParams = ref({
   pageSize: 10,
 });
 
-const { data, status } = useAsyncData(
+const { data, status, refresh } = useAsyncData(
   `trade-history-${address}-${queryParams.value.pageNo}`,
   () => {
     if (!address.value) return Promise.resolve(undefined);
@@ -59,6 +60,11 @@ const { data, status } = useAsyncData(
     deep: true,
   },
 );
+watch(counter, () => {
+  if (queryParams.value.pageNo === 1) {
+    refresh();
+  }
+});
 
 const datas = computed(() => {
   return (data.value?.items ?? []).map((item) => {
