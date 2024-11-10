@@ -73,7 +73,9 @@ const tradeData = computed(() => {
 
   if (list.length > 0) {
     const test = timeSpecified.value === '0' ? hourData : dayData;
-    return [...test, ...list];
+    return [...test, ...list].map(t => ({
+      ...t, time: timeToLocal(t.time),
+    }));
   }
 
   return list;

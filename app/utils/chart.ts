@@ -65,6 +65,11 @@ export function generateChartData(
   return initialData.reverse();
 }
 
+export function timeToLocal(originalTime: number) {
+  const d = new Date(originalTime * 1000);
+  return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds(), d.getMilliseconds()) / 1000;
+}
+
 export const dayData = [
   {
     time: 1730203200,
