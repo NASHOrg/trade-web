@@ -227,21 +227,27 @@ function openTokens() {
   slideover.open(TokensSlideover);
 }
 
+let oldRect: DOMRect | undefined = undefined;
 async function resizeHandler() {
   if (charting.value) {
     return;
   }
-  charting.value = true;
   // throttle
   await new Promise((resolve) => {
     setTimeout(() => {
       resolve(true);
     }, 500);
   });
+  const rect = mainChartContainer.value?.getBoundingClientRect();
 
-  if (mainChart.value) {
-    const rect = mainChartContainer.value?.getBoundingClientRect();
-    if (rect) {
+  if (mainChart.value && rect) {
+    const widthRangeUp = rect.width + 30;
+    const widthRangeLow = rect.width - 30;
+
+    if (!oldRect || oldRect.width > widthRangeUp || oldRect.width < widthRangeLow) {
+      charting.value = true;
+      oldRect = rect;
+
       mainChart.value.resize(rect.width, rect.height);
     }
   }
@@ -249,6 +255,7 @@ async function resizeHandler() {
 }
 
 onMounted(() => {
+  oldRect = mainChartContainer.value?.getBoundingClientRect();
   window.addEventListener('resize', resizeHandler);
 });
 

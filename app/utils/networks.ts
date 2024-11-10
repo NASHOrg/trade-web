@@ -17,6 +17,7 @@ export const betaTestnet = {
       symbol: 'tBOL',
       decimals: 18,
       icon: '/images/bool_circle_fill_pink.png',
+      address: '',
     },
     usdt: {
       name: 'USDT',
@@ -46,6 +47,7 @@ export const alphaTestnet = {
       name: 'BOOL',
       symbol: 'BOL',
       decimals: 18,
+      address: '',
       icon: '/images/bool_circle_fill_pink.png',
     },
     usdt: {

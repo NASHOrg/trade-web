@@ -87,8 +87,8 @@ async function onSell() {
       return open();
     }
     const provider = useWallet().provider();
-    if (chainId.value !== Number(network.chainId)) {
-      const result = await switchNetwork(Number(network.chainId));
+    if (chainId.value !== Number(network.value.chainId)) {
+      const result = await switchNetwork(Number(network.value.chainId));
       if (!result) return;
     }
     if (!state.quantity || !state.price) {
