@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import type { IChartApi, ISeriesApi } from 'lightweight-charts';
+import type { IChartApi, ISeriesApi, Time } from 'lightweight-charts';
 import { createChart } from 'lightweight-charts';
 import { TokensSlideover } from '#components';
 
+const mainChart = ref<null | IChartApi>();
 const tradeStore = useTradeStore();
 const { currantToken } = storeToRefs(tradeStore);
 const { $api } = useNuxtApp();
 
 const mainChartContainer = ref<null | HTMLElement>();
-const mainChart = ref<null | IChartApi>();
 const candlestickSeries = ref<null | ISeriesApi<'Candlestick'>>();
 
 const timeSpecified = ref('0');
@@ -72,9 +72,9 @@ const tradeData = computed(() => {
     .reverse();
 
   if (list.length > 0) {
-    const test = timeSpecified.value === '0' ? hourData : dayData;
+    const test = (timeSpecified.value === '0' ? hourData : dayData);
     return [...test, ...list].map(t => ({
-      ...t, time: timeToLocal(t.time),
+      ...t, time: timeToLocal(t.time), close: t.open, open: t.close,
     }));
   }
 
@@ -242,7 +242,7 @@ function updateChart() {
 
   if (item) {
     candlestickSeries.value.update({
-      time: Number(item.time) / 1000,
+      time: Number(item.time) / 1000 as Time,
       open: Number(item.openPrice),
       high: Number(item.highPrice),
       low: Number(item.lowPrice),
