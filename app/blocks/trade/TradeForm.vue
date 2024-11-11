@@ -3,18 +3,18 @@ const { t } = useI18n();
 const activeTab = ref<'limit' | 'market'>('limit');
 const { isXL } = useDevice();
 
-const tabs = computed<{ value: 'limit' | 'market'; label: string }[]>(() => {
-  return [
-    {
-      value: 'limit',
-      label: t('Limit'),
-    },
-    {
-      value: 'market',
-      label: t('market'),
-    },
-  ];
-});
+// const tabs = computed<{ value: 'limit' | 'market'; label: string }[]>(() => {
+//   return [
+//     {
+//       value: 'limit',
+//       label: t('Limit'),
+//     },
+//     {
+//       value: 'market',
+//       label: t('market'),
+//     },
+//   ];
+// });
 
 const selectedMode = ref('buy');
 const tradeFormModes = computed(() => {
@@ -26,8 +26,8 @@ const tradeFormModes = computed(() => {
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col lg:px-4 md:px-2">
-    <div
+  <div class="w-full h-full flex flex-col lg:px-4 md:px-2 md:pt-4 pt-2">
+    <!-- <div
       class="flex justify-start space-x-[30px] md:border-b-[1px] border-[#2E2E2E] md:mb-4"
     >
       <div
@@ -41,7 +41,7 @@ const tradeFormModes = computed(() => {
       >
         {{ item.label }}
       </div>
-    </div>
+    </div> -->
 
     <div
       v-if="!isXL"

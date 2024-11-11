@@ -184,8 +184,6 @@ function initChart() {
 }
 
 function updateChart() {
-  console.log(candlestickSeries.value);
-
   if (!candlestickSeries.value) {
     return;
   }

@@ -47,11 +47,23 @@ const price = computed({
   set: (val) => {
     state.price = val;
 
-    if (!state.quantity || !state.price) {
+    if (!Number(state.quantity || '0') || !Number(state.price || '0')) {
       state.total = '0';
     }
     else {
-      state.total = BN(state.quantity).times(state.price).dp(2, 1).toFixed(2);
+      const _total = BN(state.quantity || '0')
+        .times(state.price || '0')
+        .dp(2, 1);
+
+      if (_total.gt(balance.value || '0')) {
+        const q = BN(balance.value || '0')
+          .div(state.price || '0')
+          .dp(2, 1);
+        quantity.value = !q.isFinite() || q.isZero() ? '0' : q.toString();
+      }
+      else {
+        state.total = _total.toString();
+      }
     }
   },
 });
@@ -61,11 +73,14 @@ const quantity = computed({
   set: (val) => {
     state.quantity = val;
 
-    if (!state.quantity || !state.price) {
+    if (!Number(state.quantity || '0') || !Number(state.price || '0')) {
       state.total = '0';
     }
     else {
-      state.total = BN(state.quantity).times(state.price).dp(2, 1).toFixed(2);
+      state.total = BN(state.quantity || '0')
+        .times(state.price || '0')
+        .dp(2, 1)
+        .toString();
     }
   },
 });
@@ -81,7 +96,8 @@ const total = computed({
     else {
       state.quantity = BN(val || '0')
         .div(price.value || '0')
-        .toFixed(2);
+        .dp(2, 1)
+        .toString();
     }
   },
 });
@@ -91,25 +107,25 @@ const amountPercent = computed({
     if (!balance.value || !state.quantity) {
       return 0;
     }
-    return BN(state.quantity ?? 0)
+    return BN(state.total ?? 0)
       .div(BN(balance.value.toString()))
       .times(100)
       .toNumber();
   },
   set(value) {
     if (!balance.value) return;
-    quantity.value = BN(balance.value.toString())
-      .times(BN(value ?? 0))
-      .div(100)
+    if (!Number(state.price || '0')) {
+      const _price = Number(currentRoute.value.query?.price ?? '0');
+      if (_price && !Number.isNaN(_price)) {
+        price.value = _price.toString();
+      }
+    }
+    total.value = BN(balance.value.toString())
+      .times(BN(value ?? 0).dividedBy(100))
       .dp(2, 1)
       .toString();
   },
 });
-
-// const total = computed(() => {
-//   if (!state.quantity || !state.price) return 0;
-//   return BN(state.quantity).times(state.price).dp(2, 1).toFormat();
-// });
 
 watch(
   data,
@@ -288,14 +304,14 @@ watch(
       </div>
       <div v-else />
 
-      <UButton
+      <!-- <UButton
         to=""
         variant="outline"
         size="xs"
         class="rounded-[4px] h-[22px] text-[12px] !px-1"
       >
         Add Fund
-      </UButton>
+      </UButton> -->
     </div>
     <div class="grow" />
     <div class="pt-5 w-full">

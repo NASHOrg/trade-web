@@ -36,11 +36,14 @@ const price = computed({
   set: (val) => {
     state.price = val;
 
-    if (!state.quantity || !state.price) {
+    if (!Number(state.quantity || '0') || !Number(state.price || '0')) {
       state.total = '0';
     }
     else {
-      state.total = BN(state.quantity).times(state.price).dp(2, 1).toFixed(2);
+      const _total = BN(state.quantity || '0')
+        .times(state.price || '0')
+        .dp(2, 1);
+      state.total = _total.toString();
     }
   },
 });
@@ -50,11 +53,14 @@ const quantity = computed({
   set: (val) => {
     state.quantity = val;
 
-    if (!state.quantity || !state.price) {
+    if (!Number(state.quantity || '0') || !Number(state.price || '0')) {
       state.total = '0';
     }
     else {
-      state.total = BN(state.quantity).times(state.price).dp(2, 1).toFixed(2);
+      state.total = BN(state.quantity || '0')
+        .times(state.price || '0')
+        .dp(2, 1)
+        .toString();
     }
   },
 });
@@ -68,9 +74,22 @@ const total = computed({
       state.quantity = '0';
     }
     else {
-      state.quantity = BN(val || '0')
+      const q = BN(val || '0')
         .div(price.value || '0')
-        .toFixed(2);
+        .dp(2, 1);
+
+      if (q.gt(balance.value || '0')) {
+        state.quantity = BN(balance.value || '0')
+          .dp(2, 1)
+          .toString();
+        state.price = BN(val || '0')
+          .dividedBy(state.quantity || '0')
+          .dp(2, 1)
+          .toString();
+      }
+      else {
+        state.quantity = q.toString();
+      }
     }
   },
 });
@@ -88,8 +107,7 @@ const amountPercent = computed({
   set(value) {
     if (!balance.value) return;
     quantity.value = BN(balance.value.toString())
-      .times(BN(value ?? 0))
-      .div(100)
+      .times(BN(value ?? 0).dividedBy(100))
       .dp(2, 1)
       .toString();
   },
@@ -259,14 +277,14 @@ watch(
         />
       </div>
       <div v-else />
-      <UButton
+      <!-- <UButton
         to=""
         variant="outline"
         size="xs"
         class="rounded-[4px] h-[22px] text-[12px] !px-1"
       >
         Add Fund
-      </UButton>
+      </UButton> -->
     </div>
     <div class="grow" />
     <div class="pt-5 w-full pb-6">
