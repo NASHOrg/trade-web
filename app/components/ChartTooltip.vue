@@ -15,14 +15,30 @@ const colorStyle = computed(() => {
 </script>
 
 <template>
-  <div class="text-white inline-flex space-x-1">
-    <span>O</span>
-    <span :style="colorStyle">{{ formatAmount(data.open, 5, { endPad: true }) }}</span>
-    <span>C</span>
-    <span :style="colorStyle">{{ formatAmount(data.close, 5, { endPad: true }) }}</span>
-    <span>H</span>
-    <span :style="colorStyle">{{ formatAmount(data.high, 5, { endPad: true }) }}</span>
-    <span>L</span>
-    <span :style="colorStyle">{{ formatAmount(data.low, 5, { endPad: true }) }}</span>
+  <div class="text-white inline-flex space-x-2 text-sm font-normal">
+    <span>
+      <span>O&nbsp;</span>
+      <span :style="colorStyle">
+        {{ formatAmount(data.open, 5, { endPad: true }) }}
+      </span>
+    </span>
+    <span>
+      <span>C&nbsp;</span>
+      <span :style="colorStyle">
+        {{ formatAmount(data.close, 5, { endPad: true }) }}
+      </span>
+    </span>
+    <span>
+      <span>H&nbsp;</span>
+      <span :style="colorStyle">
+        {{ formatAmount(data.high, 5, { endPad: true }) }}
+      </span>
+    </span>
+    <span>
+      <span>L&nbsp;</span>
+      <span :style="colorStyle">
+        {{ formatAmount(data.low, 5, { endPad: true }) }}
+      </span>
+    </span>
   </div>
 </template>

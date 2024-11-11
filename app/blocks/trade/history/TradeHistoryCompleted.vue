@@ -68,7 +68,12 @@ watch(counter, () => {
 
 const datas = computed(() => {
   return (data.value?.items ?? []).map((item) => {
-    return { ...item };
+    return {
+      ...item,
+      price: formatAmount(item.price || '0', 2),
+      qty: formatAmount(item.qty || '0', 2),
+      u: formatAmount(item.u, 2),
+    };
   });
 });
 

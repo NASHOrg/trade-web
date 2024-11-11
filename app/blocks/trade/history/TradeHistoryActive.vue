@@ -193,14 +193,14 @@ async function onCancelOrder(id: string, type: number) {
       </template>
 
       <template #qty-data="{ row }">
-        <span>{{ row["filledQty"] }}</span>
+        <span>{{ formatAmount(row["filledQty"], 2) }}</span>
         <span>/</span>
-        <span>{{ row["qty"] }}</span>
+        <span>{{ formatAmount(row["qty"], 2) }}</span>
       </template>
       <template #value-data="{ row }">
-        <span>{{ row["filledU"] }}</span>
+        <span>{{ formatAmount(row["filledU"], 2) }}</span>
         <span>/</span>
-        <span>{{ row["originalU"] }}</span>
+        <span>{{ formatAmount(row["originalU"], 2) }}</span>
       </template>
       <template #type-data="{ row }">
         <div>

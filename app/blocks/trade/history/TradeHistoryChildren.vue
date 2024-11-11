@@ -59,6 +59,17 @@ const { data, status } = useAsyncData(
     server: false,
   },
 );
+
+const datas = computed(() => {
+  return (data.value?.items ?? []).map((item) => {
+    return {
+      ...item,
+      price: formatAmount(item.price || '0', 2),
+      qty: formatAmount(item.qty || '0', 2),
+      u: formatAmount(item.u.toString(), 2),
+    };
+  });
+});
 </script>
 
 <template>
@@ -93,7 +104,7 @@ const { data, status } = useAsyncData(
       by="orderId"
       class="w-full"
       :columns="columns"
-      :rows="data?.items ?? []"
+      :rows="datas"
       :ui="{
         tbody: 'divide-none',
         divide: 'divide-none',

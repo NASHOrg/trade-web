@@ -20,13 +20,59 @@ const { data } = useNuxtData('order-book');
 const state = reactive<{
   price: string | undefined;
   quantity: string | undefined;
+  total: string | undefined;
 }>({
   price: data.value?.latestPrice,
   quantity: undefined,
+  total: undefined,
 });
 
 const tokenSymbolList = computed(() => {
   return currantToken.value?.value.toUpperCase().split('-') ?? [];
+});
+
+const price = computed({
+  get: () => state.price,
+  set: (val) => {
+    state.price = val;
+
+    if (!state.quantity || !state.price) {
+      state.total = '0';
+    }
+    else {
+      state.total = BN(state.quantity).times(state.price).dp(2, 1).toFixed(2);
+    }
+  },
+});
+
+const quantity = computed({
+  get: () => state.quantity,
+  set: (val) => {
+    state.quantity = val;
+
+    if (!state.quantity || !state.price) {
+      state.total = '0';
+    }
+    else {
+      state.total = BN(state.quantity).times(state.price).dp(2, 1).toFixed(2);
+    }
+  },
+});
+
+const total = computed({
+  get: () => state.total,
+  set: (val) => {
+    state.total = val;
+
+    if (!Number(val || '0') || !Number(price.value || '0')) {
+      state.quantity = '0';
+    }
+    else {
+      state.quantity = BN(val || '0')
+        .div(price.value || '0')
+        .toFixed(2);
+    }
+  },
 });
 
 const amountPercent = computed({
@@ -41,17 +87,12 @@ const amountPercent = computed({
   },
   set(value) {
     if (!balance.value) return;
-    state.quantity = BN(balance.value.toString())
+    quantity.value = BN(balance.value.toString())
       .times(BN(value ?? 0))
       .div(100)
       .dp(2, 1)
       .toString();
   },
-});
-
-const total = computed(() => {
-  if (!state.quantity || !state.price) return 0;
-  return BN(state.quantity).times(state.price).dp(2, 1).toFormat();
 });
 
 watch(
@@ -69,9 +110,9 @@ watch(
 watch(
   currentRoute,
   () => {
-    const price = Number(currentRoute.value.query?.price ?? '0');
-    if (price && !Number.isNaN(price)) {
-      state.price = price.toString();
+    const _price = Number(currentRoute.value.query?.price ?? '0');
+    if (_price && !Number.isNaN(_price)) {
+      price.value = _price.toString();
     }
   },
   {
@@ -97,8 +138,8 @@ async function onSell() {
     const amount = parseEther(state.quantity);
     const receive = tradeApi.calcUsdt(state.price, state.quantity);
     const tx = await tradeApi.createSellOrder(provider, { amount, receive });
-    state.price = undefined;
-    state.quantity = undefined;
+    price.value = undefined;
+    quantity.value = undefined;
     toast.promise(tx.wait(), {
       loading: t('sendTransaction'),
       success: () => {
@@ -118,12 +159,12 @@ async function onSell() {
 watch(
   () => props.mode,
   async () => {
-    state.quantity = undefined;
+    quantity.value = undefined;
     if (props.mode === 'limit') {
-      state.price = undefined;
+      price.value = undefined;
     }
     else {
-      state.price = data.value?.latestPrice;
+      price.value = data.value?.latestPrice;
       refreshNuxtData('order-book');
     }
   },
@@ -165,7 +206,7 @@ watch(
       <span>Price</span>
       <div class="flex justify-end items-center">
         <CustomInput
-          v-model="state.price"
+          v-model="price"
           placeholder="0.0"
           :precision="5"
           type="number"
@@ -178,7 +219,7 @@ watch(
       <span>Qty</span>
       <div class="flex justify-end items-center">
         <CustomInput
-          v-model="state.quantity"
+          v-model="quantity"
           placeholder="0.0"
           :precision="2"
           type="number"
@@ -193,7 +234,13 @@ watch(
     <div class="form-item">
       <span>Value</span>
       <div class="flex justify-end items-center space-x-[10px]">
-        <span>{{ total }}</span>
+        <CustomInput
+          v-model="total"
+          placeholder="0.0"
+          :precision="2"
+          type="number"
+          input-class="!text-[16px] !bg-transparent !text-end !text-white"
+        />
         <span class="text-white"> {{ tokenSymbolList[1] }}</span>
       </div>
     </div>
