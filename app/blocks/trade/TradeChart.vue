@@ -46,10 +46,10 @@ function openTokens() {
 <template>
   <div class="w-full h-full flex flex-col">
     <div
-      class="w-full md:h-9 md:px-5 px-2.5 my-2 md:flex grid grid-cols-2 items-center md:space-x-6"
+      class="w-full md:h-9 md:px-5 px-2.5 my-2 flex flex-col md:flex-row md:items-center items-start md:space-x-6"
     >
       <div
-        class="h-full flex md:items-center items-start md:space-x-2.5 space-x-1.5"
+        class="h-full flex  md:items-center items-center md:space-x-2.5 space-x-1.5"
       >
         <div
           class="md:h-full flex items-center justify-center md:space-x-2.5 space-x-1.5 text-base font-bold"
@@ -65,16 +65,16 @@ function openTokens() {
         <span
           v-else
           :class="priceChange >= 0 ? 'text-buy' : 'text-sell'"
-        >{{ `${priceChange > 0 ? '+' : ''}${priceChange}%` }}</span>
+        >{{ `${priceChange >= 0 ? '+' : ''}${priceChange}%` }}</span>
       </div>
 
       <div
-        class="h-full flex md:flex-row flex-col items-center md:gap-6 gap-1 text-xs font-normal"
+        class="h-full flex items-center md:gap-6 gap-2 text-xs font-normal"
       >
         <div
           v-for="item in timePriceForToken"
           :key="item.id"
-          class="w-full h-full flex md:flex-col flex-row md:justify-around justify-between"
+          class="w-fit md:w-full h-full flex md:flex-col flex-row md:justify-around justify-between space-x-1"
         >
           <span class="text-[#999999] text-nowrap">{{ item.label }}</span>
           <span class="text-white">{{ item.value }}</span>
@@ -102,7 +102,7 @@ function openTokens() {
       </div>
     </div>
 
-    <div class="grow md:h-auto h-[200px] relative">
+    <div class="grow md:h-auto h-[300px] relative">
       <TvChart
         :key="range"
         :range="range"
