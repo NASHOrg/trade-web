@@ -15,16 +15,14 @@ const back = () => {
 </script>
 
 <template>
-  <div class="flex space-x-2.5 py-2.5 cursor-pointer ">
-    <div
-      class="flex items-center"
-      @click="back"
-    >
-      <UIcon
-        name="i-ic-outline-arrow-back"
-        class="w-5 h-5"
-      />
-    </div>
+  <div
+    class="flex items-center space-x-2.5 py-2.5 cursor-pointer "
+    @click="back"
+  >
+    <UIcon
+      name="i-ic-outline-arrow-back"
+      class="w-5 h-5"
+    />
     <p class="text-xl font-semibold">
       {{ title ?? "" }}
     </p>
