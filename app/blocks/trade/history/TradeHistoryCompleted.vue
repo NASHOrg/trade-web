@@ -68,12 +68,7 @@ watch(counter, () => {
 
 const datas = computed(() => {
   return (data.value?.items ?? []).map((item) => {
-    return {
-      ...item,
-      price: formatAmount(item.price || '0', 2),
-      qty: formatAmount(item.qty || '0', 2),
-      u: formatAmount(item.u, 2),
-    };
+    return { ...item };
   });
 });
 
@@ -186,13 +181,9 @@ function isExpanded(row: (typeof datas.value)[number]) {
 
       <template #expand="{ row }">
         <TradeHistoryChildren :trade="row" />
-      </template>
-
-      <template #time-data="{ row }">
+      </template> <template #time-data="{ row }">
         <span> {{ formatDate(Number(row.tradeTime)) }}</span>
-      </template>
-
-      <template #expand-data="{ row }">
+      </template> <template #expand-data="{ row }">
         <div class="flex items-center space-x-2">
           <UIcon
             name="i-heroicons-chevron-down"

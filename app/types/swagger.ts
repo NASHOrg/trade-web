@@ -739,7 +739,7 @@ export interface paths {
                             pageSize?: number;
                             hasNext?: boolean;
                             totalCount?: number;
-                            items?: {
+                            items: {
                                 /** @description 交易数量 */
                                 tradeAmount: number;
                                 /** @description 最高价 */
