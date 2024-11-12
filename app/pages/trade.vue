@@ -57,7 +57,7 @@ function openTokens() {
       </div>
 
       <div
-        class="xl:border-l-[2px] border-t-[2px] border-[#2E2E2E]"
+        class="xl:border-l-[2px] xl:border-t-[0px] border-t-[2px] border-[#2E2E2E]"
         :class="
           [
             'xl:col-span-2 xl:row-span-10',
