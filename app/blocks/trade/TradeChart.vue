@@ -59,7 +59,7 @@ function openTokens() {
           <UIcon name="i-mingcute-down-line" />
         </div>
         <span
-          v-if="!priceChange"
+          v-if="priceChange === undefined"
           class="text-buy"
         >--</span>
         <span
