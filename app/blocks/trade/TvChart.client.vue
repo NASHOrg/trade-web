@@ -115,7 +115,8 @@ async function initChart() {
         type: 'volume',
       },
       priceScaleId: '',
-      color: '#333' });
+      color: '#333',
+    });
   }
 
   if (!candlestickSeries) {
@@ -128,6 +129,12 @@ async function initChart() {
       priceLineColor: '#E24444',
       priceScaleId: 'right', // 使用右侧价格刻度
       priceLineVisible: true,
+      priceFormat: {
+        type: 'custom',
+        formatter: (price: number) => {
+          return price < 0 ? '' : `${formatAmount(price.toString(), 5)}`;
+        },
+      },
     });
   }
 

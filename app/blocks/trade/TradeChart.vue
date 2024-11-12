@@ -52,7 +52,7 @@ function openTokens() {
         class="h-full flex  md:items-center items-center md:space-x-2.5 space-x-1.5"
       >
         <div
-          class="md:h-full flex items-center justify-center md:space-x-2.5 space-x-1.5 text-base font-bold"
+          class="md:h-full flex items-center justify-center md:space-x-2.5 space-x-1.5 text-base font-bold cursor-pointer"
           @click="openTokens"
         >
           <span>{{ currantToken?.label ?? "Token" }}</span>
