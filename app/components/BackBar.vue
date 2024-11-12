@@ -16,7 +16,7 @@ const back = () => {
 
 <template>
   <div
-    class="flex items-center space-x-2.5 py-2.5 cursor-pointer "
+    class="flex items-center space-x-2.5 py-2.5 cursor-pointer"
     @click="back"
   >
     <UIcon
