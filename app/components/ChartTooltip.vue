@@ -9,13 +9,17 @@ const props = defineProps<{
   };
 }>();
 
+const tradeStore = useTradeStore();
+const { currantToken } = storeToRefs(tradeStore);
+
 const colorStyle = computed(() => {
   return { color: props.data.open > props.data.close ? '#E24444' : '#0AC49E' };
 });
 </script>
 
 <template>
-  <div class="text-white inline-flex space-x-2 text-sm font-normal">
+  <div class="text-white inline-flex space-x-3 text-sm font-normal">
+    <span>{{ currantToken.label }}</span>
     <span>
       <span>O&nbsp;</span>
       <span :style="colorStyle">

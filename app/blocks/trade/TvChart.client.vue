@@ -120,12 +120,12 @@ async function initChart() {
 
   if (!candlestickSeries) {
     candlestickSeries = mainChart.addCandlestickSeries({
-      upColor: '#0AC49ECC',
-      downColor: '#E24444CC',
+      upColor: '#0AC49E',
+      downColor: '#E24444',
       borderVisible: false,
-      wickUpColor: '#0AC49ECC',
-      wickDownColor: '#E24444CC',
-      priceLineColor: '#E24444CC',
+      wickUpColor: '#0AC49E',
+      wickDownColor: '#E24444',
+      priceLineColor: '#E24444',
       priceScaleId: 'right', // 使用右侧价格刻度
       priceLineVisible: true,
     });
@@ -134,7 +134,7 @@ async function initChart() {
   candlestickSeries.priceScale().applyOptions({
     scaleMargins: {
       top: 0.1,
-      bottom: 0.1,
+      bottom: 0.4,
     },
   });
   histogramSeries.priceScale().applyOptions({
@@ -148,6 +148,7 @@ async function initChart() {
   const valumeData = list.map(d => ({
     time: d.time,
     value: d.value ?? 1000 * Math.random(),
+    color: d.close > d.open ? '#0AC49E' : '#E24444',
   })) as any;
   histogramSeries.setData(valumeData);
   setTooltip();
@@ -243,7 +244,7 @@ onUnmounted(() => {
     </div>
     <ChartTooltip
       v-if="tooltipData"
-      class="absolute left-1 top-1 z-10"
+      class="absolute left-[20px] top-2 z-10"
       :data="tooltipData"
     />
   </div>

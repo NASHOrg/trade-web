@@ -65,7 +65,7 @@ function openTokens() {
         <span
           v-else
           :class="priceChange >= 0 ? 'text-buy' : 'text-sell'"
-        >{{ `${priceChange}%` }}</span>
+        >{{ `${priceChange > 0 ? '+' : ''}${priceChange}%` }}</span>
       </div>
 
       <div
