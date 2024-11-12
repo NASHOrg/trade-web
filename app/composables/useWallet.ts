@@ -30,7 +30,7 @@ const metadata = {
   name: 'XBIT',
   description: 'Bool campaign',
   url: 'https://xbit.finance',
-  icons: ['https://xbit.finance/favicon.png'],
+  icons: ['https://xbit.finance/favicon.svg'],
 };
 // let signing: string | undefined;
 createWeb3Modal({
@@ -47,8 +47,9 @@ createWeb3Modal({
   },
   chains,
   chainImages: {
-    481: 'https://bool.network/favicon.svg',
-    479: 'https://bool.network/favicon.svg',
+    481: 'https://bool.network/bool-network.png',
+    479: 'https://bool.network/bool-network.png',
+    11100: 'https://bool.network/bool-network.png',
   },
   projectId,
   enableSwaps: false,
