@@ -26,7 +26,7 @@ const { counter } = useInterval(3000, { controls: true });
 const type = computed(() => props.range === 'day' ? '1' : '0');
 
 const { data: newData } = useAsyncData(
-  generateRandomNumber(),
+  `trade-statistic-${props.range}`,
   () => {
     return $api.blockchainTradeStatistic({
       type: type.value,
@@ -43,15 +43,12 @@ const maxVisibleBars = 200;
 //   const visibleLogicalRange = mainChart!.timeScale()
 //     .getVisibleLogicalRange();
 //   if (!visibleLogicalRange) return;
-//
-//   const barsVisible = visibleLogicalRange.to - visibleLogicalRange.from;
-//   if (barsVisible < maxVisibleBars) {
-//     // 设置可见范围，使其最小显示 maxVisibleBars 个数据点
-//     const center = (visibleLogicalRange.to + visibleLogicalRange.from) / 2;
-//     mainChart!.timeScale().setVisibleLogicalRange({
-//       from: center - maxVisibleBars / 2,
-//       to: center + maxVisibleBars / 2,
-//     });
+//   if (visibleLogicalRange.from <= -50) {
+//     const newData = hourData.map(t => ({
+//       ...t, time: timeToLocal(t.time), close: t.open, open: t.close,
+//     }));
+//     const existingData = candlestickSeries!.data();
+//     candlestickSeries!.setData([...newData, ...existingData] as any);
 //   }
 // }
 
@@ -88,7 +85,7 @@ async function initChart() {
     const test = (type.value === '0' ? hourData : dayData);
     list = [...test, ...list].map(t => ({
       ...t, time: timeToLocal(t.time), close: t.open, open: t.close,
-    }));
+    } as any));
   }
   if (!mainChart) {
     mainChart = createChart(mainChartContainer.value!, {
@@ -130,7 +127,7 @@ async function initChart() {
       wickDownColor: '#E24444CC',
       priceLineColor: '#E24444CC',
       priceScaleId: 'right', // 使用右侧价格刻度
-      priceLineVisible: false,
+      priceLineVisible: true,
     });
   }
 
@@ -163,16 +160,6 @@ async function initChart() {
     to: list.length - 1,
   });
   // mainChart.timeScale().subscribeVisibleTimeRangeChange(changeChartRange);
-  // setTimeout(() => {
-  //   mainChart!.timeScale().setVisibleLogicalRange({
-  //     from:
-  //       list.length > maxVisibleBars
-  //         ? list.length - 1 - maxVisibleBars
-  //         : 0,
-  //     to: list.length - 1,
-  //   });
-  //   // changeChartRange();
-  // }, 200);
 }
 
 function updateChart() {
