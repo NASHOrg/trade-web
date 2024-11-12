@@ -134,12 +134,12 @@ async function initChart() {
   candlestickSeries.priceScale().applyOptions({
     scaleMargins: {
       top: 0.1,
-      bottom: 0.4,
+      bottom: 0.3,
     },
   });
   histogramSeries.priceScale().applyOptions({
     scaleMargins: {
-      top: 0.7,
+      top: 0.8,
       bottom: 0,
     },
   });

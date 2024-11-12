@@ -16,7 +16,7 @@ function openTokens() {
   <div class="w-full grow flex flex-col border-t-[2px] border-[#2E2E2E] pb-20">
     <div
       v-if="isMD"
-      class="w-full h-[840px] grid grid-cols-10 grid-rows-10 border-b-[2px] border-[#2E2E2E]"
+      class="w-full h-[1000px] grid grid-cols-10 grid-rows-10 border-b-[2px] border-[#2E2E2E]"
     >
       <div
         class="h-full border-r-[2px] border-[#2E2E2E]"
@@ -47,8 +47,8 @@ function openTokens() {
       <div
         :class="
           [
-            'xl:col-span-6 xl:row-span-5',
-            'md:col-span-7 md:row-span-5',
+            'xl:col-span-6 xl:row-span-6',
+            'md:col-span-7 md:row-span-6',
             '',
           ].join(' ')
         "
@@ -75,7 +75,7 @@ function openTokens() {
         :class="
           [
             'xl:col-span-6 xl:row-span-5',
-            'md:col-span-3 md:row-span-5',
+            'md:col-span-3 md:row-span-6',
             '',
           ].join(' ')
         "
