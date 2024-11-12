@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { BlockchainTradeHistory } from "~/types/swagger";
+import type { BlockchainTradeHistory } from '~/types/swagger';
 
 const props = defineProps<{
-  trade: BlockchainTradeHistory["items"][number];
+  trade: BlockchainTradeHistory['items'][number];
 }>();
 const { $api } = useNuxtApp();
 const { t } = useI18n();
@@ -10,34 +10,34 @@ const { t } = useI18n();
 const columns = computed(() => {
   return [
     {
-      key: "1",
+      key: '1',
     },
     {
-      key: "time",
-      label: t("time"),
+      key: 'time',
+      label: t('time'),
     },
     {
-      key: "pair",
-      label: t("pair"),
+      key: 'pair',
+      label: t('pair'),
     },
     {
-      key: "type",
-      label: t("side"),
+      key: 'type',
+      label: t('side'),
     },
     {
-      key: "price",
-      label: t("price"),
+      key: 'price',
+      label: t('price'),
     },
     {
-      key: "qty",
-      label: t("totalQty"),
+      key: 'qty',
+      label: t('totalQty'),
     },
     {
-      key: "u",
-      label: t("value"),
+      key: 'u',
+      label: t('value'),
     },
     {
-      key: "2",
+      key: '2',
     },
   ];
 });
@@ -64,8 +64,8 @@ const datas = computed(() => {
   return (data.value?.items ?? []).map((item) => {
     return {
       ...item,
-      price: formatAmount(item.price || "0", 2),
-      qty: formatAmount(item.qty || "0", 2),
+      price: formatAmount(item.price || '0', 2),
+      qty: formatAmount(item.qty || '0', 2),
       u: formatAmount(item.u.toString(), 2),
     };
   });
@@ -86,7 +86,10 @@ const datas = computed(() => {
       />
       <span class="text-sm font-medium text-gray-400">Loading...</span>
     </div>
-    <div v-else-if="data && Number(data.totalCount) === 0" class="my-[50px]">
+    <div
+      v-else-if="data && Number(data.totalCount) === 0"
+      class="my-[50px]"
+    >
       <NuxtPicture
         class="mb-4 flex justify-center"
         src="images/empty_box.png"
@@ -94,7 +97,9 @@ const datas = computed(() => {
         height="72"
         width="72"
       />
-      <div class="text-sm font-medium text-gray-500">No transactions</div>
+      <div class="text-sm font-medium text-gray-500">
+        No transactions
+      </div>
     </div>
     <UTable
       v-else
@@ -118,14 +123,20 @@ const datas = computed(() => {
                 : `${(1 / (columns.length - 2)) * 85}%`,
             }"
             :data-index="count"
-          />
+          >
         </colgroup>
       </template>
 
       <template #type-data="{ row }">
         <div>
-          <span v-if="row.type === 0" class="text-sell">{{ t("sell") }}</span>
-          <span v-else class="text-buy">{{ t("buy") }}</span>
+          <span
+            v-if="row.type === 0"
+            class="text-sell"
+          >{{ t("sell") }}</span>
+          <span
+            v-else
+            class="text-buy"
+          >{{ t("buy") }}</span>
         </div>
       </template>
 

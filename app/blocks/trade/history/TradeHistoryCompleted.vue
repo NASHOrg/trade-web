@@ -181,9 +181,14 @@ function isExpanded(row: (typeof datas.value)[number]) {
 
       <template #expand="{ row }">
         <TradeHistoryChildren :trade="row" />
-      </template> <template #time-data="{ row }">
+      </template>
+      <template #qty-data="{ row }">
+        <span> {{ formatAmount(Number(row.qty), 2) }}</span>
+      </template>
+      <template #time-data="{ row }">
         <span> {{ formatDate(Number(row.tradeTime)) }}</span>
-      </template> <template #expand-data="{ row }">
+      </template>
+      <template #expand-data="{ row }">
         <div class="flex items-center space-x-2">
           <UIcon
             name="i-heroicons-chevron-down"
