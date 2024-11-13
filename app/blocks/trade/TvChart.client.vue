@@ -161,10 +161,7 @@ async function initChart() {
   setTooltip();
 
   mainChart.timeScale().setVisibleLogicalRange({
-    from:
-        list.length > maxVisibleBars
-          ? list.length - 1 - maxVisibleBars
-          : 0,
+    from: list.length - 1 - maxVisibleBars,
     to: list.length - 1,
   });
   // mainChart.timeScale().subscribeVisibleTimeRangeChange(changeChartRange);
