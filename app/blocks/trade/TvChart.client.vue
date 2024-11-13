@@ -38,7 +38,7 @@ const { data: newData } = useAsyncData(
   },
 );
 
-const maxVisibleBars = 200;
+const maxVisibleBars = 100;
 // function changeChartRange() {
 //   const visibleLogicalRange = mainChart!.timeScale()
 //     .getVisibleLogicalRange();
@@ -160,10 +160,19 @@ async function initChart() {
   histogramSeries.setData(valumeData);
   setTooltip();
 
-  mainChart.timeScale().setVisibleLogicalRange({
-    from: list.length - 1 - maxVisibleBars,
-    to: list.length - 1,
-  });
+  if (list.length - 1 < maxVisibleBars) {
+    mainChart.timeScale().setVisibleLogicalRange({
+      from: 0,
+      to: maxVisibleBars,
+    });
+  }
+  else {
+    mainChart.timeScale().setVisibleLogicalRange({
+      from: list.length - 1 - maxVisibleBars,
+      to: list.length - 1,
+    });
+  }
+
   // mainChart.timeScale().subscribeVisibleTimeRangeChange(changeChartRange);
 }
 
