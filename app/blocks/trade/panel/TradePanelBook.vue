@@ -142,7 +142,7 @@ const onSelectPrice = (price: string) => {
         <span
           class="md:text-[20px] text-base md:leading-6 leading-3 md:me-3 me-1"
         >
-          {{ formatAmount(data.latestPrice, 5) }}
+          {{ formatAmount(data.latestPrice, 5, { endPad: true }) }}
         </span>
         <span class="md:text-[14px] text-[8px] whitespace-nowrap text-[#999]">
           ≈ {{ formatAmount(data.latestPrice, 2) }} USD
