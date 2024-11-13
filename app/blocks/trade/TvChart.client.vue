@@ -82,8 +82,8 @@ async function initChart() {
     .reverse();
 
   if (list.length > 0) {
-    const test = (type.value === '0' ? hourData : dayData);
-    list = [...test, ...list].map(t => ({
+    // const test = (type.value === '0' ? hourData : dayData);
+    list = [...list].map(t => ({
       ...t, time: timeToLocal(t.time), close: t.open, open: t.close,
     } as any));
   }

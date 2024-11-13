@@ -322,7 +322,7 @@ watch(
         class="h-[40px] rounded-full border-0 ring-0 text-sm font-normal bg-[#272727]"
         @click="open"
       >
-        <span class="text-primary"> Connect Wallet</span>
+        <span class="text-primary">Connect Wallet</span>
       </UButton>
       <UButton
         v-else
