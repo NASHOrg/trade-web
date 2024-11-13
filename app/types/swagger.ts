@@ -610,6 +610,8 @@ export interface paths {
                                 orderId: string;
                                 pair: string;
                                 u: string;
+                                /** @description 0 初始化 1完全成交 2部分成交 -1撤单 */
+                                status: number;
                             }[];
                         };
                     };
@@ -660,14 +662,18 @@ export interface paths {
                                 /** @description 交易记录time */
                                 pair?: string;
                                 qty: string;
-                                price: string;
+                                price: number;
                                 /** @description  0  sell bool 1  buy bool */
-                                type: string;
-                                filledQty: string;
-                                /** @description  0 active 1 success -1 cancel */
-                                status: string;
+                                type: number;
+                                filledQty: number;
+                                /** @description  0 active 1 success -1 cancel 2部分成交 */
+                                status: number;
                                 time: string;
                                 orderId: string;
+                                /** @description 订单创建时的U数量 */
+                                originalU: number;
+                                /** @description 成交时消耗的U */
+                                filledU: number;
                             }[];
                         };
                     };
@@ -739,7 +745,7 @@ export interface paths {
                             pageSize?: number;
                             hasNext?: boolean;
                             totalCount?: number;
-                            items: {
+                            items?: {
                                 /** @description 交易数量 */
                                 tradeAmount: number;
                                 /** @description 最高价 */
@@ -932,6 +938,24 @@ export interface paths {
             };
         };
     };
+    "/power/single/claim": {
+        post: {
+            parameters: {};
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        code: number;
+                        msg: string;
+                        data: {
+                            /** 是否已领取成功 */
+                            claimed: boolean;
+                        };
+                    };
+                };
+            };
+        };
+    };
     "/power/single": {
         get: {
             parameters: {
@@ -1048,6 +1072,37 @@ export interface paths {
                                 /** 是否已领取 */
                                 claimed: boolean;
                             }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "/power/single/check": {
+        get: {
+            parameters: {
+                query: {
+                    /** 如果未传，需要用户登录 */
+                    address?: string;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        code: number;
+                        msg: string;
+                        data: {
+                            /** 质押合格 */
+                            stake: boolean;
+                            /** campaign合格 */
+                            campaign: boolean;
+                            /** 白名单合格 */
+                            white: boolean;
+                            /** 算力 */
+                            power: string;
+                            /** 是否已领取 */
+                            claimed: boolean;
                         };
                     };
                 };
@@ -1376,12 +1431,16 @@ export type UserCrowdfundingDevicesGetParams = paths["/user/crowdfunding-devices
 export type UserCrowdfundingDevices = paths["/user/crowdfunding-devices"]['get']['responses'][200]['schema']['data'];
 export type UserVoteDevicesGetParams = paths["/user/vote-devices"]['get']['parameters']['query'];
 export type UserVoteDevices = paths["/user/vote-devices"]['get']['responses'][200]['schema']['data'];
+export type PowerSingleClaimPostParams = paths["/power/single/claim"]['post']['parameters']['body']['root'];
+export type PowerSingleClaimPost = paths["/power/single/claim"]['post']['responses'][200]['schema']['data'];
 export type PowerSingleGetParams = paths["/power/single"]['get']['parameters']['query'];
 export type PowerSingle = paths["/power/single"]['get']['responses'][200]['schema']['data'];
 export type PowerWithdrawPostParams = paths["/power/withdraw"]['post']['parameters']['body']['root'];
 export type PowerWithdrawPost = paths["/power/withdraw"]['post']['responses'][200]['schema']['data'];
 export type PowerListGetParams = paths["/power/list"]['get']['parameters']['query'];
 export type PowerList = paths["/power/list"]['get']['responses'][200]['schema']['data'];
+export type PowerSingleCheckGetParams = paths["/power/single/check"]['get']['parameters']['query'];
+export type PowerSingleCheck = paths["/power/single/check"]['get']['responses'][200]['schema']['data'];
 export type RebateComputePostParams = paths["/rebate/compute"]['post']['parameters']['body']['root'];
 export type RebateComputePost = paths["/rebate/compute"]['post']['responses'][200]['schema']['data'];
 export type UserDailyRewardInfoCpPostParams = paths["/user/daily-reward-info-cp"]['post']['parameters']['body']['root'];

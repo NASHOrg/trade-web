@@ -6,57 +6,79 @@ import {
   useDisconnect,
   useWeb3Modal,
 } from '@web3modal/ethers/vue';
-import { BrowserProvider } from 'ethers';
-import NetworkConfig from '~/utils/networks';
+// import type { AppKit } from '@web3modal/base';
+// import type { EthersStoreUtilState } from '@web3modal/scaffold-utils/ethers';
 
-const network = NetworkConfig.beta_testnet;
+import { BrowserProvider } from 'ethers';
+// import NetworkConfig from '~/utils/networks';
 
 // 1. Get projectId at https://cloud.walletconnect.com
 const projectId = '07556f4c9346cbd23fa53dde19889e99';
 
 // 2. Set chains
-const chains = Object.values(NetworkConfig).map((item) => {
-  return {
-    chainId: item.chainId,
-    name: item.name,
-    currency: item.symbol,
-    explorerUrl: item.explorer,
-    rpcUrl: item.rpc,
-  };
-});
+// const chains = Object.values(NetworkConfig).map((item) => {
+//   return {
+//     chainId: item.chainId,
+//     name: item.name,
+//     currency: item.symbol,
+//     explorerUrl: item.explorer,
+//     rpcUrl: item.rpc,
+//   };
+// });
 
 // 3. Create modal
 const metadata = {
   name: 'XBIT',
-  description: 'Bool campaign',
+  description: 'XBIT for Bool Network',
   url: 'https://xbit.finance',
-  icons: ['https://xbit.finance/favicon.svg'],
+  icons: ['https://xbit.finance/favicon.png'],
 };
-// let signing: string | undefined;
-createWeb3Modal({
-  ethersConfig: defaultConfig({
-    metadata,
-    auth: { email: false, socials: [] },
-  }),
-  themeMode: 'dark',
-  themeVariables: {
-    '--w3m-accent': '#FF5a19',
-    '--w3m-border-radius-master': '1.5px',
-    '--w3m-z-index': 9999,
-    '--w3m-font-family': 'Roboto',
-  },
-  chains,
-  chainImages: {
-    481: 'https://bool.network/bool-network.png',
-    479: 'https://bool.network/bool-network.png',
-    11100: 'https://bool.network/bool-network.png',
-  },
-  projectId,
-  enableSwaps: false,
-  enableOnramp: false,
-});
+
+let isInit = false;
+// let web3Modal: AppKit<EthersStoreUtilState, number> | undefined;
 
 export default function useWallet() {
+  const { network: currentNetwork } = useNetworkConfig();
+
+  const network = {
+    chainId: currentNetwork.value.chainId,
+    name: currentNetwork.value.name,
+    currency: currentNetwork.value.symbol,
+    explorerUrl: currentNetwork.value.explorer,
+    rpcUrl: currentNetwork.value.rpc,
+  };
+
+  if (!isInit) {
+    createWeb3Modal({
+      ethersConfig: defaultConfig({
+        metadata,
+        auth: { email: false, socials: [] },
+        chains: [network],
+        defaultChainId: network.chainId,
+        rpcUrl: network.rpcUrl,
+      }),
+      themeMode: 'dark',
+      themeVariables: {
+        '--w3m-accent': '#FF7800',
+        '--w3m-border-radius-master': '1.5px',
+        '--w3m-z-index': 9999,
+        '--w3m-font-family': 'ProtoMono, Inter',
+      },
+      chainImages: {
+        481: currentNetwork.value.icon,
+        482: currentNetwork.value.icon,
+        11100: currentNetwork.value.icon,
+      },
+      defaultChain: network,
+      chains: [network],
+      projectId,
+      enableSwaps: false,
+      enableOnramp: false,
+    });
+
+    isInit = true;
+  }
+
   const { open } = useWeb3Modal();
   const { address, isConnected, chainId } = useWeb3ModalAccount();
   const { disconnect } = useDisconnect();
@@ -84,11 +106,11 @@ export default function useWallet() {
               {
                 chainId: `0x${chain.toString(16)}`,
                 chainName: network.name,
-                rpcUrls: [network.rpc] /* ... */,
-                blockExplorerUrls: [network.explorer] /* ... */,
+                rpcUrls: [network.rpcUrl] /* ... */,
+                blockExplorerUrls: [network.explorerUrl] /* ... */,
                 nativeCurrency: {
-                  name: network.symbol,
-                  symbol: network.symbol,
+                  name: network.name,
+                  symbol: network.currency,
                   decimals: 18,
                 },
               },

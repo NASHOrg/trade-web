@@ -4,10 +4,11 @@ export const betaTestnet = {
   wss: 'wss://betatest-rpc-node-ws.bool.network',
   chainId: 481,
   symbol: 'tBOL',
-  name: 'Beta Testnet',
+  name: 'Bool Beta Testnet',
   value: 'beta_testnet',
   feeRate: 3000,
   explorer: 'https://beta-testnet.boolscan.com',
+  icon: 'https://bool.network/bool-orange.png',
   contracts: {
     trade: '0x1E3f592CfcEbE18824e19Cb6Ca7Ba8f91939Bca4',
   },
@@ -16,7 +17,7 @@ export const betaTestnet = {
       name: 'BOOL',
       symbol: 'tBOL',
       decimals: 18,
-      icon: '/images/bool_circle_fill_pink.png',
+      icon: 'https://bool.network/bool-orange.png',
       address: '',
     },
     usdt: {
@@ -29,16 +30,17 @@ export const betaTestnet = {
   },
 };
 
-export const alphaTestnet = {
-  baseUrl: 'https://alpha-api.boolscan.com/bool-network',
-  rpc: 'https://alpha-rpc-node-http.bool.network/',
-  wss: 'wss://alpha-rpc-node-ws.bool.network',
-  chainId: 479,
-  symbol: 'tBOL',
-  name: 'Alpha Mainnet',
-  value: 'alpha_mainnet',
-  feeRate: 500,
-  explorer: 'https://alpha-mainnet.boolscan.com',
+export const betaMainnet = {
+  baseUrl: 'https://beta-mainnet-api.boolscan.com/bool-network-beta-mainnet',
+  rpc: 'https://beta-rpc-node-http.bool.network',
+  wss: 'wss://beta-rpc-node-ws.bool.network',
+  chainId: 11100,
+  symbol: 'BOL',
+  name: 'Bool Beta Mainnet',
+  value: 'beta_mainnet',
+  feeRate: 3000,
+  explorer: 'https://beta-mainnet.boolscan.com',
+  icon: 'https://bool.network/bool-orange.png',
   contracts: {
     trade: '',
   },
@@ -48,7 +50,7 @@ export const alphaTestnet = {
       symbol: 'BOL',
       decimals: 18,
       address: '',
-      icon: '/images/bool_circle_fill_pink.png',
+      icon: 'https://bool.network/bool-orange.png',
     },
     usdt: {
       name: 'USDT',
@@ -64,5 +66,5 @@ export type Network = typeof betaTestnet;
 
 export default {
   beta_testnet: betaTestnet,
-  alpha_mainnet: alphaTestnet,
+  beta_mainnet: betaMainnet,
 };

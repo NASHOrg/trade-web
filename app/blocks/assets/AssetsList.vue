@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { WithdrawModal, DepositModal } from '#components';
+
 const { tokens } = useNetworkConfig();
 const { t } = useI18n();
 const { address } = useWallet();
@@ -7,39 +9,42 @@ const columns = computed(() => {
   return [
     { id: 'assets', label: t('assets') },
     { id: 'balance', label: t('balance') },
-    // { id: 'entry', label: t('entry') },
+    { id: 'entry', label: t('entry') },
   ];
 });
 
 const data = computed(() => {
-  return [
-    {
-      id: 'bool',
-      icon: tokens.value.bool.icon,
-      name: tokens.value.bool.name,
+  return Object.values(tokens.value).map((item) => {
+    return {
+      id: item.name,
+      icon: item.icon,
+      name: item.name,
       type: 'Token',
-      token: tokens.value.bool,
-    },
-    {
-      id: 'usdt',
-      icon: tokens.value.usdt.icon,
-      name: tokens.value.usdt.name,
-      type: 'Token',
-      token: tokens.value.usdt,
-    },
-  ];
+      token: item,
+    };
+  });
 });
+
+const modal = useModal();
+
+function onDeposit(token: (typeof data.value)[number]['token']) {
+  modal.open(DepositModal, { token });
+}
+
+function onWithdraw(token: (typeof data.value)[number]['token']) {
+  modal.open(WithdrawModal, { token });
+}
 </script>
 
 <template>
   <div
     class="w-full md:px-6 px-3 md:pt-6 pt-3 border-[1px] border-[#2E2E2E] rounded-xl bg-[#121212]"
   >
-    <div class="w-full grid grid-cols-2 text-sm font-normal">
+    <div class="w-full grid grid-cols-3 text-sm font-normal">
       <span
         v-for="item in columns"
         :key="item.id"
-        class="text-start last:text-end"
+        class="first:text-start last:text-end text-center"
       >
         {{ item.label }}
       </span>
@@ -48,7 +53,7 @@ const data = computed(() => {
     <div
       v-for="(item, index) in data"
       :key="index"
-      class="grid grid-cols-2 md:py-9 py-4"
+      class="grid grid-cols-3 md:py-9 py-4"
       :class="{ ' border-t-[1px] border-[#2E2E2E]': index > 0 }"
     >
       <div class="flex items-center md:space-x-4 space-x-2">
@@ -66,7 +71,7 @@ const data = computed(() => {
           </span>
         </div>
       </div>
-      <div class="w-full flex justify-end items-center">
+      <div class="w-full flex justify-center items-center">
         <TokenBalance
           :address="address"
           :token="{
@@ -75,6 +80,34 @@ const data = computed(() => {
             symbol: item.token.symbol,
           }"
         />
+      </div>
+      <div class="flex flex-col justify-end items-end space-y-2.5">
+        <UButton
+          color="black"
+          variant="outline"
+          class="w-[95px] h-[30px] items-center justify-center text-xs font-normal leading-[14px]"
+          :ui="{ rounded: 'rounded-[4px]', padding: { md: 'p-0' } }"
+          :disabled="true"
+          @click="onWithdraw(item.token)"
+        >
+          {{ t("withdraw") }}
+        </UButton>
+        <UButton
+          color="primary"
+          variant="outline"
+          class="w-[95px] h-[30px] items-center justify-center text-xs font-normal leading-[14px]"
+          :ui="{
+            rounded: 'rounded-[4px]',
+            padding: { md: 'p-0' },
+            variant: {
+              outline: 'bg-primary/30 dark:bg-primary/30',
+            },
+          }"
+          :disabled="true"
+          @click="onDeposit(item.token)"
+        >
+          {{ t("deposit") }}
+        </UButton>
       </div>
     </div>
   </div>

@@ -28,7 +28,7 @@ const state = reactive<{
 });
 
 const tokenSymbolList = computed(() => {
-  return currantToken.value?.value.toUpperCase().split('-') ?? [];
+  return currantToken.value?.label.split('/') ?? [];
 });
 
 const price = computed({
@@ -230,7 +230,7 @@ watch(
           type="number"
           input-class="!text-[16px] !bg-transparent !text-end !text-white"
         />
-        <span class="text-white"> {{ tokenSymbolList[1] }}</span>
+        <span class="text-white text-xs"> {{ tokenSymbolList[1] }}</span>
       </div>
     </div>
     <div class="form-item">
@@ -243,7 +243,7 @@ watch(
           type="number"
           input-class="!text-[16px] !bg-transparent !text-end !text-white"
         />
-        <span class="text-white"> {{ tokenSymbolList[0] }}</span>
+        <span class="text-white text-xs"> {{ tokenSymbolList[0] }}</span>
       </div>
     </div>
     <div>
@@ -259,7 +259,7 @@ watch(
           type="number"
           input-class="!text-[16px] !bg-transparent !text-end !text-white"
         />
-        <span class="text-white"> {{ tokenSymbolList[1] }}</span>
+        <span class="text-white text-xs"> {{ tokenSymbolList[1] }}</span>
       </div>
     </div>
     <div class="flex justify-between items-center !mt-3">

@@ -5,6 +5,7 @@
     "types": [
       "node",
       "@pinia/nuxt",
+      "@nuxtjs/i18n"
     ],
     "verbatimModuleSyntax": false
   },

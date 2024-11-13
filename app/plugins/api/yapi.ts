@@ -93,6 +93,10 @@ export class Yapi extends Api {
     return this.ft.path('/user/vote-devices').method('get').create()!;
   }
 
+  get powerSingleClaimPost() {
+    return this.ft.path('/power/single/claim').method('post').create()!;
+  }
+
   get powerSingle() {
     return this.ft.path('/power/single').method('get').create()!;
   }
@@ -103,6 +107,10 @@ export class Yapi extends Api {
 
   get powerList() {
     return this.ft.path('/power/list').method('get').create()!;
+  }
+
+  get powerSingleCheck() {
+    return this.ft.path('/power/single/check').method('get').create()!;
   }
 
   get rebateComputePost() {

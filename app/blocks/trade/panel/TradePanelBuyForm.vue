@@ -39,7 +39,7 @@ const state = reactive<{
 });
 
 const tokenSymbolList = computed(() => {
-  return currantToken.value?.value.toUpperCase().split('-') ?? [];
+  return currantToken.value?.label.split('/') ?? [];
 });
 
 const price = computed({

@@ -3,13 +3,14 @@ export const useTradeStore = defineStore('trade-store', () => {
   const { tokens } = useNetworkConfig();
 
   const tokenOptions = computed(() => {
+    const bu = [tokens.value.bool, tokens.value.usdt];
     return [
       {
-        value: 'bool-usdt',
-        label: 'BOOL / USDT',
+        value: bu.map(item => item.name).join('-'),
+        label: bu.map(item => item.symbol).join(' / '),
         type: 0,
         price: '0.01',
-        tokens: [tokens.value.bool, tokens.value.usdt],
+        tokens: bu,
       },
       // {
       //   value: "BOOL/USDC",

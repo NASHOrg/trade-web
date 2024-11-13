@@ -38,10 +38,11 @@ const options = computed(() => {
         class="flex border-[1px] border-primary rounded-[4px] px-2 py-1.5 space-x-[8px] bg-transparent cursor-pointer"
       >
         <NuxtPicture
-          src="images/bool_circle_fill_black.png"
+          src="https://bool.network/bool-orange.png"
           densities="1x 2x"
           height="18"
           width="18"
+          class="rounded-full overflow-hidden"
         />
         <div class="flex items-center text-xs leading-4">
           <p>{{ shortAddress(address, 4) }}</p>

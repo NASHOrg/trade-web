@@ -163,8 +163,34 @@ function isExpanded(row: (typeof datas.value)[number]) {
           >
         </colgroup>
       </template>
-      <template #expand-action>
-        <span />
+      <template #expand-action="{ row }">
+        <UBadge
+          v-if="row['status'] === 1"
+          color="green"
+          variant="outline"
+          class="w-[105px] justify-center"
+          :ui="{ variant: { outline: 'bg-green-500/10' } }"
+        >
+          Full Matched
+        </UBadge>
+        <UBadge
+          v-else-if="row['status'] === 2"
+          color="primary"
+          variant="outline"
+          class="w-[105px] justify-center"
+          :ui="{ variant: { outline: 'bg-primary-500/10' } }"
+        >
+          Partly Matched
+        </UBadge>
+        <UBadge
+          v-else-if="row['status'] === -1"
+          color="gray"
+          variant="outline"
+          class="w-[105px] justify-center"
+          :ui="{ variant: { outline: 'bg-gray-500/10 !ring-gray-500' } }"
+        >
+          Canceled
+        </UBadge>
       </template>
       <template #type-data="{ row }">
         <div>

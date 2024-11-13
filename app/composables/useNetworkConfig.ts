@@ -20,6 +20,7 @@ export function useNetworkConfig() {
   });
 
   return {
+    networks,
     network: currentNetwork,
     tokens: tokens,
     stakeApi: new StakeApi(currentNetwork.value.rpc),

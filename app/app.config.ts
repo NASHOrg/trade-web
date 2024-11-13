@@ -55,7 +55,7 @@ export default defineAppConfig({
       overlay: {
         background: 'bg-black/60',
       },
-      background: 'bg-[#F7FBFF] dark:bg-[#f7fbff]',
+      background: 'bg-[#1C1D21] dark:bg-[#1C1D21]',
       rounded: 'rounded-[12px]',
       base: 'text-[#333]',
     },

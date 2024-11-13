@@ -163,5 +163,8 @@
   "trades": "Trades",
   "value": "Value",
   "filled": "Filled",
-  "totalValue": "Total value"
+  "totalValue": "Total value",
+  "withdraw": "Withdraw",
+  "deposit": "Deposit",
+  "default": "Default"
 }
