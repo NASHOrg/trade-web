@@ -211,6 +211,9 @@ function isExpanded(row: (typeof datas.value)[number]) {
       <template #qty-data="{ row }">
         <span> {{ formatAmount(Number(row.qty), 2) }}</span>
       </template>
+      <template #u-data="{ row }">
+        <span> {{ formatAmount(Number(row.qty), 5) }}</span>
+      </template>
       <template #time-data="{ row }">
         <span> {{ formatDate(Number(row.tradeTime)) }}</span>
       </template>
