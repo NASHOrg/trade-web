@@ -194,6 +194,7 @@ function updateChart() {
     histogramSeries.update({
       time: data.time,
       value: Number(item.tradeAmount),
+      color: Number(item.closePrice) > Number(item.openPrice) ? '#0AC49E' : '#E24444',
     });
     if (tooltipData.value?.time === data.time) {
       tooltipData.value = data as any;
