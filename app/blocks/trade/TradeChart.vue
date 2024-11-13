@@ -25,7 +25,7 @@ const priceChange = computed(() => {
   if (!tradeData.value) return 0;
   const items = tradeData.value.items as any[];
   const dailyData = items.slice(0, 24);
-  const open = dailyData[0].openPrice;
+  const open = dailyData[0].closePrice;
   const close = dailyData[dailyData.length - 1].openPrice;
   const price = BN(open).minus(close).div(open).times(100).dp(2, 1).toString();
   return Number(price);
