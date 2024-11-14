@@ -180,9 +180,9 @@ function updateChart() {
     const data = {
       time: timeToLocal(Number(item.time) / 1000) as Time,
       open: Number(item.openPrice),
-      close: Number(item.closePrice),
       high: Number(item.highPrice),
       low: Number(item.lowPrice),
+      close: Number(item.closePrice),
     };
     candlestickSeries.update(data);
     histogramSeries.update({
@@ -190,7 +190,6 @@ function updateChart() {
       value: Number(item.tradeAmount),
       color: Number(item.closePrice) >= Number(item.openPrice) ? '#0AC49E' : '#E24444',
     });
-    console.log('update', candlestickSeries.data());
     if (tooltipData.value?.time === data.time) {
       tooltipData.value = data as any;
     }
