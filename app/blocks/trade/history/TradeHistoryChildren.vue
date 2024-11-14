@@ -13,6 +13,9 @@ const columns = computed(() => {
       key: '1',
     },
     {
+      key: '2',
+    },
+    {
       key: 'time',
       label: t('time'),
     },
@@ -38,6 +41,9 @@ const columns = computed(() => {
     },
     {
       key: '2',
+    },
+    {
+      key: 'action',
     },
   ];
 });
@@ -115,12 +121,12 @@ const datas = computed(() => {
       <template #caption>
         <colgroup>
           <col
-            v-for="count in columns.length + 1"
+            v-for="count in columns.length"
             :key="count"
             :style="{
-              width: [1, columns.length + 1, columns.length].includes(count)
+              width: [1, columns.length - 1, columns.length].includes(count)
                 ? '5%'
-                : `${(1 / (columns.length - 2)) * 85}%`,
+                : `${(1 / (columns.length - 3)) * 85}%`,
             }"
             :data-index="count"
           >
@@ -138,6 +144,10 @@ const datas = computed(() => {
             class="text-buy"
           >{{ t("buy") }}</span>
         </div>
+      </template>
+
+      <template #u-data="{ row }">
+        <span> {{ formatAmount(Number(row.u), 2) }}</span>
       </template>
 
       <template #time-data="{ row }">

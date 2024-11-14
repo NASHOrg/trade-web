@@ -7,6 +7,9 @@ const { counter } = useInterval(10000, { controls: true });
 const columns = computed(() => {
   return [
     {
+      key: 'status',
+    },
+    {
       key: 'time',
       label: t('time'),
     },
@@ -163,7 +166,27 @@ function isExpanded(row: (typeof datas.value)[number]) {
           >
         </colgroup>
       </template>
-      <template #expand-action="{ row }">
+      <template #expand-action>
+        <span />
+      </template>
+      <template #type-data="{ row }">
+        <div>
+          <span
+
+            v-if="row.type === 0"
+            class="text-sell"
+          >{{ t("sell") }}</span>
+          <span
+            v-else
+            class="text-buy"
+          >{{ t("buy") }}</span>
+        </div>
+      </template>
+
+      <template #expand="{ row }">
+        <TradeHistoryChildren :trade="row" />
+      </template>
+      <template #status-data="{ row }">
         <UBadge
           v-if="row['status'] === 1"
           color="green"
@@ -192,24 +215,11 @@ function isExpanded(row: (typeof datas.value)[number]) {
           Canceled
         </UBadge>
       </template>
-      <template #type-data="{ row }">
-        <div>
-          <span
-            v-if="row.type === 0"
-            class="text-sell"
-          >{{ t("sell") }}</span>
-          <span
-            v-else
-            class="text-buy"
-          >{{ t("buy") }}</span>
-        </div>
-      </template>
-
-      <template #expand="{ row }">
-        <TradeHistoryChildren :trade="row" />
-      </template>
       <template #qty-data="{ row }">
         <span> {{ formatAmount(Number(row.qty), 2) }}</span>
+      </template>
+      <template #u-data="{ row }">
+        <span> {{ formatAmount(Number(row.u), 2) }}</span>
       </template>
       <template #time-data="{ row }">
         <span> {{ formatDate(Number(row.tradeTime)) }}</span>
