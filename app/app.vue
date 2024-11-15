@@ -8,8 +8,9 @@ import { Toaster } from 'vue-sonner';
       <NuxtPage />
     </NuxtLayout>
     <Toaster
-      position="top-center"
+      position="bottom-right"
       rich-colors
+      theme="dark"
     />
     <UModals />
     <USlideovers />

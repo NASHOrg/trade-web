@@ -81,7 +81,6 @@ const columns = computed(() => {
 
 const datas = computed(() => {
   const localOrders = orders.value.filter(o => !data.value?.items.map(i => i.txHash).includes(o.txHash));
-  console.log(localOrders, orders.value[0]);
   const userOrders = [...localOrders, ...(data.value?.items ?? [])];
   return userOrders.filter(o => !cancelledOrders.value.includes(o.txHash));
 });
