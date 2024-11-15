@@ -674,6 +674,8 @@ export interface paths {
                                 originalU: number;
                                 /** @description 成交时消耗的U */
                                 filledU: number;
+                                /** @description 哈希 */
+                                txHash: string;
                             }[];
                         };
                     };
@@ -719,6 +721,26 @@ export interface paths {
                             }[];
                             latestPrice: string;
                         };
+                    };
+                };
+            };
+        };
+    };
+    "/blockchain/check-order": {
+        get: {
+            parameters: {
+                query: {
+                    hash: string;
+                };
+            };
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        code?: string;
+                        msg?: string;
+                        data?: string;
+                        fail?: boolean;
                     };
                 };
             };
@@ -1421,6 +1443,8 @@ export type BlockchainUserOrdersGetParams = paths["/blockchain/user-orders"]['ge
 export type BlockchainUserOrders = paths["/blockchain/user-orders"]['get']['responses'][200]['schema']['data'];
 export type BlockchainOrderBooksGetParams = paths["/blockchain/order-books"]['get']['parameters']['query'];
 export type BlockchainOrderBooks = paths["/blockchain/order-books"]['get']['responses'][200]['schema']['data'];
+export type BlockchainCheckOrderGetParams = paths["/blockchain/check-order"]['get']['parameters']['query'];
+export type BlockchainCheckOrder = paths["/blockchain/check-order"]['get']['responses'][200]['schema']['data'];
 export type BlockchainTradeStatisticGetParams = paths["/blockchain/trade-statistic"]['get']['parameters']['query'];
 export type BlockchainTradeStatistic = paths["/blockchain/trade-statistic"]['get']['responses'][200]['schema']['data'];
 export type BlockchainTradeHistoryDetailGetParams = paths["/blockchain/trade-history-detail"]['get']['parameters']['query'];

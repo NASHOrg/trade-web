@@ -8,6 +8,7 @@ const props = defineProps<{
 }>();
 
 const tradeStore = useTradeStore();
+const { addOrder } = useOrders();
 const balance = ref<string | undefined>();
 
 const { address, open, chainId, switchNetwork } = useWallet();
@@ -161,6 +162,15 @@ async function onSell() {
     toast.promise(tx.wait(), {
       loading: t('sendTransaction'),
       success: () => {
+        const order = {
+          price: state.price,
+          qty: state.quantity,
+          total: state.total,
+          side: 'buy',
+          hash: tx.hash,
+          pair: currantToken.value?.label,
+        };
+        addOrder(order);
         refreshNuxtData();
         return t('transactionSuccess');
       },
@@ -306,7 +316,7 @@ watch(
         :loading="isSelling"
         @click="onSell"
       >
-        Sell Bool
+        Sell Bol
       </UButton>
     </div>
   </div>

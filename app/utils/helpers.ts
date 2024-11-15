@@ -88,13 +88,14 @@ export const errorHandling = (error: any): Error => {
 export function formatAmount(
   value: string,
   decimal = 6,
-  options?: { endPad?: boolean; format?: boolean },
+  options?: { endPad?: boolean; format?: boolean; rounded?: boolean },
 ) {
   const amount = new BigNumber(value);
+  const roundedMode = options?.rounded ? BigNumber.ROUND_UP : BigNumber.ROUND_DOWN;
 
   if (!options?.format) {
     return amount
-      .dp(decimal, 1)
+      .dp(decimal, roundedMode)
       .toFormat(options?.endPad ? decimal : undefined);
   }
   const units = {
@@ -103,6 +104,15 @@ export function formatAmount(
     billion: new BigNumber('1000000000'),
     trillion: new BigNumber('1000000000000'),
   };
+
+  const minimum = BigNumber(1).div(BigNumber(10).pow(decimal));
+
+  if (amount.isLessThan(minimum)) {
+    /// return with 0.{decimal}f format
+    return amount.toString().replace(/0\.(0+)([1-9][0-9]*)/, (match, zeros, rest) => {
+      return `0.{${zeros.length}}${BigNumber(rest).dp(2).toString()}`;
+    });
+  }
 
   if (amount.isGreaterThanOrEqualTo(units.trillion)) {
     return `${amount

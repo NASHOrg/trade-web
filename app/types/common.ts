@@ -1,3 +1,5 @@
+import type { BlockchainUserOrders } from './swagger';
+
 export type AccountInfo = {
   myRewards: string;
   myBalance: string;
@@ -14,3 +16,5 @@ export interface Token {
   decimals: number;
   name: string;
 }
+
+export type Order = BlockchainUserOrders['items'][0];

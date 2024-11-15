@@ -38,7 +38,7 @@ const options = computed(() => {
         class="flex border-[1px] border-primary rounded-[4px] px-2 py-1.5 space-x-[8px] bg-transparent cursor-pointer"
       >
         <NuxtPicture
-          src="https://bool.network/bool-orange.png"
+          src="https://bool.network/bool-network-orange.png"
           densities="1x 2x"
           height="18"
           width="18"

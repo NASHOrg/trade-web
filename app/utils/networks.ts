@@ -14,7 +14,7 @@ export const betaTestnet = {
   },
   tokens: {
     bool: {
-      name: 'BOOL',
+      name: 'BOL',
       symbol: 'tBOL',
       decimals: 18,
       icon: 'https://bool.network/bool-orange.png',
@@ -79,7 +79,7 @@ export const betaMainnet = {
   },
   tokens: {
     bool: {
-      name: 'BOOL',
+      name: 'BOL',
       symbol: 'BOL',
       decimals: 18,
       address: '',

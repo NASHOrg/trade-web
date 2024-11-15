@@ -9,12 +9,13 @@ const { network, tradeApi } = useNetworkConfig();
 const { t } = useI18n();
 const { $api } = useNuxtApp();
 const { counter } = useInterval(10000, { controls: true });
+const { cancelledOrders, orders, addCancelledOrder } = useOrders();
 
 const isCanceling = ref<string | undefined>(undefined);
 
 const queryParams = ref({
   pageNo: 1,
-  pageSize: 10,
+  pageSize: 100,
 });
 
 const { data, status, refresh } = useAsyncData(
@@ -76,11 +77,12 @@ const columns = computed(() => {
     },
   ];
 });
+
 const datas = computed(() => {
-  return (data.value?.items ?? []).map((item) => {
-    return { ...item };
-  });
+  const userOrders = [...orders.value, data.value?.items ?? []];
+  return userOrders.filter(o => !cancelledOrders.value.includes(o.orderId));
 });
+
 const expandRows = ref<{
   openedRows: typeof datas.value;
   row: (typeof datas.value)[number] | null;
@@ -107,6 +109,7 @@ async function onCancelOrder(id: string, type: number) {
     toast.promise(tx.wait(), {
       loading: t('sendTransaction'),
       success: () => {
+        addCancelledOrder(id);
         refreshNuxtData();
         return t('transactionSuccess');
       },
