@@ -43,7 +43,7 @@ const onClose = () => {
       <div class="w-full md:px-6 px-3 relative">
         <div
           v-if="title"
-          class="w-full md:py-6 py-3 text-white text-base font-normal text-ellipsis overflow-hidden text-nowrap border-[#2E2E2E] border-b-[1px]"
+          class="text-[18px] w-full md:py-6 py-3 text-white text-base font-normal text-ellipsis overflow-hidden text-nowrap border-[#2E2E2E] border-b-[1px]"
         >
           <span>{{ title ?? "" }}</span>
         </div>

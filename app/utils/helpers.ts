@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 
-export function formatDate(at: number, format = 'YYYY/MM/DD HH:mm:ss') {
-  return dayjs(at).format(format);
+export function formatDate(at: number | string, format = 'YYYY/MM/DD HH:mm:ss') {
+  return dayjs(Number(at)).format(format);
 }
 
 export function shortAddress(address?: string, length: number = 6) {
@@ -203,4 +203,21 @@ export function handleJsonRpcError(error: any, message: any) {
       }
     }
   }
+}
+
+export function secondsToTimeString(seconds: number): string {
+  const hours: number = Math.floor(seconds / 3600);
+  const minutes: number = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds: number = Math.floor(seconds % 60);
+
+  // Pad to 2 digits
+  const paddedHours: string = String(hours).padStart(2, '0');
+  const paddedMinutes: string = String(minutes).padStart(2, '0');
+  const paddedSeconds: string = String(remainingSeconds).padStart(2, '0');
+
+  // Format the time string
+  if (paddedHours === '00') {
+    return `${paddedMinutes}m ${paddedSeconds}s`;
+  }
+  return `${paddedHours}h ${paddedMinutes}m`;
 }

@@ -22,6 +22,7 @@ export default defineNuxtConfig({
     public: {
       baseUrl: '',
       network: '',
+      bridgeApiUrl: '',
     },
   },
   components: [

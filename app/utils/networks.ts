@@ -29,19 +29,19 @@ export const betaTestnet = {
     },
   },
   bridge: {
-    usdt: [],
-    usdc: [
+    usdt: [
       {
         name: 'ETH Sepolia',
         chainId: 11155111,
         symbol: 'ETH',
         icon: 'https://oss.boolscan.com/token-logo/1417150d35702e6d774167ae785d94913f09bc.png',
+        explorer: 'https://sepolia.etherscan.io',
         consumer: '0xa557070AF02d09F2Daa3371053B7A6D4bEb8023a',
         tokens: {
           decimals: 6,
-          name: 'USDC',
-          symbol: 'USDC',
-          icon: '/images/usdc.svg',
+          name: 'USDT',
+          symbol: 'USDT',
+          icon: '/images/usdt.png',
           address: '0x07540610a807150f3c74b55a0316b5a4735a3225',
         },
       },
@@ -50,12 +50,13 @@ export const betaTestnet = {
         chainId: 481,
         symbol: 'tBOL',
         icon: 'https://bool.network/bool-orange.png',
+        explorer: 'https://beta-testnet.boolscan.com',
         consumer: '0x97668c00FdD830cFF4578bD66283E512FE2b9C71',
         tokens: {
-          name: 'USDC',
+          name: 'USDT',
           decimals: 6,
-          symbol: 'USDC',
-          icon: '/images/usdc.svg',
+          symbol: 'USDT',
+          icon: '/images/usdt.png',
           address: '0xf9007019014c8CdFA78f21e97995F6a4D3493729',
         },
       },
@@ -124,7 +125,6 @@ export const betaMainnet = {
         },
       },
     ],
-    usdc: [],
   },
 } as const;
 

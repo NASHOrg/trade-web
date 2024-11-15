@@ -87,8 +87,7 @@ function onWithdraw(token: (typeof data.value)[number]['token']) {
     <div
       v-for="(item, index) in data"
       :key="index"
-      class="grid grid-cols-3 md:py-9 py-4"
-      :class="{ ' border-t-[1px] border-[#2E2E2E]': index > 0 }"
+      class="grid grid-cols-3 md:py-9 py-4 border-t-[1px] border-[#2E2E2E]"
     >
       <div class="flex items-center md:space-x-4 space-x-2">
         <UAvatar
