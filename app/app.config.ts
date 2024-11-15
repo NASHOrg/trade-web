@@ -2,7 +2,8 @@ export const walletConfig = {
   projectId: '07556f4c9346cbd23fa53dde19889e99',
   metadata: {
     name: 'XBIT',
-    description: 'The first Decentralized, On-Chain Order Book Exchange with Bool DHC for Self-Custody.',
+    description:
+      'The first Decentralized, On-Chain Order Book Exchange with Bool DHC for Self-Custody.',
     url: 'https://xbit.finance',
     icons: ['https://xbit.finance/favicon.png'],
   },
@@ -17,6 +18,19 @@ export default defineAppConfig({
   ui: {
     primary: 'main',
     gray: 'neutral',
+    avatar: {
+      size: {
+        '3xs': 'h-full w-full text-[8px]',
+        '2xs': 'h-full w-full text-[10px]',
+        'xs': 'h-full w-full text-xs',
+        'sm': 'h-full w-full text-sm',
+        'md': 'h-full w-full text-base',
+        'lg': 'h-full w-full text-lg',
+        'xl': 'h-full w-full text-xl',
+        '2xl': 'h-full w-full text-2xl',
+        '3xl': 'h-full w-full text-3xl',
+      },
+    },
     button: {
       default: {
         loadingIcon: 'i-tdesign-loading',

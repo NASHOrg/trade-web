@@ -28,6 +28,39 @@ export const betaTestnet = {
       decimals: 18,
     },
   },
+  bridge: {
+    usdt: [],
+    usdc: [
+      {
+        name: 'ETH Sepolia',
+        chainId: 11155111,
+        symbol: 'ETH',
+        icon: 'https://oss.boolscan.com/token-logo/1417150d35702e6d774167ae785d94913f09bc.png',
+        consumer: '0xa557070AF02d09F2Daa3371053B7A6D4bEb8023a',
+        tokens: {
+          decimals: 6,
+          name: 'USDC',
+          symbol: 'USDC',
+          icon: '/images/usdc.svg',
+          address: '0x07540610a807150f3c74b55a0316b5a4735a3225',
+        },
+      },
+      {
+        name: 'Bool Beta Testnet',
+        chainId: 481,
+        symbol: 'tBOL',
+        icon: 'https://bool.network/bool-orange.png',
+        consumer: '0x97668c00FdD830cFF4578bD66283E512FE2b9C71',
+        tokens: {
+          name: 'USDC',
+          decimals: 6,
+          symbol: 'USDC',
+          icon: '/images/usdc.svg',
+          address: '0xf9007019014c8CdFA78f21e97995F6a4D3493729',
+        },
+      },
+    ],
+  },
 };
 
 export const betaMainnet = {
@@ -60,11 +93,46 @@ export const betaMainnet = {
       decimals: 18,
     },
   },
+  bridge: {
+    usdt: [
+      {
+        name: 'ETH Sepolia',
+        chainId: 11155111,
+        symbol: 'ETH',
+        icon: 'https://oss.boolscan.com/token-logo/1417150d35702e6d774167ae785d94913f09bc.png',
+        consumer: '0xa49e678eccb9922ca6293bbde16db4403f609eb8',
+        tokens: {
+          decimals: 6,
+          name: 'USDT',
+          symbol: 'USDT',
+          icon: '/images/usdt.png',
+          address: '0x07540610a807150f3c74b55a0316b5a4735a3225',
+        },
+      },
+      {
+        name: 'Bool Beta Mainnet',
+        chainId: 11100,
+        symbol: 'BOL',
+        icon: 'https://bool.network/bool-orange.png',
+        consumer: '0x0015035658f57c613102a33d8c97d4441c520ea1',
+        tokens: {
+          decimals: 6,
+          name: 'USDT',
+          symbol: 'USDT',
+          icon: '/images/usdt.png',
+          address: '0xf9007019014c8CdFA78f21e97995F6a4D3493729',
+        },
+      },
+    ],
+    usdc: [],
+  },
+};
+
+export const networks = {
+  beta_testnet: betaTestnet,
+  beta_mainnet: betaMainnet,
 };
 
 export type Network = typeof betaTestnet;
 
-export default {
-  beta_testnet: betaTestnet,
-  beta_mainnet: betaMainnet,
-};
+export default networks;

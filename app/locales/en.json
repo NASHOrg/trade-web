@@ -135,6 +135,8 @@
   "latestTrades": "Latest Trades",
   "transactionSuccess": "Transaction Success",
   "transactionFail": "Transaction Fail",
+  "approveSuccess": "Approving Success",
+  "approveFail": "Approving Fail",
   "sendTransaction": "Sending transaction...",
   "fullStaked": "You can't stake on this node right now. Please choose a different node or try again later.",
   "cancelUnstake": "Cancel Unstake",
@@ -166,5 +168,6 @@
   "totalValue": "Total value",
   "withdraw": "Withdraw",
   "deposit": "Deposit",
-  "default": "Default"
+  "default": "Default",
+  "approving": "Approving"
 }

@@ -15,7 +15,7 @@ export class StakeApi extends BaseEvmApi {
       .getFunction('updateVotes')
       .populateTransaction(devices, _stakeAmount);
     const signer = await provider.getSigner();
-    await signer.estimateGas(res);
+    await this.provider.estimateGas(res);
     return signer.sendTransaction(res);
   }
 
@@ -24,7 +24,7 @@ export class StakeApi extends BaseEvmApi {
       .getFunction('unlockBalance')
       .populateTransaction();
     const signer = await provider.getSigner();
-    await signer.estimateGas(res);
+    await this.provider.estimateGas(res);
     return signer.sendTransaction(res);
   }
 

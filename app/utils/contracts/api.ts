@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js';
-import type { BrowserProvider, TransactionReceipt } from 'ethers';
+import type { BrowserProvider, TransactionResponse } from 'ethers';
 import { Contract, JsonRpcProvider } from 'ethers';
 import { MAX_INTEGER } from '@ethereumjs/util';
-import { ChainConfig } from './chains';
+import { ChainConfig } from '../chains';
 import { erc20ABI } from './abis/erc20';
 
 export const ORIGIN_TOKEN = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
@@ -97,7 +97,9 @@ export class BaseEvmApi {
         _address,
         param.approvedAddress,
       );
-      return new BigNumber(approved).gte(new BigNumber(param.amount.toString()));
+      return new BigNumber(approved).gte(
+        new BigNumber(param.amount.toString()),
+      );
     }
     catch (error) {
       console.log(error);
@@ -121,14 +123,19 @@ export class BaseEvmApi {
     param: {
       contract: string;
       approvedAddress: string;
+      amount?: bigint;
     },
-  ): Promise<TransactionReceipt | null> {
+  ): Promise<TransactionResponse> {
     const erc20Contract = this.getContractProvider('ERC20', param.contract);
     const data = await erc20Contract
       .getFunction('approve')
-      .populateTransaction(param.approvedAddress, MAX_INTEGER);
+      .populateTransaction(param.approvedAddress, param.amount ?? MAX_INTEGER);
+
     const signer = await provider.getSigner();
+    const address = signer.address;
+    await this.provider.estimateGas({ ...data, from: address });
+
     const res = await signer.sendTransaction(data);
-    return res.wait();
+    return res;
   }
 }

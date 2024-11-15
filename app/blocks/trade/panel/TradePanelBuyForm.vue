@@ -299,6 +299,7 @@ watch(
           v-if="currantToken?.tokens[1]"
           :address="address"
           :token="currantToken.tokens[1]"
+          :config="{ showSymbol: true }"
           @change="(value) => (balance = value)"
         />
       </div>

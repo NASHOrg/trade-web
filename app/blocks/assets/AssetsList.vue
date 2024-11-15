@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { WithdrawModal, DepositModal } from '#components';
 
-const { tokens } = useNetworkConfig();
+const { network } = useNetworkConfig();
 const { t } = useI18n();
 const { address } = useWallet();
 
@@ -14,15 +14,23 @@ const columns = computed(() => {
 });
 
 const data = computed(() => {
-  return Object.values(tokens.value).map((item) => {
-    return {
-      id: item.name,
-      icon: item.icon,
-      name: item.name,
-      type: 'Token',
-      token: item,
-    };
-  });
+  return Object.values(network.value.bridge)
+    .filter(item => item.length > 1) // filter out empty list
+    .map((item) => {
+      const token = item.find(
+        t => t.chainId === network.value.chainId,
+      )?.tokens;
+      return {
+        id: token?.name ?? '',
+        icon: token?.icon ?? '',
+        name: token?.name ?? '',
+        type: 'Token',
+        token: token!,
+      };
+    }) // get token in bool network
+    .filter((item) => {
+      return item.token.address;
+    }); // filter out native token
 });
 
 const modal = useModal();
@@ -59,7 +67,6 @@ function onWithdraw(token: (typeof data.value)[number]['token']) {
       <div class="flex items-center md:space-x-4 space-x-2">
         <UAvatar
           :src="item.icon"
-          size="30"
           class="w-[30px] h-[30px]"
         />
         <div class="inline-flex flex-col">
@@ -87,7 +94,6 @@ function onWithdraw(token: (typeof data.value)[number]['token']) {
           variant="outline"
           class="w-[95px] h-[30px] items-center justify-center text-xs font-normal leading-[14px]"
           :ui="{ rounded: 'rounded-[4px]', padding: { md: 'p-0' } }"
-          :disabled="true"
           @click="onWithdraw(item.token)"
         >
           {{ t("withdraw") }}
@@ -103,7 +109,6 @@ function onWithdraw(token: (typeof data.value)[number]['token']) {
               outline: 'bg-primary/30 dark:bg-primary/30',
             },
           }"
-          :disabled="true"
           @click="onDeposit(item.token)"
         >
           {{ t("deposit") }}

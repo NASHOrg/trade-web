@@ -1,21 +1,186 @@
 <script lang="ts" setup>
+import { ethers } from 'ethers';
+import { toast } from 'vue-sonner';
 import type { Token } from '~/types/common';
+import { BaseEvmApi } from '~/utils/contracts/api';
+import { BridgeApi } from '~/utils/contracts/bridge';
 
-defineProps<{
+const props = defineProps<{
   token: Token;
 }>();
 
 const { t } = useI18n();
 const { network } = useNetworkConfig();
-const { address } = useWallet();
+const { address, provider } = useWallet();
+
 const modal = useModal();
+const amount = ref('');
+const confirming = ref(false);
+
+const networks = computed(() => {
+  const bridge = network.value.bridge;
+  const token = props.token.symbol.toLowerCase() as keyof typeof bridge;
+  return bridge[token];
+});
+
+const selectNetwork = ref<(typeof networks.value)[0]>(networks.value[0] as any);
+
+const networkOptions = computed(() => {
+  return networks.value
+    .filter(item => item.chainId !== network.value.chainId)
+    .map((item) => {
+      return [
+        {
+          label: item.name,
+          avatar: {
+            src: item.icon,
+          },
+          disabled: item.chainId === selectNetwork.value.chainId,
+          click: () => {
+            selectNetwork.value = item;
+          },
+        },
+      ];
+    });
+});
+
+const bridgeInBool = computed(() => {
+  return networks.value.find(item => item.chainId === network.value.chainId);
+});
+const tokenInBool = computed(() => {
+  return bridgeInBool.value?.tokens;
+});
+
+const tokenInTarget = computed(() => {
+  return selectNetwork.value.tokens;
+});
+
+const targetNetwork = computed(() => {
+  return BaseEvmApi.getChain(selectNetwork.value.chainId);
+});
+
+const { data: balanceInBool } = useAsyncData(
+  `deposit-data-network-balance-${props.token.symbol}`,
+  () => {
+    if (!address.value) {
+      return Promise.resolve(BigInt(0));
+    }
+    const networkApi = new BaseEvmApi(network.value.rpc);
+    return networkApi.getBalance({
+      address: address.value,
+      contractAddress: tokenInBool.value?.address,
+    });
+  },
+  {
+    server: false,
+  },
+);
 
 const items = computed(() => {
+  const balanceInBoolFormat = ethers.formatUnits(
+    balanceInBool.value ?? '0',
+    tokenInBool.value?.decimals,
+  );
   return [
-    { label: 'Balance ', value: '0' },
+    {
+      label: 'Balance ',
+      value: `${formatAmount(
+        balanceInBoolFormat,
+        tokenInBool.value?.decimals,
+      )} ${tokenInBool.value?.symbol ?? ''}`,
+    },
     { label: 'Fee', value: '--' },
   ];
 });
+
+function onMax() {
+  amount.value = ethers.formatUnits(
+    balanceInBool.value || '0',
+    tokenInTarget.value.decimals,
+  );
+}
+
+async function onSubmit() {
+  try {
+    if (!amount.value) {
+      throw new Error('Please input amount!');
+    }
+    else if (!targetNetwork.value) {
+      throw new Error('Please select network!');
+    }
+    else if (!address.value) {
+      throw new Error('Wallet is not connected.');
+    }
+    else if (!tokenInBool.value) {
+      throw new Error('Token error!');
+    }
+    else if (!bridgeInBool.value) {
+      throw new Error('Network error!');
+    }
+    confirming.value = true;
+
+    const consumer = bridgeInBool.value.consumer;
+    const bridgeApi = new BridgeApi(network.value.rpc, consumer);
+
+    const amountParse = ethers.parseUnits(
+      amount.value,
+      tokenInBool.value.decimals,
+    );
+
+    const approveParam = {
+      contract: tokenInBool.value!.address,
+      approvedAddress: consumer,
+      address: address.value,
+      amount: amountParse,
+    };
+
+    const isApproved = await bridgeApi.isApprove(approveParam);
+
+    if (!isApproved) {
+      const approveTx = await bridgeApi.approve(provider(), {
+        ...approveParam,
+      });
+      await new Promise((resolve, reject) => {
+        toast.promise(approveTx.wait(), {
+          loading: t('approve'),
+          success: () => {
+            refreshNuxtData();
+            resolve(true);
+            return t('approveSuccess');
+          },
+          error: () => {
+            reject(new Error(t('approveFail')));
+          },
+        });
+      });
+    }
+
+    const tx = await bridgeApi.bridgeOut(provider(), {
+      dstChainId: network.value.chainId,
+      amount: amountParse,
+      dstRecipient: address.value!,
+      customData: '0x',
+    });
+
+    toast.promise(tx.wait(), {
+      loading: t('sendTransaction'),
+      success: () => {
+        refreshNuxtData();
+        return t('transactionSuccess');
+      },
+      error: () => t('transactionFail'),
+    });
+    modal.close();
+  }
+  catch (err) {
+    console.log(err);
+
+    handleJsonRpcError(err, toast);
+  }
+  finally {
+    confirming.value = false;
+  }
+}
 </script>
 
 <template>
@@ -33,13 +198,13 @@ const items = computed(() => {
           <UAvatar
             :src="token.icon"
             :alt="token.symbol"
-            :size="'30px'"
             class="w-[30px] h-[30px] bg-gray-500/50"
           />
           <div>{{ token.symbol }}</div>
         </div>
         <div class="grow">
           <CustomInput
+            v-model:value="amount"
             placeholder="0.00"
             :precision="2"
             type="number"
@@ -55,28 +220,51 @@ const items = computed(() => {
               padding: { md: 'p-1.5' },
               size: { md: 'text-xs leading-3 font-normal' },
             }"
+            @click="onMax"
           >
             Max
           </UButton>
         </div>
       </div>
 
-      <div
-        class="w-full flex items-center md:px-7 px-3.5 md:py-6 py-3 bg-[#0E0E11] rounded-lg"
+      <UDropdown
+        :items="networkOptions"
+        :ui="{
+          wrapper: 'w-full',
+          width: 'w-full',
+          item: {
+            avatar: {
+              base: 'w-[30px] h-[30px] flex-shrink-0',
+            },
+          },
+          popper: {
+            strategy: 'absolute',
+          },
+        }"
       >
-        <div class="flex items-center text-white space-x-4 text-base leading-4">
-          <UAvatar
-            :src="network.icon"
-            :alt="network.name"
-            :size="'30px'"
-            class="w-[30px] h-[30px] bg-gray-500/50"
-          />
-          <div>{{ network.name }}</div>
-        </div>
+        <div
+          class="w-full flex items-center md:px-7 px-3.5 md:py-6 py-3 bg-[#0E0E11] rounded-lg select-none"
+        >
+          <div
+            class="flex items-center text-white space-x-4 text-base leading-4"
+          >
+            <UAvatar
+              :src="selectNetwork.icon"
+              :alt="selectNetwork.name"
+              class="w-[30px] h-[30px] bg-gray-500/50"
+            />
+            <div>{{ selectNetwork.name }}</div>
+          </div>
 
-        <div class="grow" />
-        <div />
-      </div>
+          <div class="grow" />
+          <div>
+            <UIcon
+              name="i-gridicons-dropdown"
+              class="text-4xl text-[#999999]"
+            />
+          </div>
+        </div>
+      </UDropdown>
 
       <div
         class="w-full flex flex-col md:px-7 px-3.5 md:py-4 py-2 bg-[#0E0E11] rounded-lg md:space-y-5 space-y-2.5"
@@ -146,12 +334,15 @@ const items = computed(() => {
         </UButton>
 
         <UButton
+          :loading="confirming"
           color="primary"
           class="text-sm leading-4 font-normal"
           :ui="{
             base: 'md:w-[120px]  w-[45%] h-[40px] justify-center ',
             rounded: 'rounded-lg',
           }"
+          :disabled="Number(amount || '0') === 0"
+          @click="onSubmit"
         >
           {{ t("confirm") }}
         </UButton>
