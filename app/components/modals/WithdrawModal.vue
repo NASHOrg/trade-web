@@ -156,7 +156,7 @@ async function onSubmit() {
     }
 
     const tx = await bridgeApi.bridgeOut(provider(), {
-      dstChainId: network.value.chainId,
+      dstChainId: selectNetwork.value!.chainId!,
       amount: amountParse,
       dstRecipient: address.value!,
       customData: '0x',
@@ -206,7 +206,7 @@ async function onSubmit() {
           <CustomInput
             v-model:value="amount"
             placeholder="0.00"
-            :precision="2"
+            :precision="5"
             type="number"
             input-class="!text-[16px] !bg-transparent !text-end !text-white"
             block

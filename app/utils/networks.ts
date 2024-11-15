@@ -61,7 +61,7 @@ export const betaTestnet = {
       },
     ],
   },
-};
+} as const;
 
 export const betaMainnet = {
   baseUrl: 'https://beta-mainnet-api.boolscan.com/bool-network-beta-mainnet',
@@ -126,7 +126,7 @@ export const betaMainnet = {
     ],
     usdc: [],
   },
-};
+} as const;
 
 export const networks = {
   beta_testnet: betaTestnet,

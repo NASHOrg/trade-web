@@ -155,15 +155,6 @@ watch(
 
 const isBuying = ref(false);
 async function onBuy() {
-  // const { success, close } = useTransactionModal({
-  //   title: 'Token Approval',
-  //   steps: ['approve', 'send'],
-  //   token: usdt,
-  //   onClose() {
-  //     isBuying.value = false;
-  //   },
-  // });
-  // return;
   isBuying.value = true;
   try {
     if (!address.value) {
@@ -182,26 +173,26 @@ async function onBuy() {
       await tradeApi.approveUsdt(provider);
     }
     const tx = await tradeApi.createBuyOrder(provider, { amount, pay });
-
+    const order = {
+      price: Number(state.price),
+      qty: state.quantity!,
+      filledQty: 0,
+      originalU: Number(state.total!),
+      filledU: 0,
+      type: 1,
+      status: 0,
+      txHash: tx.hash,
+      time: new Date().getTime().toString(),
+      orderId: tx.hash,
+      pair: currantToken.value?.value,
+      verified: false,
+    };
     price.value = undefined;
     quantity.value = undefined;
 
     toast.promise(tx.wait(), {
       loading: t('sendTransaction'),
       success: () => {
-        const order = {
-          price: state.price,
-          qty: state.quantity,
-          filledQty: 0,
-          originalU: state.total,
-          filledU: 0,
-          status: 0,
-          side: 'buy',
-          hash: tx.hash,
-          time: new Date().getTime(),
-          orderId: tx.hash,
-          pair: currantToken.value?.label,
-        };
         addOrder(order);
         refreshNuxtData();
         return t('transactionSuccess');

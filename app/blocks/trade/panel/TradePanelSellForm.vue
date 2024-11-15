@@ -141,11 +141,11 @@ watch(
 
 const isSelling = ref(false);
 async function onSell() {
-  isSelling.value = true;
   try {
     if (!address.value) {
       return open();
     }
+    isSelling.value = true;
     const provider = useWallet().provider();
     if (chainId.value !== Number(network.value.chainId)) {
       const result = await switchNetwork(Number(network.value.chainId));
@@ -157,19 +157,25 @@ async function onSell() {
     const amount = parseEther(state.quantity);
     const receive = tradeApi.calcUsdt(state.price, state.quantity);
     const tx = await tradeApi.createSellOrder(provider, { amount, receive });
+    const order = {
+      price: Number(state.price),
+      qty: state.quantity!,
+      filledQty: 0,
+      originalU: Number(state.total!),
+      filledU: 0,
+      type: 0,
+      status: 0,
+      txHash: tx.hash,
+      time: new Date().getTime().toString(),
+      orderId: tx.hash,
+      pair: currantToken.value?.value,
+      verified: false,
+    };
     price.value = undefined;
     quantity.value = undefined;
     toast.promise(tx.wait(), {
       loading: t('sendTransaction'),
       success: () => {
-        const order = {
-          price: state.price,
-          qty: state.quantity,
-          total: state.total,
-          side: 'buy',
-          hash: tx.hash,
-          pair: currantToken.value?.label,
-        };
         addOrder(order);
         refreshNuxtData();
         return t('transactionSuccess');

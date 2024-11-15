@@ -81,7 +81,6 @@ export class TradeApi extends BaseEvmApi {
   }
 
   calcUsdt(price: string, bool: string) {
-    console.log(price, bool);
     const receive = BN(bool)
       .times(BN(price))
       .times(10 ** this.usdt.decimals)

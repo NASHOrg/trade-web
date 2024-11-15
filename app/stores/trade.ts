@@ -6,19 +6,12 @@ export const useTradeStore = defineStore('trade-store', () => {
     const bu = [tokens.value.bool, tokens.value.usdt];
     return [
       {
-        value: bu.map(item => item.name).join('-'),
+        value: 'BOOL/USDT',
         label: bu.map(item => item.symbol).join(' / '),
         type: 0,
         price: '0.01',
         tokens: bu,
       },
-      // {
-      //   value: "BOOL/USDC",
-      //   label: "BOOL/USDC",
-      //   type: 0,
-      //   price: "0.01",
-      //   tokens: [bool, usdt],
-      // },
     ];
   });
 

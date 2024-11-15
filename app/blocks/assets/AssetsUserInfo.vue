@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ethers } from 'ethers';
 import { BaseEvmApi } from '~/utils/contracts/api';
+import { WithdrawModal, DepositModal } from '#components';
 
 const { address } = useWallet();
 const { isMD } = useDevice();
@@ -21,6 +22,19 @@ const { data } = useAsyncData(`user-assets-${address.value}`, async () => {
 const balanceFormat = computed(() => {
   return ethers.formatEther(data.value?.balance || '0');
 });
+
+const modal = useModal();
+
+function onDeposit() {
+  const token = network.value.bridge.usdc[1].tokens;
+  console.log(token);
+  modal.open(DepositModal, { token });
+}
+
+function onWithdraw() {
+  const token = network.value.bridge.usdc[1].tokens;
+  modal.open(WithdrawModal, { token });
+}
 </script>
 
 <template>
@@ -64,6 +78,30 @@ const balanceFormat = computed(() => {
           {{ network?.symbol }}
         </span>
       </div>
+    </div>
+    <div class="flex space-x-[32px] mt-[28px]">
+      <UButton
+        class="rounded-[8px] !bg-[#2e2e2e] !text-white !text-[16px] !border-none"
+        color="white"
+        @click="onDeposit"
+      >
+        <IconDeposit />
+        <span>{{ $t('deposit') }}</span>
+      </UButton>
+      <UButton
+        class="rounded-[8px] !bg-[#2e2e2e] !text-white !text-[16px]"
+        @click="onWithdraw"
+      >
+        <IconWithdraw />
+        <span>{{ $t('withdraw') }}</span>
+      </UButton>
+      <UButton
+        class="rounded-[8px] !bg-[#2e2e2e] !text-white !text-[16px]"
+        to="/account/history"
+      >
+        <IconHistory />
+        <span>{{ $t('history') }}</span>
+      </UButton>
     </div>
   </div>
 </template>

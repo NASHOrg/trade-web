@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { WithdrawModal, DepositModal } from '#components';
 
-const { network } = useNetworkConfig();
+const { network, tokens } = useNetworkConfig();
 const { t } = useI18n();
 const { address } = useWallet();
 
@@ -27,10 +27,7 @@ const data = computed(() => {
         type: 'Token',
         token: token!,
       };
-    }) // get token in bool network
-    .filter((item) => {
-      return item.token.address;
-    }); // filter out native token
+    });
 });
 
 const modal = useModal();
@@ -56,6 +53,35 @@ function onWithdraw(token: (typeof data.value)[number]['token']) {
       >
         {{ item.label }}
       </span>
+    </div>
+    <div
+      class="grid grid-cols-3 md:py-9 py-4"
+    >
+      <div class="flex items-center md:space-x-4 space-x-2">
+        <UAvatar
+          :src="tokens.bool.icon"
+          class="w-[30px] h-[30px]"
+        />
+        <div class="inline-flex flex-col">
+          <span class="text-sm font-normal leading-4">{{ tokens.bool.name }}</span>
+          <span
+            class="text-xs p-0.5 font-normal border-[1px] border-[#999] text-[#999] rounded-sm mt-1 leading-3"
+          >
+            Token
+          </span>
+        </div>
+      </div>
+      <div class="w-full flex justify-center items-center">
+        <TokenBalance
+          :address="address"
+          :token="{
+            address: tokens.bool.address,
+            decimals: tokens.bool.decimals,
+            symbol: tokens.bool.symbol,
+          }"
+        />
+      </div>
+      <div class="flex flex-col justify-end items-end space-y-2.5" />
     </div>
 
     <div

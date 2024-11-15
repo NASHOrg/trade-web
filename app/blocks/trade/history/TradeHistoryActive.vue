@@ -36,6 +36,7 @@ const { data, status, refresh } = useAsyncData(
 );
 
 watch(counter, () => {
+  checkOrders();
   if (queryParams.value.pageNo === 1) {
     refresh();
   }
@@ -79,7 +80,9 @@ const columns = computed(() => {
 });
 
 const datas = computed(() => {
-  const userOrders = [...orders.value, data.value?.items ?? []];
+  const localOrders = orders.value.filter(o => !data.value?.items.map(i => i.txHash).includes(o.txHash));
+  console.log(localOrders, orders.value[0]);
+  const userOrders = [...localOrders, ...(data.value?.items ?? [])];
   return userOrders.filter(o => !cancelledOrders.value.includes(o.orderId));
 });
 
@@ -91,8 +94,18 @@ const expandRows = ref<{
       row: null,
     });
 
-async function onCancelOrder(id: string, type: number) {
-  isCanceling.value = id + type.toString();
+async function checkOrders() {
+  if (orders.value.length === 0) return;
+  const result = await $api.blockchainCheckOrder(
+    {
+      hash: orders.value.map(o => o.txHash).join(','),
+    },
+  );
+  const uncompleted = result!.filter(t => !t.result).map(t => t.hash);
+  orders.value = orders.value.filter(o => uncompleted.includes(o.txHash));
+}
+
+async function onCancelOrder(id: string, type: number, hash: string) {
   try {
     if (!address.value) {
       return open();
@@ -102,6 +115,7 @@ async function onCancelOrder(id: string, type: number) {
       const result = await switchNetwork(Number(network.value.chainId));
       if (!result) return;
     }
+    isCanceling.value = id + type.toString();
     const tx = await tradeApi.cancelOrder(provider, {
       type: type === 0 ? 'sell' : 'buy',
       orderId: BigInt(id),
@@ -109,26 +123,24 @@ async function onCancelOrder(id: string, type: number) {
     toast.promise(tx.wait(), {
       loading: t('sendTransaction'),
       success: () => {
-        addCancelledOrder(id);
-        refreshNuxtData();
+        addCancelledOrder(hash);
+        isCanceling.value = undefined;
         return t('transactionSuccess');
       },
-      error: () => t('transactionFail'),
+      error: () => {
+        isCanceling.value = undefined;
+        return t('transactionFail');
+      },
     });
   }
   catch (error) {
     handleJsonRpcError(error, toast);
   }
-  finally {
-    isCanceling.value = undefined;
-  }
 }
 
-// function isExpanded(row: (typeof datas.value)[number]) {
-//   return expandRows.value.openedRows.some(
-//     (item) => item.orderId === row.orderId,
-//   );
-// }
+onMounted(() => {
+  checkOrders();
+});
 </script>
 
 <template>
@@ -226,8 +238,9 @@ async function onCancelOrder(id: string, type: number) {
         <UButton
           class="rounded-[4px] h-[26px]"
           size="sm"
-          :loading="isCanceling === row.orderId + row.type.toString()"
-          @click="onCancelOrder(row.orderId, row.type)"
+          :disabled="row.verified === false"
+          :loading="isCanceling === (row.orderId + row.type.toString())"
+          @click="onCancelOrder(row.orderId, row.type, row.txHash)"
         >
           <span v-if="isCanceling !== row.orderId + row.type.toString()">
             {{ t("cancel") }}

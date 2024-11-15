@@ -730,6 +730,7 @@ export interface paths {
         get: {
             parameters: {
                 query: {
+                    /** 支持批量用“,”隔开 */
                     hash: string;
                 };
             };
@@ -739,7 +740,10 @@ export interface paths {
                     schema: {
                         code?: string;
                         msg?: string;
-                        data?: string;
+                        data?: {
+                            hash: string;
+                            result: boolean;
+                        }[];
                         fail?: boolean;
                     };
                 };

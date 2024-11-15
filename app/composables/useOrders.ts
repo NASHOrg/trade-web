@@ -1,7 +1,7 @@
 import { useStorage } from '@vueuse/core';
 import type { Order } from '~/types/common';
 
-type SavedOrder = Order & { verified?: boolean; hash?: string };
+type SavedOrder = Order & { verified?: boolean };
 export function useOrders() {
   const orders = useStorage<SavedOrder[]>('xbit-orders', []);
   const cancelledOrders = useStorage<string[]>('xbit-cancelled-orders', []);
