@@ -171,6 +171,7 @@ async function onSell() {
       pair: currantToken.value?.value,
       verified: false,
     };
+    const qty = quantity.value;
     price.value = undefined;
     quantity.value = undefined;
     toast.promise(tx.wait(), {
@@ -181,6 +182,13 @@ async function onSell() {
         return t('transactionSuccess');
       },
       error: () => t('transactionFail'),
+      description: `Sell ${qty} BOL`,
+      action: {
+        label: t('viewTx'),
+        onClick: () => {
+          window.open(`${network.value.explorer}/tx/${tx.hash}`, '_blank');
+        },
+      },
     });
   }
   catch (error) {

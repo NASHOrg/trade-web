@@ -169,5 +169,6 @@
   "withdraw": "Withdraw",
   "deposit": "Deposit",
   "default": "Default",
-  "approving": "Approving"
+  "approving": "Approving",
+  "viewTx": "View tx"
 }

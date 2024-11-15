@@ -18,3 +18,29 @@ export interface Token {
 }
 
 export type Order = BlockchainUserOrders['items'][0];
+
+export type BridgeHistory = {
+  swapRecordSrcChainHash: string;
+  swapRecordSrcTokenId?: string;
+  swapRecordDstTokenId?: string;
+  swapRecordSrcChainId?: string;
+  swapRecordDstChainName?: string;
+  swapRecordDstChainId?: string;
+  swapRecordSrcChainName?: string;
+  swapRecordDstTokenAmount?: string;
+  swapRecordUserAddress?: string;
+  swapRecordSrcTokenAmount?: string;
+  swapRecordDstChainHash?: string;
+  swapRecordSrcChainTime: string;
+  swapRecordBoolChainHash?: string;
+  swapRecordCrossID?: string;
+  swapRecordStatus?: string;
+  swapRecordCrossId?: string;
+  swapRecordDstUserAddress?: string;
+  swapRecordSrcTokenSymbol?: string;
+  swapRecordSrcTokenName?: string;
+  swapRecordDstTokenSymbol?: string;
+  swapRecordDstChainTime?: string;
+  swapRecordDstTokenName?: string;
+  swapRecordSrcUserAddress?: string;
+};

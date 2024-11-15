@@ -187,6 +187,7 @@ async function onBuy() {
       pair: currantToken.value?.value,
       verified: false,
     };
+    const qty = quantity.value;
     price.value = undefined;
     quantity.value = undefined;
 
@@ -198,6 +199,13 @@ async function onBuy() {
         return t('transactionSuccess');
       },
       error: () => t('transactionFail'),
+      description: `Buy ${qty} BOL`,
+      action: {
+        label: t('viewTx'),
+        onClick: () => {
+          window.open(`${network.value.explorer}/tx/${tx.hash}`, '_blank');
+        },
+      },
     });
   }
   catch (error) {

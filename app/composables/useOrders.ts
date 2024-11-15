@@ -3,19 +3,38 @@ import type { Order } from '~/types/common';
 
 type SavedOrder = Order & { verified?: boolean };
 export function useOrders() {
-  const orders = useStorage<SavedOrder[]>('xbit-orders', []);
-  const cancelledOrders = useStorage<string[]>('xbit-cancelled-orders', []);
+  const { address } = useWallet();
+  const _orders = useStorage<{ [key: string]: SavedOrder[] }>('xbit-orders', {});
+  const _cancelledOrders = useStorage<{ [key: string]: string[] }>('xbit-cancelled-orders', {});
   function addOrder(tx: SavedOrder) {
-    orders.value = [tx, ...orders.value];
+    if (!address.value) return;
+    _orders.value[address.value] = [tx, ..._orders.value[address.value] ?? []];
   };
   function addCancelledOrder(orderId: string) {
-    cancelledOrders.value = [orderId, ...cancelledOrders.value];
+    if (!address.value) return;
+    _cancelledOrders.value[address.value] = Array.from(new Set([orderId, ..._cancelledOrders.value[address.value] ?? []]));
   };
+
+  const orders = computed(() => {
+    if (!address.value) return [];
+    return _orders.value[address.value] ?? [];
+  });
+
+  const removeOrders = (hashes: string[]) => {
+    if (!address.value) return;
+    _orders.value[address.value] = _orders.value[address.value]?.filter(order => !hashes.includes(order.txHash)) ?? [];
+  };
+
+  const cancelledOrders = computed(() => {
+    if (!address.value) return [];
+    return _cancelledOrders.value[address.value] ?? [];
+  });
 
   return {
     orders,
     cancelledOrders,
     addOrder,
     addCancelledOrder,
+    removeOrders,
   };
 }

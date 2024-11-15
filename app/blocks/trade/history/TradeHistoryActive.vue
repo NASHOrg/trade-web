@@ -9,7 +9,7 @@ const { network, tradeApi } = useNetworkConfig();
 const { t } = useI18n();
 const { $api } = useNuxtApp();
 const { counter } = useInterval(10000, { controls: true });
-const { cancelledOrders, orders, addCancelledOrder } = useOrders();
+const { cancelledOrders, orders, addCancelledOrder, removeOrders } = useOrders();
 
 const isCanceling = ref<string | undefined>(undefined);
 
@@ -83,7 +83,7 @@ const datas = computed(() => {
   const localOrders = orders.value.filter(o => !data.value?.items.map(i => i.txHash).includes(o.txHash));
   console.log(localOrders, orders.value[0]);
   const userOrders = [...localOrders, ...(data.value?.items ?? [])];
-  return userOrders.filter(o => !cancelledOrders.value.includes(o.orderId));
+  return userOrders.filter(o => !cancelledOrders.value.includes(o.txHash));
 });
 
 const expandRows = ref<{
@@ -102,7 +102,7 @@ async function checkOrders() {
     },
   );
   const uncompleted = result!.filter(t => !t.result).map(t => t.hash);
-  orders.value = orders.value.filter(o => uncompleted.includes(o.txHash));
+  removeOrders(uncompleted);
 }
 
 async function onCancelOrder(id: string, type: number, hash: string) {
@@ -130,6 +130,13 @@ async function onCancelOrder(id: string, type: number, hash: string) {
       error: () => {
         isCanceling.value = undefined;
         return t('transactionFail');
+      },
+      description: 'Cancel order',
+      action: {
+        label: t('viewTx'),
+        onClick: () => {
+          window.open(`${network.value.explorer}/tx/${tx.hash}`, '_blank');
+        },
       },
     });
   }
@@ -238,7 +245,7 @@ onMounted(() => {
         <UButton
           class="rounded-[4px] h-[26px]"
           size="sm"
-          :disabled="row.verified === false"
+          :disabled="Boolean(row.verified === false || (isCanceling && isCanceling !== (row.orderId + row.type.toString())))"
           :loading="isCanceling === (row.orderId + row.type.toString())"
           @click="onCancelOrder(row.orderId, row.type, row.txHash)"
         >

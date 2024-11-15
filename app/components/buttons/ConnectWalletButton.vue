@@ -2,6 +2,7 @@
 const { open, address } = useWallet();
 const { $localePath } = useNuxtApp();
 const router = useRouter();
+const { disconnect } = useWallet();
 
 const options = computed(() => {
   return [
@@ -19,7 +20,7 @@ const options = computed(() => {
         label: 'Disconnect',
         icon: 'i-material-symbols-logout',
         click: () => {
-          open({ view: 'Account' });
+          disconnect();
         },
       },
     ],
@@ -35,7 +36,7 @@ const options = computed(() => {
       :popper="{ placement: 'bottom-start' }"
     >
       <div
-        class="flex border-[1px] border-primary rounded-[4px] px-2 py-1.5 space-x-[8px] bg-transparent cursor-pointer"
+        class="flex border-[1px] border-primary rounded-[4px] px-[8px] py-[6px] space-x-[8px] bg-transparent cursor-pointer items-center"
       >
         <NuxtPicture
           src="https://bool.network/bool-network-orange.png"
@@ -44,13 +45,12 @@ const options = computed(() => {
           width="18"
           class="rounded-full overflow-hidden"
         />
-        <div class="flex items-center text-xs leading-4">
+        <div class="flex items-center text-xs leading-none">
           <p>{{ shortAddress(address, 4) }}</p>
           <UIcon
             name="i-icon-park-solid-down-one"
             class="left-[2px] bg-[#999999]"
           />
-          <!-- <p class="text-[#999] text-xs leading-3">Balance: {{ balance }} BOOL</p> -->
         </div>
       </div>
     </UDropdown>
