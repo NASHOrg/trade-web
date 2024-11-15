@@ -11,8 +11,6 @@ const { $api } = useNuxtApp();
 const { counter } = useInterval(10000, { controls: true });
 const { cancelledOrders, orders, addCancelledOrder, removeOrders } = useOrders();
 
-const isCanceling = ref<string | undefined>(undefined);
-
 const queryParams = ref({
   pageNo: 1,
   pageSize: 100,
@@ -104,6 +102,7 @@ async function checkOrders() {
   removeOrders(uncompleted);
 }
 
+const isCanceling = ref<string[]>([]);
 async function onCancelOrder(id: string, type: number, hash: string) {
   try {
     if (!address.value) {
@@ -114,7 +113,7 @@ async function onCancelOrder(id: string, type: number, hash: string) {
       const result = await switchNetwork(Number(network.value.chainId));
       if (!result) return;
     }
-    isCanceling.value = id + type.toString();
+    isCanceling.value.push(hash);
     const tx = await tradeApi.cancelOrder(provider, {
       type: type === 0 ? 'sell' : 'buy',
       orderId: BigInt(id),
@@ -123,11 +122,10 @@ async function onCancelOrder(id: string, type: number, hash: string) {
       loading: t('sendTransaction'),
       success: () => {
         addCancelledOrder(hash);
-        isCanceling.value = undefined;
         return t('transactionSuccess');
       },
       error: () => {
-        isCanceling.value = undefined;
+        isCanceling.value = isCanceling.value.filter(i => i !== hash);
         return t('transactionFail');
       },
       description: 'Cancel order',
@@ -141,6 +139,7 @@ async function onCancelOrder(id: string, type: number, hash: string) {
   }
   catch (error) {
     handleJsonRpcError(error, toast);
+    isCanceling.value = isCanceling.value.filter(i => i !== hash);
   }
 }
 
@@ -244,11 +243,11 @@ onMounted(() => {
         <UButton
           class="rounded-[4px] h-[26px]"
           size="sm"
-          :disabled="Boolean(row.verified === false || (isCanceling && isCanceling !== (row.orderId + row.type.toString())))"
-          :loading="isCanceling === (row.orderId + row.type.toString())"
+          :disabled="row.verified === false"
+          :loading="isCanceling.includes(row.txHash)"
           @click="onCancelOrder(row.orderId, row.type, row.txHash)"
         >
-          <span v-if="isCanceling !== row.orderId + row.type.toString()">
+          <span v-if="!isCanceling.includes(row.txHash)">
             {{ t("cancel") }}
           </span>
         </UButton>
