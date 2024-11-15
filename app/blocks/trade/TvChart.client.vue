@@ -68,10 +68,10 @@ function setTooltip() {
 
 async function initChart() {
   const tradeData = await $api.blockchainTradeStatistic({ type: type.value });
-  let list = (tradeData!.items ?? [])
+  const list = (tradeData!.items ?? [])
     .map((item) => {
       return {
-        time: Number(item.time) / 1000,
+        time: timeToLocal(Number(item.time) / 1000),
         open: Number(item.openPrice),
         high: Number(item.highPrice),
         low: Number(item.lowPrice),
@@ -81,12 +81,6 @@ async function initChart() {
     })
     .reverse();
 
-  if (list.length > 0) {
-    // const test = (type.value === '0' ? hourData : dayData);
-    list = [...list].map(t => ({
-      ...t, time: timeToLocal(t.time), close: t.open, open: t.close,
-    } as any));
-  }
   if (!mainChart) {
     mainChart = createChart(mainChartContainer.value!, {
       grid: {
@@ -155,7 +149,7 @@ async function initChart() {
   const valumeData = list.map(d => ({
     time: d.time,
     value: d.value ?? 1000 * Math.random(),
-    color: d.close > d.open ? '#0AC49E' : '#E24444',
+    color: d.close >= d.open ? '#0AC49E' : '#E24444',
   })) as any;
   histogramSeries.setData(valumeData);
   setTooltip();
@@ -194,7 +188,7 @@ function updateChart() {
     histogramSeries.update({
       time: data.time,
       value: Number(item.tradeAmount),
-      color: Number(item.closePrice) > Number(item.openPrice) ? '#0AC49E' : '#E24444',
+      color: Number(item.closePrice) >= Number(item.openPrice) ? '#0AC49E' : '#E24444',
     });
     if (tooltipData.value?.time === data.time) {
       tooltipData.value = data as any;
