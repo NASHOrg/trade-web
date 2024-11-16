@@ -22,7 +22,6 @@ export function useOrders() {
 
   const removeOrders = (hashes: string[]) => {
     if (!address.value) return;
-    console.log(hashes);
     _orders.value[address.value] = _orders.value[address.value]?.filter(order => !hashes.includes(order.txHash)) ?? [];
   };
 

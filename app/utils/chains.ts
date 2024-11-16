@@ -6,13 +6,6 @@ export const ChainConfig = {
     rpcUrl: 'https://rpc.ankr.com/eth',
     scanUrl: 'https://etherscan.com',
   },
-  goerli: {
-    id: '0x5',
-    token: 'ETH',
-    label: 'ETH Goerli',
-    rpcUrl: 'https://rpc.ankr.com/eth_goerli',
-    scanUrl: 'https://goerli.etherscan.io',
-  },
   sepolia: {
     id: '0xaa36a7',
     token: 'ETH',

@@ -20,6 +20,7 @@ const tooltipData = ref<{
   low: number;
   close: number;
   time: number;
+  value: number;
 } | undefined>();
 
 const { counter } = useInterval(3000, { controls: true });
@@ -53,16 +54,20 @@ const maxVisibleBars = 100;
 // }
 
 function setTooltip() {
-  if (!mainChartContainer.value || !mainChart || !candlestickSeries) return;
+  if (!mainChartContainer.value || !mainChart || !candlestickSeries || !histogramSeries) return;
   const allData = candlestickSeries.data();
+  const values = histogramSeries.data();
   const data = allData[allData.length - 1];
-  tooltipData.value = data as any;
+  const value = values[values.length - 1] as any;
+  tooltipData.value = { ...data as any, value: value.value };
 
   // update tooltip
   mainChart.subscribeCrosshairMove((param) => {
     const allData = candlestickSeries!.data();
+    const values = histogramSeries!.data();
     const data = param.time ? allData.find(t => t.time === param.time)! : allData[allData.length - 1]!;
-    tooltipData.value = data as any;
+    const value = param.time ? values.find(t => t.time === param.time)! : values[values.length - 1]!;
+    tooltipData.value = { ...data as any, value: (value as any).value };
   });
 }
 
@@ -183,6 +188,7 @@ function updateChart() {
       high: Number(item.highPrice),
       low: Number(item.lowPrice),
       close: Number(item.closePrice),
+      value: Number(item.tradeAmount),
     };
     candlestickSeries.update(data);
     histogramSeries.update({
@@ -252,7 +258,7 @@ onUnmounted(() => {
     </div>
     <ChartTooltip
       v-if="tooltipData"
-      class="absolute left-[20px] top-2 z-10"
+      class="absolute left-0 md:left-[20px] top-2 z-10"
       :data="tooltipData"
     />
   </div>

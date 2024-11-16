@@ -6,6 +6,7 @@ const props = defineProps<{
     open: number;
     close: number;
     time: number;
+    value: number;
   };
 }>();
 
@@ -18,18 +19,12 @@ const colorStyle = computed(() => {
 </script>
 
 <template>
-  <div class="text-white inline-flex space-x-3 text-sm font-normal">
-    <span>{{ currantToken.label }}</span>
+  <div class="text-white inline-flex space-x-3 text-sm font-normal flex-wrap mr-[100px] md:mr-0">
+    <span class="hidden md:block">{{ currantToken.label }}</span>
     <span>
       <span>O&nbsp;</span>
       <span :style="colorStyle">
         {{ formatAmount(data.open, 5, { endPad: true }) }}
-      </span>
-    </span>
-    <span>
-      <span>C&nbsp;</span>
-      <span :style="colorStyle">
-        {{ formatAmount(data.close, 5, { endPad: true }) }}
       </span>
     </span>
     <span>
@@ -42,6 +37,18 @@ const colorStyle = computed(() => {
       <span>L&nbsp;</span>
       <span :style="colorStyle">
         {{ formatAmount(data.low, 5, { endPad: true }) }}
+      </span>
+    </span>
+    <span>
+      <span>C&nbsp;</span>
+      <span :style="colorStyle">
+        {{ formatAmount(data.close, 5, { endPad: true }) }}
+      </span>
+    </span>
+    <span>
+      <span>Vol&nbsp;</span>
+      <span :style="colorStyle">
+        {{ formatAmount(data.value, 2, { endPad: true }) }}
       </span>
     </span>
   </div>
