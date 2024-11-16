@@ -2,6 +2,7 @@
 import { parseEther } from 'ethers';
 import BN from 'bignumber.js';
 import { toast } from 'vue-sonner';
+import { DepositModal } from '#components';
 
 const props = defineProps<{
   mode: 'limit' | 'market';
@@ -152,6 +153,11 @@ watch(
     deep: true,
   },
 );
+const modal = useModal();
+function onDeposit() {
+  const token = network.value.bridge.usdt[1].tokens;
+  modal.open(DepositModal, { token });
+}
 
 const isBuying = ref(false);
 async function onBuy() {
@@ -319,14 +325,15 @@ watch(
       </div>
       <div v-else />
 
-      <!-- <UButton
+      <UButton
         to=""
         variant="outline"
         size="xs"
         class="rounded-[4px] h-[22px] text-[12px] !px-1"
+        @click="onDeposit"
       >
-        Add Fund
-      </UButton> -->
+        {{ t('addFund') }}
+      </UButton>
     </div>
     <div class="grow" />
     <div class="pt-5 w-full">

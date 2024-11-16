@@ -170,5 +170,6 @@
   "deposit": "Deposit",
   "default": "Default",
   "approving": "Approving",
-  "viewTx": "View tx"
+  "viewTx": "View tx",
+  "addFund": "Add Fund"
 }
