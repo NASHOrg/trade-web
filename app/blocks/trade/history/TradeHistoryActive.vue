@@ -98,8 +98,8 @@ async function checkOrders() {
       hash: orders.value.map(o => o.txHash).join(','),
     },
   );
-  const uncompleted = result!.filter(t => !t.result).map(t => t.hash);
-  removeOrders(uncompleted);
+  const completed = result!.filter(t => t.result).map(t => t.hash);
+  removeOrders(completed);
 }
 
 const isCanceling = ref<string[]>([]);
