@@ -36,8 +36,8 @@ export default function useWallet() {
     chainId: Number(ethNetwork.id),
     name: ethNetwork.label,
     currency: ethNetwork.token,
-    rpcUrl: ethNetwork.rpcUrl,
     explorerUrl: ethNetwork.scanUrl,
+    rpcUrl: ethNetwork.rpcUrl,
   };
 
   if (!isInit) {
