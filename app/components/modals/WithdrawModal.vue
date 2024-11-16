@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { ethers } from 'ethers';
+import { ethers, MaxUint256 } from 'ethers';
 import { toast } from 'vue-sonner';
-import type { Token } from '~/types/common';
+import type { BridgeHistory, Token } from '~/types/common';
 import { BaseEvmApi } from '~/utils/contracts/api';
 import { BridgeApi } from '~/utils/contracts/bridge';
 
@@ -11,11 +11,12 @@ const props = defineProps<{
 
 const { t } = useI18n();
 const { network } = useNetworkConfig();
-const { address, provider } = useWallet();
+const { address, chainId, switchNetwork, provider } = useWallet();
 
 const modal = useModal();
 const amount = ref('');
 const confirming = ref(false);
+const { add } = useBridgeHistory();
 
 const networks = computed(() => {
   const bridge = network.value.bridge;
@@ -89,7 +90,7 @@ const items = computed(() => {
         tokenInBool.value?.decimals,
       )} ${tokenInBool.value?.symbol ?? ''}`,
     },
-    { label: 'Fee', value: '--' },
+    { label: 'Fee', value: '0 ' + network.value.symbol },
   ];
 });
 
@@ -119,6 +120,12 @@ async function onSubmit() {
     }
     confirming.value = true;
 
+    // Check wallet network
+    if (chainId.value !== Number(network.value.chainId)) {
+      const result = await switchNetwork(Number(network.value.chainId));
+      if (!result) return;
+    }
+
     const consumer = bridgeInBool.value.consumer;
     const bridgeApi = new BridgeApi(network.value.rpc, consumer);
 
@@ -131,7 +138,7 @@ async function onSubmit() {
       contract: tokenInBool.value!.address,
       approvedAddress: consumer,
       address: address.value,
-      amount: amountParse,
+      amount: MaxUint256,
     };
 
     const isApproved = await bridgeApi.isApprove(approveParam);
@@ -142,14 +149,20 @@ async function onSubmit() {
       });
       await new Promise((resolve, reject) => {
         toast.promise(approveTx.wait(), {
-          loading: t('approve'),
+          loading: t('sendTransaction'),
+          description: t('approve') + ' ' + tokenInBool.value!.symbol,
           success: () => {
-            refreshNuxtData();
             resolve(true);
-            return t('approveSuccess');
+            return t('transactionSuccess');
           },
           error: () => {
-            reject(new Error(t('approveFail')));
+            reject(new Error(t('transactionFail')));
+          },
+          action: {
+            label: t('viewTx'),
+            onClick: () => {
+              window.open(`${network.value!.explorer}/tx/${approveTx.hash}`, '_blank');
+            },
           },
         });
       });
@@ -162,6 +175,21 @@ async function onSubmit() {
       customData: '0x',
     });
 
+    const params: BridgeHistory = {
+      swapRecordSrcTokenAmount: amount.value,
+      swapRecordDstTokenAmount: amount.value,
+      swapRecordSrcChainHash: tx.hash,
+      swapRecordSrcChainId: network.value!.chainId?.toString() ?? '',
+      swapRecordDstChainId: Number(targetNetwork.value!.id)?.toString() ?? '',
+      swapRecordDstUserAddress: address.value ?? '',
+      swapRecordSrcChainTime: Date.now().toString(),
+      swapRecordSrcTokenName: tokenInBool.value?.name,
+      swapRecordDstTokenName: tokenInTarget.value.name,
+      swapRecordDstTokenSymbol: tokenInTarget.value.symbol,
+      swapRecordStatus: 'Pending',
+    };
+    add(params);
+
     toast.promise(tx.wait(), {
       loading: t('sendTransaction'),
       success: () => {
@@ -169,12 +197,18 @@ async function onSubmit() {
         return t('transactionSuccess');
       },
       error: () => t('transactionFail'),
+      description: `${t('withdraw')} ${amount.value} ${tokenInBool.value.symbol}`,
+      action: {
+        label: t('viewTx'),
+        onClick: () => {
+          window.open(`${network.value!.explorer}/tx/${tx.hash}`, '_blank');
+        },
+      },
     });
     modal.close();
   }
   catch (err) {
     console.log(err);
-
     handleJsonRpcError(err, toast);
   }
   finally {

@@ -6,8 +6,6 @@ import {
   useDisconnect,
   useWeb3Modal,
 } from '@web3modal/ethers/vue';
-// import type { AppKit } from '@web3modal/base';
-// import type { EthersStoreUtilState } from '@web3modal/scaffold-utils/ethers';
 
 import { BrowserProvider } from 'ethers';
 // import NetworkConfig from '~/utils/networks';
@@ -15,27 +13,14 @@ import { BrowserProvider } from 'ethers';
 // 1. Get projectId at https://cloud.walletconnect.com
 const projectId = '07556f4c9346cbd23fa53dde19889e99';
 
-// 2. Set chains
-// const chains = Object.values(NetworkConfig).map((item) => {
-//   return {
-//     chainId: item.chainId,
-//     name: item.name,
-//     currency: item.symbol,
-//     explorerUrl: item.explorer,
-//     rpcUrl: item.rpc,
-//   };
-// });
-
-// 3. Create modal
 const metadata = {
   name: 'XBIT',
-  description: 'XBIT for Bool Network',
+  description: 'XBIT',
   url: 'https://xbit.finance',
   icons: ['https://xbit.finance/favicon.png'],
 };
 
 let isInit = false;
-// let web3Modal: AppKit<EthersStoreUtilState, number> | undefined;
 
 export default function useWallet() {
   const { network: currentNetwork } = useNetworkConfig();
@@ -47,15 +32,19 @@ export default function useWallet() {
     explorerUrl: currentNetwork.value.explorer,
     rpcUrl: currentNetwork.value.rpc,
   };
+  const sepolia = {
+    chainId: 11155111,
+    name: 'ETH Sepolia',
+    currency: 'ETH',
+    rpcUrl: 'https://eth-sepolia-public.unifra.io',
+    explorerUrl: 'https://sepolia.etherscan.io',
+  };
 
   if (!isInit) {
     createWeb3Modal({
       ethersConfig: defaultConfig({
         metadata,
         auth: { email: false, socials: [] },
-        chains: [network],
-        defaultChainId: network.chainId,
-        rpcUrl: network.rpcUrl,
       }),
       themeMode: 'dark',
       themeVariables: {
@@ -69,8 +58,7 @@ export default function useWallet() {
         482: currentNetwork.value.icon,
         11100: currentNetwork.value.icon,
       },
-      defaultChain: network,
-      chains: [network],
+      chains: [network, sepolia],
       projectId,
       enableSwaps: false,
       enableOnramp: false,

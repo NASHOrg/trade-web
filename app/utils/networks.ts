@@ -8,7 +8,7 @@ export const betaTestnet = {
   value: 'beta_testnet',
   feeRate: 3000,
   explorer: 'https://beta-testnet.boolscan.com',
-  icon: 'https://bool.network/bool-orange.png',
+  icon: 'https://bool.network/bool-network-orange.png',
   contracts: {
     trade: '0x1E3f592CfcEbE18824e19Cb6Ca7Ba8f91939Bca4',
   },
@@ -49,7 +49,7 @@ export const betaTestnet = {
         name: 'Bool Beta Testnet',
         chainId: 481,
         symbol: 'tBOL',
-        icon: 'https://bool.network/bool-orange.png',
+        icon: 'https://bool.network/bool-network-orange.png',
         explorer: 'https://beta-testnet.boolscan.com',
         consumer: '0x97668c00FdD830cFF4578bD66283E512FE2b9C71',
         tokens: {
@@ -74,7 +74,7 @@ export const betaMainnet = {
   value: 'beta_mainnet',
   feeRate: 3000,
   explorer: 'https://beta-mainnet.boolscan.com',
-  icon: 'https://bool.network/bool-orange.png',
+  icon: 'https://bool.network/bool-network-orange.png',
   contracts: {
     trade: '',
   },
@@ -114,7 +114,7 @@ export const betaMainnet = {
         name: 'Bool Beta Mainnet',
         chainId: 11100,
         symbol: 'BOL',
-        icon: 'https://bool.network/bool-orange.png',
+        icon: 'https://bool.network/bool-network-orange.png',
         consumer: '0x0015035658f57c613102a33d8c97d4441c520ea1',
         tokens: {
           decimals: 6,

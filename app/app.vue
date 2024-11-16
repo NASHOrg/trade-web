@@ -7,13 +7,12 @@ import { Toaster } from 'vue-sonner';
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
+    <UModals />
+    <USlideovers />
     <Toaster
       position="bottom-right"
       rich-colors
       theme="dark"
-      expand
     />
-    <UModals />
-    <USlideovers />
   </div>
 </template>

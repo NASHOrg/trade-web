@@ -67,11 +67,11 @@ export default defineAppConfig({
     },
     modal: {
       overlay: {
-        background: 'bg-black/60',
+        background: '!bg-black/20',
       },
       background: 'bg-[#1C1D21] dark:bg-[#1C1D21]',
       rounded: 'rounded-[12px]',
-      base: 'text-[#333]',
+      base: 'text-[#333] shadow-none',
     },
     tabs: {
       list: {

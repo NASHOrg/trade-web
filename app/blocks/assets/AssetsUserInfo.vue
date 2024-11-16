@@ -28,7 +28,6 @@ const modal = useModal();
 
 function onDeposit() {
   const token = network.value.bridge.usdt[1].tokens;
-  console.log(token);
   modal.open(DepositModal, { token });
 }
 

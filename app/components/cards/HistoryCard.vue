@@ -28,7 +28,7 @@ watch(counter, () => {
 });
 
 const icons = computed(() => {
-  if (props.record.swapRecordSrcChainId === chains[0].chainId.toString()) {
+  if (Number(props.record.swapRecordSrcChainId) === chains[0].chainId) {
     return {
       from: chains[0].icon,
       to: chains[1].icon,
@@ -45,11 +45,12 @@ const icons = computed(() => {
 function openExplorer(type: 'src' | 'dst') {
   const hash = type === 'src' ? props.record.swapRecordSrcChainHash : props.record.swapRecordDstChainHash;
   const chainId = type === 'src' ? props.record.swapRecordSrcChainId : props.record.swapRecordDstChainId;
-  if (chainId === chains[0].chainId.toString()) {
+  console.log(hash, chainId);
+  if (Number(chainId) === chains[0].chainId) {
     window.open(`${chains[0].explorer}/tx/${hash}`, '_blank');
   }
-  else if (chainId === chains[1].chainId.toString()) {
-    window.open(`${chains[1].explorer}/tx/${hash}`);
+  else if (Number(chainId) === chains[1].chainId) {
+    window.open(`${chains[1].explorer}/tx/${hash}`, '_blank');
   }
 }
 </script>
@@ -58,14 +59,14 @@ function openExplorer(type: 'src' | 'dst') {
   <div class="flex flex-col">
     <div class="inline-flex justify-between">
       <span class="text-[#999]">{{ formatDate(record.swapRecordSrcChainTime) }}</span>
-      <span class="inline-flex space-x-[8px]">
+      <span class="inline-flex items-center space-x-[4px]">
         <span class="text-[#999]">{{ timeString }}</span>
         <span v-if="record.swapRecordStatus === 'Success'">
           <IconCheckCircleOutlinedGreen />
         </span>
       </span>
     </div>
-    <div class="mt-[10px] grid grid-cols-[1fr_40px_1fr] px-[16px] py-[20px] border border-[#2e2e2e] rounded-[8px] bg-[#0E0E11]">
+    <div class="mt-[10px] grid grid-cols-[1fr_60px_1fr] px-[16px] py-[20px] border border-[#2e2e2e] rounded-[8px] bg-[#0E0E11]">
       <div class="flex items-center space-x-[8px]">
         <UAvatar
           size="md"

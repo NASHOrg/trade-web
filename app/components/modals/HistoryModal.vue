@@ -18,7 +18,7 @@ const { data, status } = useAsyncData<{
   totalCount: string;
   totalPage: number;
 }>(
-  'bridge-history',
+  'bridge-history-recods',
   async () => {
     const data: any = await $fetch(`${$config.public.bridgeApiUrl}/bool-ultimate-bridge/swap/swap-records`, {
       query: { ...queryparams.value, address: address.value },
@@ -48,7 +48,7 @@ async function checkTransactionStatus() {
   const result = await $fetch<{
     code: string;
     data: BridgeHistory[];
-  }>(`${$config.public.bridgeApiUrl}/bool-ultimate-bridge/swap/swap-record:check`, { method: 'POST', body: checkInfos });
+  }>(`${$config.public.bridgeApiUrl}/bool-ultimate-bridge/swap/swap-record:check`, { method: 'POST', body: { checkInfos } });
   const hashes = result.data.map(d => d.swapRecordSrcChainHash);
   history.value = history.value.filter(
     h => !hashes.includes(h.swapRecordSrcChainHash!),

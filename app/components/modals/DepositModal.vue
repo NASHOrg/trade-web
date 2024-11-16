@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { ethers } from 'ethers';
+import { ethers, MaxUint256 } from 'ethers';
 import { toast } from 'vue-sonner';
-import type { Token } from '~/types/common';
+import type { BridgeHistory, Token } from '~/types/common';
 import { BaseEvmApi } from '~/utils/contracts/api';
 import { BridgeApi } from '~/utils/contracts/bridge';
 
@@ -11,7 +11,8 @@ const props = defineProps<{
 
 const { t } = useI18n();
 const { network } = useNetworkConfig();
-const { address, provider } = useWallet();
+const { address, chainId, switchNetwork, provider } = useWallet();
+const { add } = useBridgeHistory();
 
 const modal = useModal();
 const amount = ref('');
@@ -86,6 +87,9 @@ const { data: balanceInTarget } = useAsyncData(
       contractAddress: tokenInTarget.value.address,
     });
   },
+  {
+    server: false,
+  },
 );
 
 const items = computed(() => {
@@ -101,14 +105,14 @@ const items = computed(() => {
     {
       label: 'Balance in your wallet',
       value: `${formatAmount(
-        balanceInBoolFormat,
+        balanceInTargetFormat,
         tokenInBool.value?.decimals,
       )} ${tokenInBool.value?.symbol ?? ''}`,
     },
     {
       label: 'Balance in Bool Chain',
       value: `${formatAmount(
-        balanceInTargetFormat,
+        balanceInBoolFormat,
         tokenInTarget.value.decimals,
       )} ${tokenInTarget.value.symbol}`,
     },
@@ -135,6 +139,12 @@ async function onSubmit() {
     }
     confirming.value = true;
 
+    // Check wallet network
+    if (chainId.value !== Number(targetNetwork.value.id)) {
+      const result = await switchNetwork(Number(targetNetwork.value.id));
+      if (!result) return;
+    }
+
     const bridgeApi = new BridgeApi(
       targetNetwork.value.rpcUrl,
       selectNetwork.value.consumer,
@@ -149,7 +159,7 @@ async function onSubmit() {
       contract: tokenInTarget.value.address,
       approvedAddress: selectNetwork.value.consumer,
       address: address.value,
-      amount: amountParse,
+      amount: MaxUint256,
     };
 
     const isApproved = await bridgeApi.isApprove(approveParam);
@@ -160,14 +170,20 @@ async function onSubmit() {
       });
       await new Promise((resolve, reject) => {
         toast.promise(approveTx.wait(), {
-          loading: t('approve'),
+          loading: t('sendTransaction'),
+          description: t('approve') + ' ' + tokenInTarget.value.symbol,
           success: () => {
-            refreshNuxtData();
             resolve(true);
-            return t('approveSuccess');
+            return t('transactionSuccess');
           },
           error: () => {
-            reject(new Error(t('approveFail')));
+            reject(new Error(t('transactionFail')));
+          },
+          action: {
+            label: t('viewTx'),
+            onClick: () => {
+              window.open(`${targetNetwork.value!.scanUrl}/tx/${approveTx.hash}`, '_blank');
+            },
           },
         });
       });
@@ -180,6 +196,21 @@ async function onSubmit() {
       customData: '0x',
     });
 
+    const params: BridgeHistory = {
+      swapRecordSrcTokenAmount: amount.value,
+      swapRecordDstTokenAmount: amount.value,
+      swapRecordSrcChainHash: tx.hash,
+      swapRecordSrcChainId: Number(targetNetwork.value!.id)?.toString() ?? '',
+      swapRecordDstChainId: network.value!.chainId?.toString() ?? '',
+      swapRecordDstUserAddress: address.value ?? '',
+      swapRecordSrcChainTime: Date.now().toString(),
+      swapRecordSrcTokenName: tokenInTarget.value?.name,
+      swapRecordDstTokenName: tokenInBool.value?.name,
+      swapRecordDstTokenSymbol: tokenInTarget.value.symbol,
+      swapRecordStatus: 'Pending',
+    };
+    add(params);
+
     toast.promise(tx.wait(), {
       loading: t('sendTransaction'),
       success: () => {
@@ -187,6 +218,13 @@ async function onSubmit() {
         return t('transactionSuccess');
       },
       error: () => t('transactionFail'),
+      description: `${t('deposit')} ${amount.value} ${tokenInTarget.value.symbol}`,
+      action: {
+        label: t('viewTx'),
+        onClick: () => {
+          window.open(`${targetNetwork.value!.scanUrl}/tx/${tx.hash}`, '_blank');
+        },
+      },
     });
     modal.close();
   }

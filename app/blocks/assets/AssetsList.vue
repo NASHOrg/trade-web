@@ -18,7 +18,7 @@ const data = computed(() => {
     .filter(item => item.length > 1) // filter out empty list
     .map((item) => {
       const token = item.find(
-        t => t.chainId === network.value.chainId,
+        (t: any) => t.chainId === network.value.chainId,
       )?.tokens;
       return {
         id: token?.name ?? '',
