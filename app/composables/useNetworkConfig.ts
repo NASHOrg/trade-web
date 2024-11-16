@@ -7,6 +7,7 @@ export function useNetworkConfig() {
   const config = useRuntimeConfig();
 
   const networks = Object.values(networksConfig);
+  const ethNetwork = config.public.network === 'beta_mainnet' ? ChainConfig.ethereum : ChainConfig.sepolia;
 
   const currentNetwork = computed<(typeof networks)[0]>(() => {
     const { currentRoute } = router;
@@ -23,6 +24,7 @@ export function useNetworkConfig() {
     networks,
     network: currentNetwork,
     tokens: tokens,
+    ethNetwork,
     stakeApi: new StakeApi(currentNetwork.value.rpc),
     tradeApi: new TradeApi({
       rpc: currentNetwork.value.rpc,

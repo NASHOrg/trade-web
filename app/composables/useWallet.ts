@@ -23,7 +23,7 @@ const metadata = {
 let isInit = false;
 
 export default function useWallet() {
-  const { network: currentNetwork } = useNetworkConfig();
+  const { network: currentNetwork, ethNetwork } = useNetworkConfig();
 
   const network = {
     chainId: currentNetwork.value.chainId,
@@ -32,12 +32,12 @@ export default function useWallet() {
     explorerUrl: currentNetwork.value.explorer,
     rpcUrl: currentNetwork.value.rpc,
   };
-  const sepolia = {
-    chainId: 11155111,
-    name: 'ETH Sepolia',
-    currency: 'ETH',
-    rpcUrl: 'https://eth-sepolia-public.unifra.io',
-    explorerUrl: 'https://sepolia.etherscan.io',
+  const ethereum = {
+    chainId: Number(ethNetwork.id),
+    name: ethNetwork.label,
+    currency: ethNetwork.token,
+    rpcUrl: ethNetwork.rpcUrl,
+    explorerUrl: ethNetwork.scanUrl,
   };
 
   if (!isInit) {
@@ -58,7 +58,7 @@ export default function useWallet() {
         482: currentNetwork.value.icon,
         11100: currentNetwork.value.icon,
       },
-      chains: [network, sepolia],
+      chains: [network, ethereum],
       projectId,
       enableSwaps: false,
       enableOnramp: false,
