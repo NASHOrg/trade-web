@@ -106,6 +106,7 @@ function openTokens() {
       <TvChart
         :key="range"
         :range="range"
+        class="ms-[10px] md:ms-0"
       />
     </div>
   </div>

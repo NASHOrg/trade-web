@@ -169,7 +169,7 @@ async function onSubmit() {
         ...approveParam,
       });
       await new Promise((resolve, reject) => {
-        toast.promise(approveTx.wait(), {
+        toast.promise(bridgeApi.checkTransaction(approveTx.hash), {
           loading: t('sendTransaction'),
           description: t('approve') + ' ' + tokenInTarget.value.symbol,
           success: () => {
@@ -211,7 +211,7 @@ async function onSubmit() {
     };
     add(params);
 
-    toast.promise(tx.wait(), {
+    toast.promise(bridgeApi.checkTransaction(tx.hash), {
       loading: t('sendTransaction'),
       success: () => {
         refreshNuxtData();

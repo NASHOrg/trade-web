@@ -9,6 +9,7 @@ const props = defineProps<{
 const { $api } = useNuxtApp();
 
 const inited = ref(false);
+const { isMD } = useDevice();
 const mainChartContainer = ref<null | HTMLElement>();
 let candlestickSeries: ISeriesApi<'Candlestick'> | undefined;
 let histogramSeries: ISeriesApi<'Histogram'> | undefined;
@@ -139,7 +140,7 @@ async function initChart() {
 
   candlestickSeries.priceScale().applyOptions({
     scaleMargins: {
-      top: 0.1,
+      top: isMD.value ? 0.1 : 0.2,
       bottom: 0.3,
     },
   });

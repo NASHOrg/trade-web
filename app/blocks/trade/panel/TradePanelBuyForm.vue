@@ -196,8 +196,7 @@ async function onBuy() {
     const qty = quantity.value;
     price.value = undefined;
     quantity.value = undefined;
-
-    toast.promise(tx.wait(), {
+    toast.promise(tradeApi.checkTransaction(tx.hash), {
       loading: t('sendTransaction'),
       success: () => {
         addOrder(order);

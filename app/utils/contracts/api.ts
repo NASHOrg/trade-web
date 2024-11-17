@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
-import type { BrowserProvider, TransactionResponse } from 'ethers';
-import { Contract, JsonRpcProvider } from 'ethers';
+import type { BrowserProvider, TransactionReceipt, TransactionResponse } from 'ethers';
+import { assert, Contract, JsonRpcProvider } from 'ethers';
 import { MAX_INTEGER } from '@ethereumjs/util';
 import { ChainConfig } from '../chains';
 import { erc20ABI } from './abis/erc20';
@@ -48,7 +48,22 @@ export class BaseEvmApi {
    * @returns
    */
   async checkTransaction(hash: string) {
-    return await this.provider.waitForTransaction(hash);
+    const checkReceipt = (receipt: null | TransactionReceipt) => {
+      if (receipt == null || receipt.status !== 0) {
+        return receipt;
+      }
+      assert(false, 'transaction execution reverted', 'CALL_EXCEPTION', {
+        action: 'sendTransaction',
+        data: null, reason: null, invocation: null, revert: null,
+        transaction: {
+          to: receipt.to,
+          from: receipt.from,
+          data: '', // @TODO: in v7, split out sendTransaction properties
+        }, receipt,
+      });
+    };
+    const receipt = await this.provider.waitForTransaction(hash);
+    return checkReceipt(receipt);
   }
 
   /**

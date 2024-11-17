@@ -118,7 +118,7 @@ async function onCancelOrder(id: string, type: number, hash: string) {
       type: type === 0 ? 'sell' : 'buy',
       orderId: BigInt(id),
     });
-    toast.promise(tx.wait(), {
+    toast.promise(tradeApi.checkTransaction(tx.hash), {
       loading: t('sendTransaction'),
       success: () => {
         addCancelledOrder(hash);
