@@ -45,39 +45,25 @@ const tradeFormModes = computed(() => {
 
     <div
       v-if="!isXL"
-      class="w-full flex justify-between items-center pt-3 py-5"
+      class="form-item mb-[14px] mt-[4px] w-full flex items-center overflow-hidden"
     >
-      <span>Side</span>
-      <div class="flex justify-end space-x-[10px]">
-        <div
-          v-for="item in tradeFormModes"
-          :key="item.value"
-          class="flex items-center gap-2 cursor-pointer"
-          @click="selectedMode = item.value"
-        >
-          <IconActiveRadio
-            v-if="selectedMode === item.value"
-            class="size-[16px]"
-            :class="{
-              'text-buy': item.value === 'buy',
-              'text-sell': item.value === 'sell',
-            }"
-          />
-          <IconInactiveRadio
-            v-else
-            class="size-[16px]"
-          />
-          <span
-            class="text-[#999]"
-            :class="{
-              '!text-buy': selectedMode === 'buy' && item.value === 'buy',
-              '!text-sell': selectedMode === 'sell' && item.value === 'sell',
-            }"
-          >
-            {{ item.label }}
-          </span>
-        </div>
-      </div>
+      <span
+        v-for="item in tradeFormModes"
+        :key="item.value"
+        class="relative cursor-pointer w-full flex justify-center items-center h-full"
+        :class="{ 'text-white': selectedMode === item.value, 'bg-sell': (selectedMode === 'sell' && item.value === 'sell'), 'bg-buy': (selectedMode === 'buy' && item.value === 'buy') }"
+        @click="selectedMode = item.value"
+      >
+        <span class="z-[5]">{{ item.label }}</span>
+        <IconBuyArraw
+          v-if="item.value === 'buy' && selectedMode === 'buy'"
+          class="absolute -end-4"
+        />
+        <IconSellArraw
+          v-if="item.value === 'sell' && selectedMode === 'sell'"
+          class="absolute -start-4"
+        />
+      </span>
     </div>
 
     <div
@@ -101,13 +87,7 @@ const tradeFormModes = computed(() => {
 </template>
 
 <style scoped>
-.selected::after {
-  content: "";
-  position: absolute;
-  height: 2px;
-  width: 100%;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+.form-item {
+  @apply h-[38px] bg-[#242424] text-[#999] rounded-[4px] flex justify-between items-center px-[16px] text-[16px]
 }
 </style>

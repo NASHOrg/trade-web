@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { $api } = useNuxtApp();
 const { t } = useI18n();
-const { open, address } = useWallet();
+const { address } = useWallet();
 const { counter } = useInterval(10000, { controls: true });
 
 const columns = computed(() => {
@@ -107,20 +107,7 @@ function isExpanded(row: (typeof datas.value)[number]) {
 <template>
   <div class="w-full flex flex-col items-center select-none">
     <div
-      v-if="!address"
-      class="mt-[100px] flex items-center justify-center text-sm text-primary font-medium text-center"
-    >
-      <UButton
-        block
-        color="gray"
-        class="h-[40px] px-10 rounded-full border-0 ring-0 text-sm font-normal bg-[#272727]"
-        @click="open"
-      >
-        <span class="text-primary"> Connect Wallet</span>
-      </UButton>
-    </div>
-    <div
-      v-else-if="!data && status === 'pending'"
+      v-if="!data && status === 'pending'"
       class="my-[78px] w-[68px] h-[68px] flex flex-col justify-center items-center"
     >
       <UIcon
@@ -129,7 +116,7 @@ function isExpanded(row: (typeof datas.value)[number]) {
       />
     </div>
     <div
-      v-else-if="data && Number(data.totalCount) === 0"
+      v-else-if="Number(data?.totalCount ?? 0) === 0"
       class="my-[50px]"
     >
       <NuxtPicture

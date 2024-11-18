@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { toast } from 'vue-sonner';
-
 // const tradeStore = useTradeStore();
 
 // const { currantToken } = storeToRefs(tradeStore);
@@ -158,20 +157,7 @@ onMounted(() => {
 <template>
   <div class="w-full max-w-[1663px] mx-auto flex flex-col items-center">
     <div
-      v-if="!address"
-      class="mt-[100px] flex items-center justify-center text-sm text-primary font-medium text-center"
-    >
-      <UButton
-        block
-        color="gray"
-        class="h-[40px] px-10 rounded-full border-0 ring-0 text-sm font-normal bg-[#272727]"
-        @click="open"
-      >
-        <span class="text-primary"> Connect Wallet</span>
-      </UButton>
-    </div>
-    <div
-      v-else-if="!data && status === 'pending'"
+      v-if="!data && status === 'pending'"
       class="my-[78px] w-[68px] h-[68px] flex flex-col justify-center items-center"
     >
       <UIcon
@@ -180,7 +166,7 @@ onMounted(() => {
       />
     </div>
     <div
-      v-else-if="!data || (data?.items ?? []).length === 0"
+      v-else-if="datas.length === 0"
       class="my-[50px]"
     >
       <NuxtPicture

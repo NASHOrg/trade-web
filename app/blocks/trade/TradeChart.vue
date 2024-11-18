@@ -1,12 +1,40 @@
 <script lang="ts" setup>
 import BN from 'bignumber.js';
+import { useStorage } from '@vueuse/core';
 import { TokensSlideover } from '#components';
 
 const tradeStore = useTradeStore();
 const { currantToken } = storeToRefs(tradeStore);
+const showChart = useStorage<boolean>('xbit-show-shart', false);
+const { $api } = useNuxtApp();
+const { isMD } = useDevice();
 const range = ref<'hour' | 'day'>('hour');
 
 const { data: tradeData } = useNuxtData('trade-statistic-hour');
+
+const { counter, pause, reset } = useInterval(3000, { controls: true });
+
+useAsyncData(
+  `trade-statistic-hour`,
+  () => {
+    return $api.blockchainTradeStatistic({
+      type: '0',
+    });
+  },
+  {
+    server: false,
+    watch: [counter],
+  },
+);
+
+watch(() => isMD || showChart, (value) => {
+  if (value) {
+    pause();
+  }
+  else {
+    reset();
+  }
+});
 
 const timePriceForToken = computed(() => {
   if (!tradeData.value) return;
@@ -45,44 +73,53 @@ function openTokens() {
 
 <template>
   <div class="w-full h-full flex flex-col">
-    <div
-      class="w-full md:h-9 md:px-5 px-2.5 my-2 flex flex-col md:flex-row md:items-center items-start md:space-x-6"
-    >
+    <div class="flex items-center">
       <div
-        class="h-full flex  md:items-center items-center md:space-x-2.5 space-x-1.5"
+        class="w-full md:h-9 md:px-5 px-2.5 my-2 flex flex-col md:flex-row md:items-center items-start md:space-x-6"
       >
         <div
-          class="md:h-full flex items-center justify-center md:space-x-2.5 space-x-1.5 text-base font-bold cursor-pointer"
-          @click="openTokens"
+          class="grow h-full flex md:items-center items-center md:space-x-2.5 space-x-1.5"
         >
-          <span>{{ currantToken?.label ?? "Token" }}</span>
-          <UIcon name="i-mingcute-down-line" />
+          <div
+            class="md:h-full flex items-center justify-center md:space-x-2.5 space-x-1.5 text-base font-bold cursor-pointer"
+            @click="openTokens"
+          >
+            <span>{{ currantToken?.label ?? "Token" }}</span>
+            <UIcon name="i-mingcute-down-line" />
+          </div>
+          <span
+            v-if="priceChange === undefined"
+            class="text-buy"
+          >--</span>
+          <span
+            v-else
+            :class="priceChange >= 0 ? 'text-buy' : 'text-sell'"
+          >{{ `${priceChange >= 0 ? '+' : ''}${priceChange}%` }}</span>
         </div>
-        <span
-          v-if="priceChange === undefined"
-          class="text-buy"
-        >--</span>
-        <span
-          v-else
-          :class="priceChange >= 0 ? 'text-buy' : 'text-sell'"
-        >{{ `${priceChange >= 0 ? '+' : ''}${priceChange}%` }}</span>
-      </div>
 
-      <div
-        class="h-full flex items-center md:gap-6 gap-2 text-xs font-normal"
-      >
         <div
-          v-for="item in timePriceForToken"
-          :key="item.id"
-          class="w-fit md:w-full h-full flex md:flex-col flex-row md:justify-around justify-between space-x-1 md:space-x-0 items-center"
+          class="h-full flex items-center md:gap-6 gap-2 text-xs font-normal"
         >
-          <span class="text-[#999999] text-nowrap">{{ item.label }}</span>
-          <span class="text-white">{{ item.value }}</span>
+          <div
+            v-for="item in timePriceForToken"
+            :key="item.id"
+            class="w-fit md:w-full h-full flex md:flex-col flex-row md:justify-around justify-between space-x-1 md:space-x-0 items-center"
+          >
+            <span class="text-[#999999] text-nowrap">{{ item.label }}</span>
+            <span class="text-white">{{ item.value }}</span>
+          </div>
         </div>
+      </div>
+      <div
+        class="block md:hidden me-1"
+        @click="showChart = !showChart"
+      >
+        <IconChart class="text-[#2e2e2e] dark:text-white size-[24px]" />
       </div>
     </div>
 
     <div
+      v-if="isMD || showChart"
       :class="
         [
           'w-full md:px-5 px-2.5 md:py-2.5 py-1.5 border-y-[1px] border-[#2E2E2E] md:text-sm text-xs font-normal leading-4 text-[#999999]',
@@ -102,7 +139,10 @@ function openTokens() {
       </div>
     </div>
 
-    <div class="grow md:h-auto h-[300px] relative">
+    <div
+      v-if="isMD || showChart"
+      class="grow md:h-auto h-[300px] relative"
+    >
       <TvChart
         :key="range"
         :range="range"

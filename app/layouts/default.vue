@@ -14,7 +14,7 @@ mode.value = 'dark';
   >
     <NuxtLoadingIndicator color="#FF7800FF" />
     <LayoutHeader />
-    <div class="w-full grow pt-[46px] flex flex-col">
+    <div class="w-full grow flex flex-col">
       <slot />
     </div>
   </div>
