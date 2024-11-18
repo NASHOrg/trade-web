@@ -9,7 +9,7 @@ const { address } = useWallet();
 const queryparams = ref({
   pageNo: 1,
   pageSize: 5,
-  bridgeNo: '5',
+  bridgeNo: '32',
 });
 
 const { data, status } = useAsyncData<{
