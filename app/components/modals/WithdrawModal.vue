@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ethers, MaxUint256 } from 'ethers';
+import { ethers, formatEther, MaxUint256 } from 'ethers';
 import { toast } from 'vue-sonner';
 import type { BridgeHistory, Token } from '~/types/common';
 import { BaseEvmApi } from '~/utils/contracts/api';
@@ -77,6 +77,25 @@ const { data: balanceInBool } = useAsyncData(
   },
 );
 
+const { data: bridgeFee } = useAsyncData(
+  `withdraw-fee-${props.token.symbol}`,
+  () => {
+    if (!address.value || !bridgeInBool.value) {
+      return Promise.resolve(BigInt(0));
+    }
+    const consumer = bridgeInBool.value.consumer;
+    const bridgeApi = new BridgeApi(network.value.rpc, consumer);
+    return bridgeApi.getBridgeFee({
+      dstChainId: selectNetwork.value.chainId,
+      amount: 0n,
+      dstRecipient: '0xbbbB4350Ea18a153e9077c1067Fa8Ff3654123F6',
+    });
+  },
+  {
+    server: false,
+  },
+);
+
 const items = computed(() => {
   const balanceInBoolFormat = ethers.formatUnits(
     balanceInBool.value ?? '0',
@@ -90,7 +109,9 @@ const items = computed(() => {
         tokenInBool.value?.decimals,
       )} ${tokenInBool.value?.symbol ?? ''}`,
     },
-    { label: 'Fee', value: '0 ' + network.value.symbol },
+    { label: 'Fee', value:
+      `${formatEther(bridgeFee.value ?? 0n)} ${network.value.symbol}`,
+    },
   ];
 });
 

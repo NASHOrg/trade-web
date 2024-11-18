@@ -24,8 +24,7 @@ const columns = computed(() => {
       label: t('pair'),
     },
     {
-      key: 'type',
-      label: t('side'),
+      key: '2',
     },
     {
       key: 'price',
@@ -33,7 +32,7 @@ const columns = computed(() => {
     },
     {
       key: 'qty',
-      label: t('totalQty'),
+      label: t('qty'),
     },
     {
       key: 'u',
@@ -131,19 +130,6 @@ const datas = computed(() => {
             :data-index="count"
           >
         </colgroup>
-      </template>
-
-      <template #type-data="{ row }">
-        <div>
-          <span
-            v-if="row.type === 0"
-            class="text-sell"
-          >{{ t("sell") }}</span>
-          <span
-            v-else
-            class="text-buy"
-          >{{ t("buy") }}</span>
-        </div>
       </template>
 
       <template #u-data="{ row }">

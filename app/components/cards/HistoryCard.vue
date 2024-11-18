@@ -100,7 +100,7 @@ function openExplorer(type: 'src' | 'dst') {
           </span>
           <span
             class="text-[#999] text-[12px] cursor-pointer"
-            @click="openExplorer('src')"
+            @click="openExplorer('dst')"
           >{{ shortAddress(record.swapRecordDstChainHash) }}</span>
         </div>
       </div>
