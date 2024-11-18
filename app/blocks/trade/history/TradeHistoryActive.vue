@@ -83,6 +83,13 @@ const datas = computed(() => {
   return userOrders.filter(o => !cancelledOrders.value.includes(o.txHash));
 });
 
+watch(data, () => {
+  if (data.value?.items) {
+    const finished = data?.value.items.map(i => i.txHash) ?? [];
+    removeOrders(finished);
+  }
+});
+
 const expandRows = ref<{
   openedRows: typeof datas.value;
   row: (typeof datas.value)[number] | null;
