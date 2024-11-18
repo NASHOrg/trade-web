@@ -66,11 +66,11 @@ function openExplorer(type: 'src' | 'dst') {
         </span>
       </span>
     </div>
-    <div class="mt-[10px] grid grid-cols-[1fr_60px_1fr] px-[16px] py-[20px] border border-[#2e2e2e] rounded-[8px] bg-[#0E0E11]">
+    <div class="mt-[10px] grid grid-cols-[1fr_40px_1fr] md:grid-cols-[1fr_60px_1fr] px-[10px] md:px-[16px] py-[20px] border border-[#2e2e2e] rounded-[8px] bg-[#0E0E11]">
       <div class="flex items-center space-x-[8px]">
         <UAvatar
           size="md"
-          :ui="{ size: { md: 'size-[40px]' } }"
+          :ui="{ size: { md: 'size-[30px] md:size-[40px]' } }"
           :src="icons.from"
         />
         <div class="flex flex-col space-y-[4px]">
@@ -91,7 +91,7 @@ function openExplorer(type: 'src' | 'dst') {
       <div class="flex items-center space-x-[8px]">
         <UAvatar
           size="md"
-          :ui="{ size: { md: 'size-[40px]' } }"
+          :ui="{ size: { md: 'size-[30px] md:size-[40px]' } }"
           :src="icons.to"
         />
         <div class="flex flex-col space-y-[4px]">

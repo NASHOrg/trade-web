@@ -104,7 +104,7 @@ const buttons = [
         </span>
       </div>
     </div>
-    <div class="flex space-x-[32px] mt-[28px]">
+    <div class="flex space-x-[10px] md:space-x-[32px] mt-[28px]">
       <UButton
         v-for="item in buttons"
         :key="item.value"
@@ -113,7 +113,7 @@ const buttons = [
         @click="item.onClick"
       >
         <component :is="item.icon" />
-        <span>{{ item.label }}</span>
+        <span class="hidden md:block">{{ item.label }}</span>
       </UButton>
     </div>
   </div>

@@ -80,7 +80,7 @@ watchOnce(history, checkTransactionStatus, { immediate: true });
     :title="t('history')"
     :prevent-close="true"
   >
-    <div class="flex flex-col w-full md:space-y-6 space-y-[10px] px-[24px]">
+    <div class="flex flex-col w-full md:space-y-6 space-y-[10px] px-[14px] md:px-[24px]">
       <div
         v-if="status === 'pending' && records.length === 0"
         class="w-full my-[100px] flex flex-col justify-center items-center"
