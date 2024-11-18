@@ -45,7 +45,7 @@ const tradeFormModes = computed(() => {
 
     <div
       v-if="!isXL"
-      class="form-item mb-[14px] mt-[4px] w-full flex items-center overflow-hidden"
+      class="form-item mb-[14px] mt-[4px] w-full flex items-center overflow-hidden space-x-[30px]"
     >
       <span
         v-for="item in tradeFormModes"
@@ -88,6 +88,6 @@ const tradeFormModes = computed(() => {
 
 <style scoped>
 .form-item {
-  @apply h-[38px] bg-[#242424] text-[#999] rounded-[4px] flex justify-between items-center px-[16px] text-[16px]
+  @apply h-[38px] bg-[#242424] text-[#999] rounded-[4px] flex justify-between items-center text-[16px];
 }
 </style>
