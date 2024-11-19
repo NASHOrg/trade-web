@@ -61,7 +61,7 @@ const targetNetwork = computed(() => {
 });
 
 const { data: balanceInBool } = useAsyncData(
-  `deposit-data-network-balance-${props.token.symbol}`,
+  `withdraw-data-network-balance-${props.token.symbol}`,
   () => {
     if (!address.value) {
       return Promise.resolve(BigInt(0));

@@ -155,8 +155,16 @@ watch(
 );
 const modal = useModal();
 function onDeposit() {
-  const token = network.value.bridge.usdt[1].tokens;
-  modal.open(DepositModal, { token });
+  const bridgeTokens = network.value.bridge;
+  const tokenKey = tokenSymbolList.value[1]
+    ?.trim()
+    ?.toLowerCase() as keyof typeof bridgeTokens;
+
+  const token = bridgeTokens[tokenKey]?.[1]?.tokens;
+
+  if (token) {
+    modal.open(DepositModal, { token });
+  }
 }
 
 const isBuying = ref(false);
@@ -331,7 +339,7 @@ watch(
         class="rounded-[4px] h-[22px] text-[12px] !px-1"
         @click="onDeposit"
       >
-        {{ t('addFund') }}
+        {{ t("addFund") }}
       </UButton>
     </div>
     <div class="grow" />

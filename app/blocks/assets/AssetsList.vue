@@ -20,6 +20,7 @@ const data = computed(() => {
       const token = item.find(
         (t: any) => t.chainId === network.value.chainId,
       )?.tokens;
+
       return {
         id: token?.name ?? '',
         icon: token?.icon ?? '',

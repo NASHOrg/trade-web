@@ -62,7 +62,7 @@ export const betaTestnet = {
       },
     ],
   },
-} as const;
+};
 
 export const betaMainnet = {
   baseUrl: 'https://beta-mainnet-api.boolscan.com/bool-network-beta-mainnet',
@@ -102,6 +102,7 @@ export const betaMainnet = {
         symbol: 'ETH',
         icon: 'https://oss.boolscan.com/token-logo/1417150d35702e6d774167ae785d94913f09bc.png',
         consumer: '0xa49e678eccb9922ca6293bbde16db4403f609eb8',
+        explorer: 'https://sepolia.etherscan.io',
         tokens: {
           decimals: 6,
           name: 'USDT',
@@ -116,6 +117,7 @@ export const betaMainnet = {
         symbol: 'BOL',
         icon: 'https://bool.network/bool-network-orange.png',
         consumer: '0x0015035658f57c613102a33d8c97d4441c520ea1',
+        explorer: 'https://beta-testnet.boolscan.com',
         tokens: {
           decimals: 6,
           name: 'USDT',
@@ -126,7 +128,7 @@ export const betaMainnet = {
       },
     ],
   },
-} as const;
+};
 
 export const networks = {
   beta_testnet: betaTestnet,
