@@ -103,11 +103,13 @@ watchOnce(history, checkTransactionStatus, { immediate: true });
         </div>
       </div>
       <template v-else>
-        <HistoryCard
-          v-for="item in history"
-          :key="item.swapRecordSrcChainHash"
-          :record="item"
-        />
+        <template v-if="queryparams.pageNo === 1">
+          <HistoryCard
+            v-for="item in history"
+            :key="item.swapRecordSrcChainHash"
+            :record="item"
+          />
+        </template>
         <HistoryCard
           v-for="item in data?.items ?? []"
           :key="item.swapRecordSrcChainHash"
