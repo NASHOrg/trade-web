@@ -4,7 +4,7 @@ import { toast } from 'vue-sonner';
 
 // const { currantToken } = storeToRefs(tradeStore);
 const { address, chainId, switchNetwork, open } = useWallet();
-const { network, tradeApi } = useNetworkConfig();
+const { network, tradeApi, payToken } = useNetworkConfig();
 const { t } = useI18n();
 const { $api } = useNuxtApp();
 const { counter } = useInterval(10000, { controls: true });
@@ -217,11 +217,11 @@ onMounted(() => {
                 "
               />
               <UAvatar
-                src="/images/usdt.png"
+                :src="payToken.icon"
                 :ui="{
                   size: { sm: 'size-[20px]' },
                 }"
-                alt="USDT"
+                :alt="payToken.symbol"
               />
             </UAvatarGroup>
             <span>{{ item.pair }}</span>

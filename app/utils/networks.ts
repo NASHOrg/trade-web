@@ -20,16 +20,16 @@ export const betaTestnet = {
       icon: 'https://bool.network/bool-orange.png',
       address: '',
     },
-    usdt: {
-      name: 'USDT',
+    usdc: {
+      name: 'USDC',
       address: '0xf9007019014c8CdFA78f21e97995F6a4D3493729',
       icon: '/images/usdt.png',
-      symbol: 'USDT',
+      symbol: 'USDC',
       decimals: 6,
     },
   },
   bridge: {
-    usdt: [
+    usdc: [
       {
         name: 'ETH Sepolia',
         chainId: 11155111,
@@ -39,9 +39,9 @@ export const betaTestnet = {
         consumer: '0xa557070AF02d09F2Daa3371053B7A6D4bEb8023a',
         tokens: {
           decimals: 6,
-          name: 'USDT',
-          symbol: 'USDT',
-          icon: '/images/usdt.png',
+          name: 'USDC',
+          symbol: 'USDC',
+          icon: '/images/usdc.png',
           address: '0x07540610a807150f3c74b55a0316b5a4735a3225',
         },
       },
@@ -53,10 +53,10 @@ export const betaTestnet = {
         explorer: 'https://beta-testnet.boolscan.com',
         consumer: '0x97668c00FdD830cFF4578bD66283E512FE2b9C71',
         tokens: {
-          name: 'USDT',
+          name: 'USDC',
           decimals: 6,
-          symbol: 'USDT',
-          icon: '/images/usdt.png',
+          symbol: 'USDC',
+          icon: '/images/usdc.png',
           address: '0xf9007019014c8CdFA78f21e97995F6a4D3493729',
         },
       },

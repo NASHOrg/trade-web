@@ -1,3 +1,4 @@
+import type { Token } from '~/types/common';
 import { StakeApi } from '~/utils/contracts/stake';
 import { TradeApi } from '~/utils/contracts/trade';
 import networksConfig from '~/utils/networks';
@@ -16,20 +17,23 @@ export function useNetworkConfig() {
     return networks.find(item => item.value === network)!;
   });
 
-  const tokens = computed(() => {
+  const tokens = computed<{ [key: string]: Token }>(() => {
     return currentNetwork.value.tokens;
   });
+
+  const payToken = tokens.value.usdc!;
 
   return {
     networks,
     network: currentNetwork,
-    tokens: tokens,
+    tokens,
+    payToken,
     ethNetwork,
     stakeApi: new StakeApi(currentNetwork.value.rpc),
     tradeApi: new TradeApi({
       rpc: currentNetwork.value.rpc,
       contract: currentNetwork.value.contracts.trade!,
-      usdt: tokens.value.usdt!,
+      token: tokens.value.usdc!,
     }),
   };
 }

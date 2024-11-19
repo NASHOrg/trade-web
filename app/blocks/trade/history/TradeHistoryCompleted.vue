@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const { $api } = useNuxtApp();
 const { t } = useI18n();
+const { payToken } = useNetworkConfig();
 const { address } = useWallet();
 const { counter } = useInterval(10000, { controls: true });
 
@@ -175,11 +176,11 @@ function isExpanded(row: (typeof datas.value)[number]) {
                 "
               />
               <UAvatar
-                src="/images/usdt.png"
+                :src="payToken.icon"
                 :ui="{
                   size: { sm: 'size-[20px]' },
                 }"
-                alt="USDT"
+                :alt="payToken.symbol"
               />
             </UAvatarGroup>
             <span>{{ item.pair }}</span>

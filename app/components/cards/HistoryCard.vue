@@ -4,8 +4,8 @@ import type { BridgeHistory } from '~/types/common';
 const props = defineProps<{
   record: BridgeHistory;
 }>();
-const { network } = useNetworkConfig();
-const chains = network.value.bridge.usdt;
+const { network, payToken } = useNetworkConfig();
+const chains = network.value.bridge[payToken.symbol.toLowerCase()];
 const { counter, pause } = useInterval(1000, { controls: true });
 const timeString = ref('');
 watch(counter, () => {

@@ -9,19 +9,19 @@ import type { Token } from '~/types/common';
 export class TradeApi extends BaseEvmApi {
   constructor({
     rpc,
-    usdt,
+    token,
     contract,
   }: {
     rpc: string;
-    usdt: { address: string; decimals: number };
+    token: { address?: string; decimals: number };
     contract: string;
   }) {
     super(rpc);
     this.contractAddress = contract;
-    this.usdt = usdt;
+    this.token = token;
   }
 
-  readonly usdt;
+  readonly token;
   readonly contractAddress: string;
 
   get contract() {
@@ -66,7 +66,7 @@ export class TradeApi extends BaseEvmApi {
 
   isUsdtApproved(address: string, amount: bigint) {
     return super.isApprove({
-      contract: this.usdt.address,
+      contract: this.token.address!,
       approvedAddress: this.contractAddress,
       amount,
       address,
@@ -75,7 +75,7 @@ export class TradeApi extends BaseEvmApi {
 
   approveUsdt(provider: BrowserProvider) {
     return super.approve(provider, {
-      contract: this.usdt.address,
+      contract: this.token.address!,
       approvedAddress: this.contractAddress,
     });
   }
@@ -83,7 +83,7 @@ export class TradeApi extends BaseEvmApi {
   calcUsdt(price: string, bool: string) {
     const receive = BN(bool)
       .times(BN(price))
-      .times(10 ** this.usdt.decimals)
+      .times(10 ** this.token.decimals)
       .toFixed();
     return BigInt(receive);
   }

@@ -6,7 +6,7 @@ import PendingTransactionAmount from '~/components/PendingTransactionAmount.vue'
 
 const { address } = useWallet();
 const { isMD } = useDevice();
-const { network } = useNetworkConfig();
+const { network, payToken } = useNetworkConfig();
 const { t } = useI18n();
 const api = new BaseEvmApi(network.value.rpc);
 
@@ -28,13 +28,11 @@ const balanceFormat = computed(() => {
 const modal = useModal();
 
 function onDeposit() {
-  const token = network.value.bridge.usdt[1].tokens;
-  modal.open(DepositModal, { token });
+  modal.open(DepositModal, { token: payToken });
 }
 
 function onWithdraw() {
-  const token = network.value.bridge.usdt[1].tokens;
-  modal.open(WithdrawModal, { token });
+  modal.open(WithdrawModal, { token: payToken });
 }
 
 function onOpenHistory() {
