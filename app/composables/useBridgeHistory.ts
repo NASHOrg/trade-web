@@ -5,7 +5,6 @@ export function useBridgeHistory() {
   const history = useStorage<BridgeHistory[]>('xbit-bridge-history', []);
   function add(tx: BridgeHistory) {
     history.value = [tx, ...history.value];
-    console.log('history', history.value);
   };
   return {
     history,

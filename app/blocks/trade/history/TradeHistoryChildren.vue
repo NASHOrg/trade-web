@@ -47,6 +47,27 @@ const columns = computed(() => {
   ];
 });
 
+const smColumns = computed(() => {
+  return [
+    {
+      key: 'time',
+      label: t('time'),
+    },
+    {
+      key: 'price',
+      label: t('price'),
+    },
+    {
+      key: 'qty',
+      label: t('qty'),
+    },
+    {
+      key: 'u',
+      label: t('value'),
+    },
+  ];
+});
+
 const queryParams = ref({
   pageNo: 1,
   pageSize: 100,
@@ -106,39 +127,77 @@ const datas = computed(() => {
         No transactions
       </div>
     </div>
-    <UTable
-      v-else
-      by="orderId"
-      class="w-full"
-      :columns="columns"
-      :rows="datas"
-      :ui="{
-        tbody: 'divide-none',
-        divide: 'divide-none',
-      }"
-    >
-      <template #caption>
-        <colgroup>
-          <col
-            v-for="count in columns.length"
-            :key="count"
-            :style="{
-              width: [1, columns.length - 1, columns.length].includes(count)
-                ? '5%'
-                : `${(1 / (columns.length - 3)) * 85}%`,
-            }"
-            :data-index="count"
+    <template v-else>
+      <div class="md:hidden flex flex-col space-y-[16px] w-full">
+        <div
+          v-for="item in datas"
+          :key="item.orderId"
+          class="space-y-[16px] bg-[#F1F1F3] dark:bg-[#171717] border border-[#d5d5d5] dark:border-[#2e2e2e] rounded-[6px] p-[16px]"
+        >
+          <div
+            v-for="row in smColumns"
+            :key="row.key"
+            class="flex justify-between w-full"
           >
-        </colgroup>
-      </template>
+            <span class="text-[#999]">{{ row.label }}</span>
+            <div
+              v-if="row.key === 'qty'"
+            >
+              {{ formatAmount(item.qty, 2) }}
+            </div>
+            <div
+              v-else-if="row.key === 'u'"
+            >
+              {{ formatAmount(item.u, 2) }}
+            </div>
+            <div
+              v-else-if="row.key === 'time'"
+              class="text-center"
+            >
+              {{ formatDate(item.tradeTime) }}
+            </div>
+            <div
+              v-else
+              class="text-center"
+            >
+              {{ formatAmount(item.price, 5) }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <UTable
+        by="orderId"
+        class="hidden md:block w-full"
+        :columns="columns"
+        :rows="datas"
+        :ui="{
+          tbody: 'divide-none',
+          divide: 'divide-none',
+        }"
+      >
+        <template #caption>
+          <colgroup>
+            <col
+              v-for="count in columns.length"
+              :key="count"
+              :style="{
+                width: [1, columns.length - 1, columns.length].includes(count)
+                  ? '5%'
+                  : `${(1 / (columns.length - 3)) * 85}%`,
+              }"
+              :data-index="count"
+            >
+          </colgroup>
+        </template>
 
-      <template #u-data="{ row }">
-        <span> {{ formatAmount(Number(row.u), 2) }}</span>
-      </template>
+        <template #u-data="{ row }">
+          <span> {{ formatAmount(Number(row.u), 2) }}</span>
+        </template>
 
-      <template #time-data="{ row }">
-        <span> {{ formatDate(Number(row.tradeTime)) }}</span>
-      </template>
-    </UTable>
+        <template #time-data="{ row }">
+          <span> {{ formatDate(Number(row.tradeTime)) }}</span>
+        </template>
+      </UTable>
+    </template>
   </div>
 </template>

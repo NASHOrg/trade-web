@@ -39,42 +39,58 @@ watch(counter, () => {
   }
 });
 
-const columns = computed(() => {
-  return [
-    {
-      key: 'time',
-      label: t('time'),
-    },
-    {
-      key: 'pair',
-      label: t('pair'),
-    },
-    {
-      key: 'type',
-      label: t('side'),
-    },
-    {
-      key: 'price',
-      label: t('targetPrice'),
-    },
-    {
-      key: 'qty',
-      label: `${t('filled')}/${t('totalQty')}`,
-    },
-    {
-      key: 'value',
-      label: `${t('filled')}/${t('totalValue')}`,
-    },
-    {
-      key: 'action',
-      label: t('action'),
-    },
+const columns = computed(() => [
+  {
+    key: 'time',
+    label: t('time'),
+  },
+  {
+    key: 'pair',
+    label: t('pair'),
+  },
+  {
+    key: 'type',
+    label: t('side'),
+  },
+  {
+    key: 'price',
+    label: t('targetPrice'),
+  },
+  {
+    key: 'qty',
+    label: `${t('filled')}/${t('totalQty')}`,
+  },
+  {
+    key: 'value',
+    label: `${t('filled')}/${t('totalValue')}`,
+  },
+  {
+    key: 'action',
+    label: t('action'),
+  },
+  {
+    key: '1',
+  },
+]);
 
-    {
-      key: '1',
-    },
-  ];
-});
+const smColumns = computed(() => [
+  {
+    key: 'time',
+    label: t('time'),
+  },
+  {
+    key: 'price',
+    label: t('targetPrice'),
+  },
+  {
+    key: 'qty',
+    label: `${t('filled')}/${t('totalQty')}`,
+  },
+  {
+    key: 'value',
+    label: `${t('filled')}/${t('totalValue')}`,
+  },
+]);
 
 const datas = computed(() => {
   const localOrders = orders.value.filter(o => !data.value?.items.map(i => i.txHash).includes(o.txHash));
@@ -180,71 +196,155 @@ onMounted(() => {
         No transactions
       </div>
     </div>
-    <UTable
-      v-else
-      v-model:expand="expandRows"
-      class="w-full mt-2.5"
-      :columns="columns"
-      :rows="datas"
-    >
-      <template #caption>
-        <colgroup>
-          <col
-            v-for="count in columns.length + 1"
-            :key="count"
-            :style="{
-              width: [1, columns.length + 1].includes(count)
-                ? '5%'
-                : `${(1 / (columns.length - 1)) * 90}%`,
-            }"
-            :data-index="count"
+    <template v-else>
+      <div
+        v-for="item in datas"
+        :key="item.txHash"
+        class="md:hidden mt-[10px] p-[16px] w-full flex flex-col space-y-[16px] border-b border-[#eaeaaea] dark:border-[#2e2e2e] last:border-b-0"
+      >
+        <div class="flex justify-between">
+          <div class="flex space-x-[8px] items-center">
+            <UAvatarGroup
+              size="sm"
+              :max="2"
+            >
+              <UAvatar
+                src="/images/bol.png"
+                alt="BOL"
+                :ui="{
+                  size: { sm: 'size-[20px]' },
+                }
+                "
+              />
+              <UAvatar
+                src="/images/usdt.png"
+                :ui="{
+                  size: { sm: 'size-[20px]' },
+                }"
+                alt="USDT"
+              />
+            </UAvatarGroup>
+            <span>{{ item.pair }}</span>
+            <span
+              class="rounded-[3px] px-[4px] py-[2px]"
+              :class="item.type === 1 ? 'text-buy bg-buy-300/10 dark:bg-buy-600/30' : 'text-sell bg-sell-300/10 dark:bg-sell-600/30'"
+            >
+              {{ item.type === 1 ? t('buy') : t('sell') }}
+            </span>
+          </div>
+
+          <UButton
+            class="rounded-[4px] h-[26px]"
+            size="sm"
+            :disabled="item.verified === false"
+            :loading="isCanceling.includes(item.txHash)"
+            @click="onCancelOrder(item.orderId, item.type, item.txHash)"
           >
-        </colgroup>
-      </template>
-      <template #expand-action>
-        <span />
-      </template>
-
-      <template #qty-data="{ row }">
-        <span>{{ formatAmount(row["filledQty"], 2) }}</span>
-        <span>/</span>
-        <span>{{ formatAmount(row["qty"], 2) }}</span>
-      </template>
-      <template #value-data="{ row }">
-        <span>{{ formatAmount(row["filledU"], 2) }}</span>
-        <span>/</span>
-        <span>{{ formatAmount(row["originalU"], 2) }}</span>
-      </template>
-      <template #type-data="{ row }">
-        <div>
-          <span
-            v-if="row.type === 0"
-            class="text-sell"
-          >{{ t("sell") }}</span>
-          <span
-            v-else
-            class="text-buy"
-          >{{ t("buy") }}</span>
+            <span v-if="!isCanceling.includes(item.txHash)">
+              {{ t("cancel") }}
+            </span>
+          </UButton>
         </div>
-      </template>
-
-      <template #time-data="{ row }">
-        <span> {{ formatDate(Number(row.time)) }}</span>
-      </template>
-
-      <template #action-data="{ row }">
-        <UButton
-          class="rounded-[4px] h-[26px]"
-          size="sm"
-          :disabled="row.verified === false"
-          :loading="isCanceling.includes(row.txHash)"
-          @click="onCancelOrder(row.orderId, row.type, row.txHash)"
+        <div
+          v-for="row in smColumns"
+          :key="row.key"
+          class="flex justify-between w-full"
         >
-          <span v-if="!isCanceling.includes(row.txHash)">
-            {{ t("cancel") }}
-          </span>
-        </UButton>
-      </template>
+          <span class="text-[#999]">{{ row.label }}</span>
+          <div
+            v-if="row.key === 'qty'"
+            class="inline-flex items-center space-x-[2px]"
+          >
+            <span>{{ formatAmount(item.filledQty.toString(), 2) }}</span>
+            <span>/</span>
+            <span>{{ formatAmount(item.qty, 2) }}</span>
+          </div>
+          <div
+            v-else-if="row.key === 'value'"
+            class="inline-flex items-center space-x-[2px]"
+          >
+            <span>{{ formatAmount(item.filledU.toString(), 2) }}</span>
+            <span>/</span>
+            <span>{{ formatAmount(item.originalU.toString(), 2) }}</span>
+          </div>
+          <div
+            v-else-if="row.key === 'time'"
+            class="text-center"
+          >
+            {{ formatDate(item.time) }}
+          </div>
+          <div
+            v-else
+            class="text-center"
+          >
+            {{ formatAmount(item.price, 5) }}
+          </div>
+        </div>
+      </div>
+      <UTable
+        v-model:expand="expandRows"
+        class="hidden md:block w-full mt-2.5"
+        :columns="columns"
+        :rows="datas"
+      >
+        <template #caption>
+          <colgroup>
+            <col
+              v-for="count in columns.length + 1"
+              :key="count"
+              :style="{
+                width: [1, columns.length + 1].includes(count)
+                  ? '5%'
+                  : `${(1 / (columns.length - 1)) * 90}%`,
+              }"
+              :data-index="count"
+            >
+          </colgroup>
+        </template>
+        <template #expand-action>
+          <span />
+        </template>
+
+        <template #qty-data="{ row }">
+          <span>{{ formatAmount(row["filledQty"], 2) }}</span>
+          <span>/</span>
+          <span>{{ formatAmount(row["qty"], 2) }}</span>
+        </template>
+        <template #value-data="{ row }">
+          <span>{{ formatAmount(row["filledU"], 2) }}</span>
+          <span>/</span>
+          <span>{{ formatAmount(row["originalU"], 2) }}</span>
+        </template>
+        <template #type-data="{ row }">
+          <div>
+            <span
+              v-if="row.type === 0"
+              class="text-sell"
+            >{{ t("sell") }}</span>
+            <span
+              v-else
+              class="text-buy"
+            >{{ t("buy") }}</span>
+          </div>
+        </template>
+
+        <template #time-data="{ row }">
+          <span> {{ formatDate(Number(row.time)) }}</span>
+        </template>
+
+        <template #action-data="{ row }">
+          <UButton
+            class="rounded-[4px] h-[26px]"
+            size="sm"
+            :disabled="row.verified === false"
+            :loading="isCanceling.includes(row.txHash)"
+            @click="onCancelOrder(row.orderId, row.type, row.txHash)"
+          >
+            <span v-if="!isCanceling.includes(row.txHash)">
+              {{ t("cancel") }}
+            </span>
+          </UButton>
+        </template>
       <!--
       <template #expand-data="{ row }">
         <div class="flex items-center space-x-2">
@@ -254,7 +354,8 @@ onMounted(() => {
           />
         </div>
       </template> -->
-    </UTable>
+      </UTable>
+    </template>
 
     <TablePagination
       v-if="data && data.totalPage > 1"

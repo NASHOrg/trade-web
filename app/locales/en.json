@@ -172,5 +172,8 @@
   "approving": "Approving",
   "viewTx": "View tx",
   "addFund": "Add Fund",
-  "qty": "Qty"
+  "qty": "Qty",
+  "canceled": "Canceled",
+  "partlyMatched": "Partly Matched",
+  "fullMatched": "Full Matched"
 }
