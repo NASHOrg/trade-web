@@ -46,11 +46,11 @@ export default defineAppConfig({
         },
         sell: {
           solid:
-            'shadow-sm ring-1 ring-inset ring-sell-300 dark:ring-sell-700 text-white bg-sell-400 hover:bg-sell-500 disabled:bg-gray-700 aria-disabled:bg-white dark:disabled:bg-gray-700 dark:aria-disabled:bg-gray-900 focus-visible:ring-2 focus-visible:ring-sell-500 dark:focus-visible:ring-sell-400',
+            'shadow-sm ring-1 ring-inset ring-sell-300 dark:ring-sell-700 text-white bg-sell-400 hover:bg-sell-500 disabled:bg-sell-500 aria-disabled:bg-sell-500 dark:disabled:bg-sell-500 dark:aria-disabled:bg-sell-600 focus-visible:ring-2 focus-visible:ring-sell-500 dark:focus-visible:ring-sell-400',
         },
         buy: {
           solid:
-            'shadow-sm ring-1 ring-inset ring-buy-300 dark:ring-buy-700 text-white bg-buy-400 hover:bg-buy-500 disabled:bg-gray-700 aria-disabled:bg-white  dark:disabled:bg-gray-700 dark:aria-disabled:bg-gray-900 focus-visible:ring-2 focus-visible:ring-buy-500 dark:focus-visible:ring-pbuy-400',
+            'shadow-sm ring-1 ring-inset ring-buy-300 dark:ring-buy-700 text-white bg-buy-400 hover:bg-buy-500 disabled:bg-buy-500 aria-disabled:bg-buy-500  dark:disabled:bg-buy-500 dark:aria-disabled:bg-buy-500 focus-visible:ring-2 focus-visible:ring-buy-500 dark:focus-visible:ring-pbuy-400',
         },
       },
       size: {

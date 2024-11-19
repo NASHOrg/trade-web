@@ -328,6 +328,7 @@ watch(
         block
         class="h-[40px] rounded-full border-0 ring-0 text-sm font-medium"
         :loading="isSelling"
+        :disabled="balance === undefined || total === '0'"
         @click="onSell"
       >
         Sell Bol

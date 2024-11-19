@@ -3,6 +3,7 @@ import { parseEther } from 'ethers';
 import BN from 'bignumber.js';
 import { toast } from 'vue-sonner';
 import { DepositModal } from '#components';
+import { _disabled } from '#tailwind-config/theme/aria';
 
 const props = defineProps<{
   mode: 'limit' | 'market';
@@ -358,6 +359,7 @@ watch(
         v-else
         color="buy"
         block
+        :disabled="balance === undefined || total === '0'"
         class="h-[40px] rounded-full border-0 ring-0 text-sm font-medium"
         :loading="isBuying"
         @click="onBuy"

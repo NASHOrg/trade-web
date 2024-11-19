@@ -200,7 +200,7 @@ onMounted(() => {
       <div
         v-for="item in datas"
         :key="item.txHash"
-        class="md:hidden mt-[10px] p-[16px] w-full flex flex-col space-y-[16px] border-b border-[#eaeaaea] dark:border-[#2e2e2e] last:border-b-0"
+        class="md:hidden mt-[10px] p-[16px] w-full flex flex-col space-y-[14px] border-b border-[#eaeaaea] dark:border-[#2e2e2e] last:border-b-0"
       >
         <div class="flex justify-between">
           <div class="flex space-x-[8px] items-center">
@@ -248,7 +248,7 @@ onMounted(() => {
         <div
           v-for="row in smColumns"
           :key="row.key"
-          class="flex justify-between w-full"
+          class="flex justify-between w-full text-[14px]"
         >
           <span class="text-[#999]">{{ row.label }}</span>
           <div
