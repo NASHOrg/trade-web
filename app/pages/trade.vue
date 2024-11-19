@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { TokensSlideover, UAvatar, UIcon } from '#components';
+import { TokensSlideover } from '#components';
 
-// const { address } = useWallet();
-const tradeStore = useTradeStore();
-const { currantToken } = storeToRefs(tradeStore);
+const { currentPair } = useNetworkConfig();
 const { isXL, isMD } = useDevice();
 
 const slideover = useSlideover();
@@ -33,11 +31,11 @@ function openTokens() {
               class="w-5 h-5"
             />
             <UAvatar
-              :alt="currantToken?.label || 'Token'"
+              :alt="currentPair.label"
               size="xs"
             />
             <span>
-              {{ currantToken?.label ?? "" }}
+              {{ currentPair.label }}
             </span>
           </div>
           <TradeForm />

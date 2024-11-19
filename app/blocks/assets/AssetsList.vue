@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { WithdrawModal, DepositModal } from '#components';
+import type { Token } from '~/types/common';
 
-const { network, tokens } = useNetworkConfig();
+const { tokens } = useNetworkConfig();
 const { t } = useI18n();
 const { address } = useWallet();
 
@@ -13,31 +14,13 @@ const columns = computed(() => {
   ];
 });
 
-const data = computed(() => {
-  return Object.values(network.value.bridge)
-    .filter(item => item.length > 1) // filter out empty list
-    .map((item) => {
-      const token = item.find(
-        (t: any) => t.chainId === network.value.chainId,
-      )?.tokens;
-
-      return {
-        id: token?.name ?? '',
-        icon: token?.icon ?? '',
-        name: token?.name ?? '',
-        type: 'Token',
-        token: token!,
-      };
-    });
-});
-
 const modal = useModal();
 
-function onDeposit(token: (typeof data.value)[number]['token']) {
+function onDeposit(token: Token) {
   modal.open(DepositModal, { token });
 }
 
-function onWithdraw(token: (typeof data.value)[number]['token']) {
+function onWithdraw(token: Token) {
   modal.open(WithdrawModal, { token });
 }
 </script>
@@ -56,39 +39,9 @@ function onWithdraw(token: (typeof data.value)[number]['token']) {
       </span>
     </div>
     <div
-      class="grid grid-cols-3 md:py-9 py-4"
-    >
-      <div class="flex items-center md:space-x-4 space-x-2">
-        <UAvatar
-          :src="tokens.bool.icon"
-          class="w-[30px] h-[30px]"
-        />
-        <div class="inline-flex flex-col">
-          <span class="text-sm font-normal leading-4">{{ tokens.bool.name }}</span>
-          <span
-            class="text-xs p-0.5 font-normal border-[1px] border-[#999] text-[#999] rounded-sm mt-1 leading-3"
-          >
-            Token
-          </span>
-        </div>
-      </div>
-      <div class="w-full flex justify-center items-center">
-        <TokenBalance
-          :address="address"
-          :token="{
-            address: tokens.bool.address,
-            decimals: tokens.bool.decimals,
-            symbol: tokens.bool.symbol,
-          }"
-        />
-      </div>
-      <div class="flex flex-col justify-end items-end space-y-2.5" />
-    </div>
-
-    <div
-      v-for="(item, index) in data"
+      v-for="(item, index) in tokens"
       :key="index"
-      class="grid grid-cols-3 md:py-9 py-4 border-t-[1px] border-[#2E2E2E]"
+      class="grid grid-cols-3 md:py-9 py-4 border-b-[1px] border-[#2E2E2E] last:border-none"
     >
       <div class="flex items-center md:space-x-4 space-x-2">
         <UAvatar
@@ -97,34 +50,31 @@ function onWithdraw(token: (typeof data.value)[number]['token']) {
         />
         <div class="inline-flex flex-col">
           <span class="text-sm font-normal leading-4">{{ item.name }}</span>
-          <span
-            class="text-xs p-0.5 font-normal border-[1px] border-[#999] text-[#999] rounded-sm mt-1 leading-3"
-          >
-            {{ item.type }}
-          </span>
         </div>
       </div>
       <div class="w-full flex justify-center items-center">
         <TokenBalance
           :address="address"
           :token="{
-            address: item.token.address,
-            decimals: item.token.decimals,
-            symbol: item.token.symbol,
+            address: item.address,
+            decimals: item.decimals,
+            symbol: item.symbol,
           }"
         />
       </div>
       <div class="flex flex-col justify-end items-end space-y-2.5">
         <UButton
+          v-if="item.address"
           color="black"
           variant="outline"
           class="w-[95px] h-[30px] items-center justify-center text-xs font-normal leading-[14px]"
           :ui="{ rounded: 'rounded-[4px]', padding: { md: 'p-0' } }"
-          @click="onWithdraw(item.token)"
+          @click="onWithdraw(item)"
         >
           {{ t("withdraw") }}
         </UButton>
         <UButton
+          v-if="item.address"
           color="primary"
           variant="outline"
           class="w-[95px] h-[30px] items-center justify-center text-xs font-normal leading-[14px]"
@@ -135,7 +85,7 @@ function onWithdraw(token: (typeof data.value)[number]['token']) {
               outline: 'bg-primary/30 dark:bg-primary/30',
             },
           }"
-          @click="onDeposit(item.token)"
+          @click="onDeposit(item)"
         >
           {{ t("deposit") }}
         </UButton>

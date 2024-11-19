@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { toast } from 'vue-sonner';
-// const tradeStore = useTradeStore();
 
-// const { currantToken } = storeToRefs(tradeStore);
 const { address, chainId, switchNetwork, open } = useWallet();
-const { network, tradeApi, payToken } = useNetworkConfig();
+const { network, tradeApi, pairs } = useNetworkConfig();
 const { t } = useI18n();
 const { $api } = useNuxtApp();
 const { counter } = useInterval(10000, { controls: true });
@@ -38,6 +36,11 @@ watch(counter, () => {
     refresh();
   }
 });
+
+function payToken(pair: string) {
+  const _pair = pairs.find(p => p.value === pair)!;
+  return _pair.tokens[1]!;
+}
 
 const columns = computed(() => [
   {
@@ -131,8 +134,8 @@ async function onCancelOrder(id: string, type: number, hash: string) {
       return open();
     }
     const provider = useWallet().provider();
-    if (chainId.value !== Number(network.value.chainId)) {
-      const result = await switchNetwork(Number(network.value.chainId));
+    if (chainId.value !== network.chainId) {
+      const result = await switchNetwork(network.chainId);
       if (!result) return;
     }
     isCanceling.value.push(hash);
@@ -154,7 +157,7 @@ async function onCancelOrder(id: string, type: number, hash: string) {
       action: {
         label: t('viewTx'),
         onClick: () => {
-          window.open(`${network.value.explorer}/tx/${tx.hash}`, '_blank');
+          window.open(`${network.explorer}/tx/${tx.hash}`, '_blank');
         },
       },
     });
@@ -217,11 +220,11 @@ onMounted(() => {
                 "
               />
               <UAvatar
-                :src="payToken.icon"
+                :src="payToken(item.pair!).icon"
                 :ui="{
                   size: { sm: 'size-[20px]' },
                 }"
-                :alt="payToken.symbol"
+                :alt="payToken(item.pair!).symbol"
               />
             </UAvatarGroup>
             <span>{{ item.pair }}</span>

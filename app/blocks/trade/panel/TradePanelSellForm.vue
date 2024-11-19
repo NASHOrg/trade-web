@@ -7,13 +7,12 @@ const props = defineProps<{
   mode: 'limit' | 'market';
 }>();
 
-const tradeStore = useTradeStore();
 const { addOrder } = useOrders();
 const balance = ref<string | undefined>();
 
 const { address, open, chainId, switchNetwork } = useWallet();
 const { t } = useI18n();
-const { currantToken } = storeToRefs(tradeStore);
+const { currentPair } = useNetworkConfig();
 const { currentRoute } = useRouter();
 const { network, tradeApi } = useNetworkConfig();
 
@@ -29,7 +28,7 @@ const state = reactive<{
 });
 
 const tokenSymbolList = computed(() => {
-  return currantToken.value?.label.split('/') ?? [];
+  return currentPair.value?.label.split('/') ?? [];
 });
 
 const price = computed({
@@ -147,8 +146,8 @@ async function onSell() {
     }
     isSelling.value = true;
     const provider = useWallet().provider();
-    if (chainId.value !== Number(network.value.chainId)) {
-      const result = await switchNetwork(Number(network.value.chainId));
+    if (chainId.value !== network.chainId) {
+      const result = await switchNetwork(network.chainId);
       if (!result) return;
     }
     if (!state.quantity || !state.price) {
@@ -168,7 +167,7 @@ async function onSell() {
       txHash: tx.hash,
       time: new Date().getTime().toString(),
       orderId: tx.hash,
-      pair: currantToken.value?.value,
+      pair: currentPair.value?.value,
       verified: false,
     };
     const qty = quantity.value;
@@ -186,7 +185,7 @@ async function onSell() {
       action: {
         label: t('viewTx'),
         onClick: () => {
-          window.open(`${network.value.explorer}/tx/${tx.hash}`, '_blank');
+          window.open(`${network.explorer}/tx/${tx.hash}`, '_blank');
         },
       },
     });
@@ -294,9 +293,9 @@ watch(
       >
         <span>Balance:</span>
         <TokenBalance
-          v-if="currantToken?.tokens[0]"
+          v-if="currentPair.tokens[0]"
           :address="address"
-          :token="currantToken?.tokens[0]"
+          :token="currentPair.tokens[0]"
           :config="{ showSymbol: true, refresh: true }"
           @change="(value) => (balance = value)"
         />

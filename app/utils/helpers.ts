@@ -108,6 +108,7 @@ export function formatAmount(
   const minimum = BigNumber(1).div(BigNumber(10).pow(decimal));
 
   if (amount.isLessThan(minimum)) {
+    BigNumber.config({ EXPONENTIAL_AT: 100 });
     /// return with 0.{decimal}f format
     return amount.toString().replace(/0\.(0+)([1-9][0-9]*)/, (match, zeros, rest) => {
       return `0.{${zeros.length}}${BigNumber(rest).dp(2).toString()}`;

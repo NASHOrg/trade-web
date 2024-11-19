@@ -4,8 +4,7 @@ import type { BridgeHistory } from '~/types/common';
 const props = defineProps<{
   record: BridgeHistory;
 }>();
-const { network, payToken } = useNetworkConfig();
-const chains = network.value.bridge[payToken.symbol.toLowerCase()];
+const { networks } = useNetworkConfig();
 const { counter, pause } = useInterval(1000, { controls: true });
 const timeString = ref('');
 watch(counter, () => {
@@ -28,30 +27,17 @@ watch(counter, () => {
 });
 
 const icons = computed(() => {
-  if (Number(props.record.swapRecordSrcChainId) === chains[0].chainId) {
-    return {
-      from: chains[0].icon,
-      to: chains[1].icon,
-    };
-  }
-  else {
-    return {
-      from: chains[1].icon,
-      to: chains[0].icon,
-    };
-  }
+  return {
+    from: networks.find(n => n.chainId === Number(props.record.swapRecordSrcChainId))?.icon,
+    to: networks.find(n => n.chainId === Number(props.record.swapRecordDstChainId))?.icon,
+  };
 });
 
 function openExplorer(type: 'src' | 'dst') {
   const hash = type === 'src' ? props.record.swapRecordSrcChainHash : props.record.swapRecordDstChainHash;
   const chainId = type === 'src' ? props.record.swapRecordSrcChainId : props.record.swapRecordDstChainId;
-  console.log(hash, chainId);
-  if (Number(chainId) === chains[0].chainId) {
-    window.open(`${chains[0].explorer}/tx/${hash}`, '_blank');
-  }
-  else if (Number(chainId) === chains[1].chainId) {
-    window.open(`${chains[1].explorer}/tx/${hash}`, '_blank');
-  }
+  const network = networks.find(n => n.chainId === Number(chainId));
+  window.open(`${network!.explorer}/tx/${hash}`, '_blank');
 }
 </script>
 

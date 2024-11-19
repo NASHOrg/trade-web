@@ -10,7 +10,7 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n();
-const { network } = useNetworkConfig();
+const { network, bridgeNetworks } = useNetworkConfig();
 const { address, chainId, switchNetwork, provider } = useWallet();
 
 const modal = useModal();
@@ -18,17 +18,10 @@ const amount = ref('');
 const confirming = ref(false);
 const { add } = useBridgeHistory();
 
-const networks = computed(() => {
-  const bridge = network.value.bridge;
-  const token = props.token.symbol.toLowerCase() as keyof typeof bridge;
-  return bridge[token];
-});
-
-const selectNetwork = ref<(typeof networks.value)[0]>(networks.value[0] as any);
+const selectedNetwork = ref(bridgeNetworks[0]!);
 
 const networkOptions = computed(() => {
-  return networks.value
-    .filter(item => item.chainId !== network.value.chainId)
+  return bridgeNetworks
     .map((item) => {
       return [
         {
@@ -36,28 +29,19 @@ const networkOptions = computed(() => {
           avatar: {
             src: item.icon,
           },
-          disabled: item.chainId === selectNetwork.value.chainId,
+          disabled: item.chainId === selectedNetwork.value.chainId,
           click: () => {
-            selectNetwork.value = item;
+            selectedNetwork.value = item;
           },
         },
       ];
     });
 });
 
-const bridgeInBool = computed(() => {
-  return networks.value.find(item => item.chainId === network.value.chainId);
-});
-const tokenInBool = computed(() => {
-  return bridgeInBool.value?.tokens;
-});
-
 const tokenInTarget = computed(() => {
-  return selectNetwork.value.tokens;
-});
-
-const targetNetwork = computed(() => {
-  return BaseEvmApi.getChain(selectNetwork.value.chainId);
+  return Object.values(selectedNetwork.value.tokens).find(
+    (item: Token) => item.symbol === props.token.symbol,
+  )!;
 });
 
 const { data: balanceInBool } = useAsyncData(
@@ -66,10 +50,10 @@ const { data: balanceInBool } = useAsyncData(
     if (!address.value) {
       return Promise.resolve(BigInt(0));
     }
-    const networkApi = new BaseEvmApi(network.value.rpc);
+    const networkApi = new BaseEvmApi(network.rpc);
     return networkApi.getBalance({
       address: address.value,
-      contractAddress: tokenInBool.value?.address,
+      contractAddress: props.token.address,
     });
   },
   {
@@ -80,38 +64,38 @@ const { data: balanceInBool } = useAsyncData(
 const { data: bridgeFee } = useAsyncData(
   `withdraw-fee-${props.token.symbol}`,
   () => {
-    if (!address.value || !bridgeInBool.value) {
+    if (!address.value) {
       return Promise.resolve(BigInt(0));
     }
-    const consumer = bridgeInBool.value.consumer;
-    const bridgeApi = new BridgeApi(network.value.rpc, consumer);
+    const consumer = network.contracts.consumer;
+    const bridgeApi = new BridgeApi(network.rpc, consumer);
     return bridgeApi.getBridgeFee({
-      dstChainId: selectNetwork.value.chainId,
+      dstChainId: selectedNetwork.value.chainId,
       amount: 0n,
       dstRecipient: '0xbbbB4350Ea18a153e9077c1067Fa8Ff3654123F6',
     });
   },
   {
     server: false,
-    watch: [address],
+    watch: [address, selectedNetwork],
   },
 );
 
 const items = computed(() => {
   const balanceInBoolFormat = ethers.formatUnits(
     balanceInBool.value ?? '0',
-    tokenInBool.value?.decimals,
+    props.token.decimals,
   );
   return [
     {
       label: 'Balance ',
       value: `${formatAmount(
         balanceInBoolFormat,
-        tokenInBool.value?.decimals,
-      )} ${tokenInBool.value?.symbol ?? ''}`,
+        props.token.decimals,
+      )} ${props.token.symbol}`,
     },
     { label: 'Fee', value:
-      `${formatEther(bridgeFee.value ?? 0n)} ${network.value.symbol}`,
+      `${formatEther(bridgeFee.value ?? 0n)} ${network.symbol}`,
     },
   ];
 });
@@ -128,36 +112,30 @@ async function onSubmit() {
     if (!amount.value) {
       throw new Error('Please input amount!');
     }
-    else if (!targetNetwork.value) {
+    else if (!selectedNetwork.value) {
       throw new Error('Please select network!');
     }
     else if (!address.value) {
       throw new Error('Wallet is not connected.');
     }
-    else if (!tokenInBool.value) {
-      throw new Error('Token error!');
-    }
-    else if (!bridgeInBool.value) {
-      throw new Error('Network error!');
-    }
     confirming.value = true;
 
     // Check wallet network
-    if (chainId.value !== Number(network.value.chainId)) {
-      const result = await switchNetwork(Number(network.value.chainId));
+    if (chainId.value !== network.chainId) {
+      const result = await switchNetwork(network.chainId);
       if (!result) return;
     }
 
-    const consumer = bridgeInBool.value.consumer;
-    const bridgeApi = new BridgeApi(network.value.rpc, consumer);
+    const consumer = network.contracts.consumer;
+    const bridgeApi = new BridgeApi(network.rpc, consumer);
 
     const amountParse = ethers.parseUnits(
       amount.value,
-      tokenInBool.value.decimals,
+      props.token.decimals,
     );
 
     const approveParam = {
-      contract: tokenInBool.value!.address,
+      contract: props.token.address!,
       approvedAddress: consumer,
       address: address.value,
       amount: amountParse,
@@ -173,7 +151,7 @@ async function onSubmit() {
       await new Promise((resolve, reject) => {
         toast.promise(bridgeApi.checkTransaction(approveTx.hash), {
           loading: t('sendTransaction'),
-          description: t('approve') + ' ' + tokenInBool.value!.symbol,
+          description: t('approve') + ' ' + props.token.symbol,
           success: () => {
             resolve(true);
             return t('transactionSuccess');
@@ -184,7 +162,7 @@ async function onSubmit() {
           action: {
             label: t('viewTx'),
             onClick: () => {
-              window.open(`${network.value!.explorer}/tx/${approveTx.hash}`, '_blank');
+              window.open(`${network.explorer}/tx/${approveTx.hash}`, '_blank');
             },
           },
         });
@@ -192,7 +170,7 @@ async function onSubmit() {
     }
 
     const tx = await bridgeApi.bridgeOut(provider(), {
-      dstChainId: selectNetwork.value!.chainId!,
+      dstChainId: selectedNetwork.value.chainId,
       amount: amountParse,
       dstRecipient: address.value!,
       customData: '0x',
@@ -202,17 +180,17 @@ async function onSubmit() {
       swapRecordSrcTokenAmount: amount.value,
       swapRecordDstTokenAmount: amount.value,
       swapRecordSrcChainHash: tx.hash,
-      swapRecordSrcChainId: network.value!.chainId?.toString() ?? '',
-      swapRecordDstChainId: Number(targetNetwork.value!.id)?.toString() ?? '',
+      swapRecordSrcChainId: network.chainId.toString(),
+      swapRecordDstChainId: selectedNetwork.value.chainId.toString(),
       swapRecordDstUserAddress: address.value ?? '',
       swapRecordSrcChainTime: Date.now().toString(),
-      swapRecordSrcTokenName: tokenInBool.value?.name,
+      swapRecordSrcTokenName: props.token.name,
       swapRecordDstTokenName: tokenInTarget.value.name,
       swapRecordDstTokenSymbol: tokenInTarget.value.symbol,
       swapRecordStatus: 'Pending',
     };
     add(params);
-    const tokenKey = `token-balance-${address.value}-${tokenInBool.value.address ?? ''}`;
+    const tokenKey = `token-balance-${address.value}-${props.token.address ?? ''}`;
 
     toast.promise(bridgeApi.checkTransaction(tx.hash), {
       loading: t('sendTransaction'),
@@ -221,11 +199,11 @@ async function onSubmit() {
         return t('transactionSuccess');
       },
       error: () => t('transactionFail'),
-      description: `${t('withdraw')} ${amount.value} ${tokenInBool.value.symbol}`,
+      description: `${t('withdraw')} ${amount.value} ${props.token.symbol}`,
       action: {
         label: t('viewTx'),
         onClick: () => {
-          window.open(`${network.value!.explorer}/tx/${tx.hash}`, '_blank');
+          window.open(`${network.explorer}/tx/${tx.hash}`, '_blank');
         },
       },
     });
@@ -307,11 +285,11 @@ async function onSubmit() {
             class="flex items-center text-white space-x-4 text-base leading-4"
           >
             <UAvatar
-              :src="selectNetwork.icon"
-              :alt="selectNetwork.name"
+              :src="selectedNetwork.icon"
+              :alt="selectedNetwork.name"
               class="w-[30px] h-[30px] bg-gray-500/50"
             />
-            <div>{{ selectNetwork.name }}</div>
+            <div>{{ selectedNetwork.name }}</div>
           </div>
 
           <div class="grow" />

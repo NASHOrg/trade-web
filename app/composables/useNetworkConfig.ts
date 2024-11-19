@@ -1,38 +1,49 @@
 import type { Token } from '~/types/common';
 import { StakeApi } from '~/utils/contracts/stake';
 import { TradeApi } from '~/utils/contracts/trade';
-import networksConfig from '~/utils/networks';
+import { betaMainnet, betaTestnet, ethereum, sepolia } from '~/utils/networks';
 
 export function useNetworkConfig() {
-  const router = useRouter();
+  const { currentRoute } = useRouter();
   const config = useRuntimeConfig();
-
-  const networks = Object.values(networksConfig);
-  const ethNetwork = config.public.network === 'beta_mainnet' ? ChainConfig.ethereum : ChainConfig.sepolia;
-
-  const currentNetwork = computed<(typeof networks)[0]>(() => {
-    const { currentRoute } = router;
-    const network = currentRoute.value.query.network ?? config.public.network;
-
-    return networks.find(item => item.value === network)!;
-  });
+  const boolNetwork = config.public.network === 'beta_mainnet' ? betaMainnet : betaTestnet;
+  const bridgeNetworks = [config.public.network === 'beta_mainnet' ? ethereum : sepolia];
 
   const tokens = computed<{ [key: string]: Token }>(() => {
-    return currentNetwork.value.tokens;
+    return boolNetwork.tokens;
   });
 
-  const payToken = tokens.value.usdc!;
+  const payToken = config.public.network === 'beta_mainnet' ? tokens.value.usdt! : tokens.value.usdc!;
+  const tokenPairs = [[tokens.value.bool!, payToken]];
+  const pairs = tokenPairs.map(pair =>
+    ({
+      value: `BOOL/${pair[1]!.symbol}`,
+      label: pair.map(item => item.symbol).join(' / '),
+      type: 0,
+      price: '0.01',
+      tokens: pair,
+    }),
+  );
+
+  const currentPair = computed(() => {
+    const value = currentRoute.value.query?.pair as string | undefined;
+    return (
+      pairs.find(item => item.value === value)
+      ?? pairs[0]!
+    );
+  });
 
   return {
-    networks,
-    network: currentNetwork,
+    networks: [boolNetwork, ...bridgeNetworks],
+    network: boolNetwork,
+    bridgeNetworks,
     tokens,
-    payToken,
-    ethNetwork,
-    stakeApi: new StakeApi(currentNetwork.value.rpc),
+    pairs,
+    currentPair,
+    stakeApi: new StakeApi(boolNetwork.rpc),
     tradeApi: new TradeApi({
-      rpc: currentNetwork.value.rpc,
-      contract: currentNetwork.value.contracts.trade!,
+      rpc: boolNetwork.rpc,
+      contract: boolNetwork.contracts.trade!,
       token: tokens.value.usdc!,
     }),
   };

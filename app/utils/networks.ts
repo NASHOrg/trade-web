@@ -1,16 +1,15 @@
 export const betaTestnet = {
   baseUrl: 'https://beta-api.boolscan.com/bool-network-beta',
   rpc: 'https://betatest-rpc-node-http.bool.network',
-  wss: 'wss://betatest-rpc-node-ws.bool.network',
   chainId: 481,
   symbol: 'tBOL',
   name: 'Bool Beta Testnet',
   value: 'beta_testnet',
-  feeRate: 3000,
   explorer: 'https://beta-testnet.boolscan.com',
   icon: 'https://bool.network/bool-network-orange.png',
   contracts: {
     trade: '0xD79d119793f9A7B10A03DFccab6e225fdf901e19',
+    consumer: '0x97668c00FdD830cFF4578bD66283E512FE2b9C71',
   },
   tokens: {
     bool: {
@@ -28,46 +27,35 @@ export const betaTestnet = {
       decimals: 6,
     },
   },
-  bridge: {
-    usdc: [
-      {
-        name: 'ETH Sepolia',
-        chainId: 11155111,
-        symbol: 'ETH',
-        icon: 'https://oss.boolscan.com/token-logo/1417150d35702e6d774167ae785d94913f09bc.png',
-        explorer: 'https://sepolia.etherscan.io',
-        consumer: '0xa557070AF02d09F2Daa3371053B7A6D4bEb8023a',
-        tokens: {
-          decimals: 6,
-          name: 'USDC',
-          symbol: 'USDC',
-          icon: '/images/usdc.png',
-          address: '0x07540610a807150f3c74b55a0316b5a4735a3225',
-        },
-      },
-      {
-        name: 'Bool Beta Testnet',
-        chainId: 481,
-        symbol: 'tBOL',
-        icon: 'https://bool.network/bool-network-orange.png',
-        explorer: 'https://beta-testnet.boolscan.com',
-        consumer: '0x97668c00FdD830cFF4578bD66283E512FE2b9C71',
-        tokens: {
-          name: 'USDC',
-          decimals: 6,
-          symbol: 'USDC',
-          icon: '/images/usdc.png',
-          address: '0xf9007019014c8CdFA78f21e97995F6a4D3493729',
-        },
-      },
-    ],
+};
+
+export const sepolia = {
+  baseUrl: '',
+  rpc: 'https://eth-sepolia-public.unifra.io',
+  explorer: 'https://sepolia.etherscan.io',
+  chainId: 11155111,
+  symbol: 'ETH',
+  name: 'Sepolia',
+  value: 'sepolia',
+  icon: '/images/eth.png',
+  contracts: {
+    trade: '0x',
+    consumer: '0xa557070AF02d09F2Daa3371053B7A6D4bEb8023a',
+  },
+  tokens: {
+    usdc: {
+      name: 'USDC',
+      address: '0x07540610a807150f3c74b55a0316b5a4735a3225',
+      icon: '/images/usdc.png',
+      symbol: 'USDC',
+      decimals: 6,
+    },
   },
 };
 
 export const betaMainnet = {
   baseUrl: 'https://beta-mainnet-api.boolscan.com/bool-network-beta-mainnet',
   rpc: 'https://beta-rpc-node-http.bool.network',
-  wss: 'wss://beta-rpc-node-ws.bool.network',
   chainId: 11100,
   symbol: 'BOL',
   name: 'Bool Beta Mainnet',
@@ -76,7 +64,8 @@ export const betaMainnet = {
   explorer: 'https://beta-mainnet.boolscan.com',
   icon: 'https://bool.network/bool-network-orange.png',
   contracts: {
-    trade: '',
+    trade: '0x',
+    consumer: '0x',
   },
   tokens: {
     bool: {
@@ -94,45 +83,36 @@ export const betaMainnet = {
       decimals: 18,
     },
   },
-  bridge: {
-    usdt: [
-      {
-        name: 'ETH Sepolia',
-        chainId: 11155111,
-        symbol: 'ETH',
-        icon: 'https://oss.boolscan.com/token-logo/1417150d35702e6d774167ae785d94913f09bc.png',
-        consumer: '0xa49e678eccb9922ca6293bbde16db4403f609eb8',
-        explorer: 'https://sepolia.etherscan.io',
-        tokens: {
-          decimals: 6,
-          name: 'USDT',
-          symbol: 'USDT',
-          icon: '/images/usdt.png',
-          address: '0x07540610a807150f3c74b55a0316b5a4735a3225',
-        },
-      },
-      {
-        name: 'Bool Beta Mainnet',
-        chainId: 11100,
-        symbol: 'BOL',
-        icon: 'https://bool.network/bool-network-orange.png',
-        consumer: '0x0015035658f57c613102a33d8c97d4441c520ea1',
-        explorer: 'https://beta-testnet.boolscan.com',
-        tokens: {
-          decimals: 6,
-          name: 'USDT',
-          symbol: 'USDT',
-          icon: '/images/usdt.png',
-          address: '0xf9007019014c8CdFA78f21e97995F6a4D3493729',
-        },
-      },
-    ],
+};
+
+export const ethereum = {
+  baseUrl: '',
+  rpc: 'https://rpc.ankr.com/eth',
+  explorer: 'https://etherscan.io',
+  chainId: 1,
+  symbol: 'ETH',
+  name: 'Ethereum',
+  value: 'ethereum',
+  icon: '/images/eth.png',
+  contracts: {
+    trade: '0x',
+    consumer: '0xa557070AF02d09F2Daa3371053B7A6D4bEb8023a',
+  },
+  tokens: {
+    usdc: {
+      name: 'USDC',
+      address: '0x07540610a807150f3c74b55a0316b5a4735a3225',
+      icon: '/images/usdc.png',
+      symbol: 'USDC',
+      decimals: 6,
+    },
   },
 };
 
 export const networks = {
   beta_testnet: betaTestnet,
   beta_mainnet: betaMainnet,
+  sepolia,
 };
 
 export type Network = typeof betaTestnet;

@@ -10,9 +10,7 @@ const props = defineProps<{
   };
 }>();
 
-const tradeStore = useTradeStore();
-const { currantToken } = storeToRefs(tradeStore);
-
+const { currentPair } = useNetworkConfig();
 const colorStyle = computed(() => {
   return { color: props.data.open > props.data.close ? '#E24444' : '#0AC49E' };
 });
@@ -20,7 +18,7 @@ const colorStyle = computed(() => {
 
 <template>
   <div class="text-white inline-flex space-x-3 text-sm font-normal flex-wrap mr-[100px] md:mr-0">
-    <span class="hidden md:block">{{ currantToken.label }}</span>
+    <span class="hidden md:block">{{ currentPair.label }}</span>
     <span>
       <span>O&nbsp;</span>
       <span :style="colorStyle">

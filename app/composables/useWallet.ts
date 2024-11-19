@@ -23,22 +23,15 @@ const metadata = {
 let isInit = false;
 
 export default function useWallet() {
-  const { network: currentNetwork, ethNetwork } = useNetworkConfig();
+  const { networks, network } = useNetworkConfig();
 
-  const network = {
-    chainId: currentNetwork.value.chainId,
-    name: currentNetwork.value.name,
-    currency: currentNetwork.value.symbol,
-    explorerUrl: currentNetwork.value.explorer,
-    rpcUrl: currentNetwork.value.rpc,
-  };
-  const ethereum = {
-    chainId: Number(ethNetwork.id),
-    name: ethNetwork.label,
-    currency: ethNetwork.token,
-    explorerUrl: ethNetwork.scanUrl,
-    rpcUrl: ethNetwork.rpcUrl,
-  };
+  const evmNetworks = networks.map(item => ({
+    chainId: item.chainId,
+    name: item.name,
+    currency: item.symbol,
+    explorerUrl: item.explorer,
+    rpcUrl: item.rpc,
+  }));
 
   if (!isInit) {
     createWeb3Modal({
@@ -54,11 +47,11 @@ export default function useWallet() {
         '--w3m-font-family': 'ProtoMono, Inter',
       },
       chainImages: {
-        481: currentNetwork.value.icon,
-        482: currentNetwork.value.icon,
-        11100: currentNetwork.value.icon,
+        481: network.icon,
+        482: network.icon,
+        11100: network.icon,
       },
-      chains: [network, ethereum],
+      chains: evmNetworks,
       projectId,
       enableSwaps: false,
       enableOnramp: false,
@@ -87,18 +80,22 @@ export default function useWallet() {
     }
     catch (err: any) {
       if (err.code === 4902) {
+        const requestChain = networks.find(c => c.chainId === chain);
+        if (!requestChain) {
+          return false;
+        }
         await walletProvider.value // Or window.ethereum if you don't support EIP-6963.
           .request({
             method: 'wallet_addEthereumChain',
             params: [
               {
-                chainId: `0x${chain.toString(16)}`,
-                chainName: network.name,
-                rpcUrls: [network.rpcUrl] /* ... */,
-                blockExplorerUrls: [network.explorerUrl] /* ... */,
+                chainId: `0x${requestChain.chainId.toString(16)}`,
+                chainName: requestChain.name,
+                rpcUrls: [requestChain.rpc] /* ... */,
+                blockExplorerUrls: [requestChain.explorer] /* ... */,
                 nativeCurrency: {
-                  name: network.name,
-                  symbol: network.currency,
+                  name: requestChain.name,
+                  symbol: requestChain.symbol,
                   decimals: 18,
                 },
               },

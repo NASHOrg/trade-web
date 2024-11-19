@@ -3,9 +3,8 @@ import BN from 'bignumber.js';
 import { useStorage } from '@vueuse/core';
 import { TokensSlideover } from '#components';
 
-const tradeStore = useTradeStore();
-const { currantToken } = storeToRefs(tradeStore);
 const showChart = useStorage<boolean>('xbit-show-shart', false);
+const { currentPair } = useNetworkConfig();
 const { $api } = useNuxtApp();
 const { isMD } = useDevice();
 const range = ref<'hour' | 'day'>('hour');
@@ -84,7 +83,7 @@ function openTokens() {
             class="md:h-full flex items-center justify-center md:space-x-2.5 space-x-1.5 text-base font-bold cursor-pointer"
             @click="openTokens"
           >
-            <span>{{ currantToken?.label ?? "Token" }}</span>
+            <span>{{ currentPair.label ?? "Token" }}</span>
             <UIcon name="i-mingcute-down-line" />
           </div>
           <span

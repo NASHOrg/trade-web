@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { $api } = useNuxtApp();
 const { t } = useI18n();
-const { payToken } = useNetworkConfig();
+const { pairs } = useNetworkConfig();
 const { address } = useWallet();
 const { counter } = useInterval(10000, { controls: true });
 
@@ -121,6 +121,11 @@ function onSelect(info: (typeof datas.value)[number]) {
   }
 }
 
+function payToken(pair: string) {
+  const _pair = pairs.find(p => p.value === pair)!;
+  return _pair.tokens[1]!;
+}
+
 function isExpanded(row: (typeof datas.value)[number]) {
   return expandRows.value.openedRows.some(
     item => item.orderId === row.orderId,
@@ -176,11 +181,11 @@ function isExpanded(row: (typeof datas.value)[number]) {
                 "
               />
               <UAvatar
-                :src="payToken.icon"
+                :src="payToken(item.pair!).icon"
                 :ui="{
                   size: { sm: 'size-[20px]' },
                 }"
-                :alt="payToken.symbol"
+                :alt="payToken(item.pair!).symbol"
               />
             </UAvatarGroup>
             <span>{{ item.pair }}</span>

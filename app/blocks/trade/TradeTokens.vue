@@ -2,9 +2,7 @@
 const emits = defineEmits<{
   (e: 'select', value: string): void;
 }>();
-const tradeStore = useTradeStore();
-const { tokenOptions } = tradeStore;
-const { currantToken } = storeToRefs(tradeStore);
+const { pairs, currentPair } = useNetworkConfig();
 
 const router = useRouter();
 
@@ -22,7 +20,7 @@ function onSelect(id: string) {
   emits('select', id);
   router.replace({
     path: '/trade',
-    query: { ...(router.currentRoute.value.query ?? {}), value: id },
+    query: { ...(router.currentRoute.value.query ?? {}), pair: id },
   });
 }
 </script>
@@ -57,10 +55,10 @@ function onSelect(id: string) {
     <div class="w-full py-2 overflow-y-auto scrollbar">
       <div class="w-full">
         <div
-          v-for="token in tokenOptions"
+          v-for="token in pairs"
           :key="token.value"
           class="grid grid-cols-2 px-4 py-2 hover:bg-gray-500/20 cursor-pointer transition-[0.2s]"
-          :class="{ ' bg-gray-500/10': currantToken?.value === token.value }"
+          :class="{ 'bg-gray-500/10': currentPair?.value === token.value }"
           @click="onSelect(token.value)"
         >
           <span

@@ -20,16 +20,14 @@ const props = defineProps<{
 //   },
 // ];
 
-const tradeStore = useTradeStore();
 const { addOrder } = useOrders();
 const balance = ref<string | undefined>();
 const balanceKey = ref(0);
 
 const { address, open, chainId, switchNetwork } = useWallet();
 const { t } = useI18n();
-const { currantToken } = storeToRefs(tradeStore);
 const { currentRoute } = useRouter();
-const { network, tradeApi } = useNetworkConfig();
+const { network, tradeApi, currentPair } = useNetworkConfig();
 
 const { data } = useNuxtData('order-book');
 const state = reactive<{
@@ -43,7 +41,7 @@ const state = reactive<{
 });
 
 const tokenSymbolList = computed(() => {
-  return currantToken.value?.label.split('/') ?? [];
+  return currentPair.value?.label.split('/') ?? [];
 });
 
 const price = computed({
@@ -157,13 +155,7 @@ watch(
 );
 const modal = useModal();
 function onDeposit() {
-  const bridgeTokens = network.value.bridge;
-  const tokenKey = tokenSymbolList.value[1]
-    ?.trim()
-    ?.toLowerCase() as keyof typeof bridgeTokens;
-
-  const token = bridgeTokens[tokenKey]?.[1]?.tokens;
-
+  const token = currentPair.value.tokens[1]!;
   if (token) {
     modal.open(DepositModal, { token });
   }
@@ -177,8 +169,8 @@ async function onBuy() {
       return open();
     }
     const provider = useWallet().provider();
-    if (chainId.value !== Number(network.value.chainId)) {
-      const result = await switchNetwork(Number(network.value.chainId));
+    if (chainId.value !== network.chainId) {
+      const result = await switchNetwork(network.chainId);
       if (!result) return;
     }
     if (!state.quantity || !state.price) return;
@@ -200,7 +192,7 @@ async function onBuy() {
       txHash: tx.hash,
       time: new Date().getTime().toString(),
       orderId: tx.hash,
-      pair: currantToken.value?.value,
+      pair: currentPair.value?.value,
       verified: false,
     };
     const qty = quantity.value;
@@ -218,7 +210,7 @@ async function onBuy() {
       action: {
         label: t('viewTx'),
         onClick: () => {
-          window.open(`${network.value.explorer}/tx/${tx.hash}`, '_blank');
+          window.open(`${network.explorer}/tx/${tx.hash}`, '_blank');
         },
       },
     });
@@ -326,11 +318,11 @@ watch(
         <span>Balance</span>
         <span class="hidden md:inline">:</span>
         <TokenBalance
-          v-if="currantToken?.tokens[1]"
+          v-if="currentPair.tokens[1]"
           :key="balanceKey"
           class="ms-1"
           :address="address"
-          :token="currantToken.tokens[1]"
+          :token="currentPair.tokens[1]"
           :config="{ showSymbol: true, refresh: true }"
           @change="(value) => (balance = value)"
         />

@@ -12,7 +12,7 @@ const emit = defineEmits<{
 }>();
 
 const { network } = useNetworkConfig();
-const api = new BaseEvmApi(network.value.rpc);
+const api = new BaseEvmApi(network.rpc);
 
 const { data: balance, status, refresh: refreshBalance } = useAsyncData(
   `token-balance-${props.address}-${props.token.address ?? ''}`,
@@ -60,12 +60,12 @@ watch(
     </span>
     <div
       v-if="config?.refresh"
-      class="cursor-pointer text-primary"
+      class="cursor-pointer text-primary inline-flex items-center"
       @click="() => refreshBalance()"
     >
       <UIcon
         name="i-ic-round-refresh"
-        size="13"
+        size="14"
         :class="{ 'animate-spin': status === 'pending' }"
       />
     </div>

@@ -10,7 +10,7 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n();
-const { network } = useNetworkConfig();
+const { network, bridgeNetworks } = useNetworkConfig();
 const { address, chainId, switchNetwork, provider } = useWallet();
 const { add } = useBridgeHistory();
 
@@ -18,44 +18,29 @@ const modal = useModal();
 const amount = ref('');
 const confirming = ref(false);
 
-const networks = computed(() => {
-  const bridge = network.value.bridge;
-  const key = props.token.symbol.toLowerCase() as keyof typeof bridge;
-  return bridge[key];
-});
-
-const selectNetwork = ref<(typeof networks.value)[0]>(networks.value[0] as any);
-
-const networkOptions = computed(() => {
-  return networks.value
-    .filter(item => item.chainId !== network.value.chainId)
-    .map((item) => {
-      return [
-        {
-          label: item.name,
-          avatar: {
-            src: item.icon,
-          },
-          disabled: item.chainId === selectNetwork.value.chainId,
-          click: () => {
-            selectNetwork.value = item;
-          },
-        },
-      ];
-    });
-});
-
-const targetNetwork = computed(() => {
-  return BaseEvmApi.getChain(selectNetwork.value.chainId);
-});
-
-const tokenInBool = computed(() => {
-  return networks.value.find(item => item.chainId === network.value.chainId)
-    ?.tokens;
-});
+const selectedNetwork = ref(bridgeNetworks[0]!);
 
 const tokenInTarget = computed(() => {
-  return selectNetwork.value.tokens;
+  return Object.values(selectedNetwork.value.tokens).find(
+    (item: Token) => item.symbol === props.token.symbol,
+  )!;
+});
+
+const networkOptions = computed(() => {
+  return bridgeNetworks.map((item) => {
+    return [
+      {
+        label: item.name,
+        avatar: {
+          src: item.icon,
+        },
+        disabled: item.chainId === selectedNetwork.value.chainId,
+        click: () => {
+          selectedNetwork.value = item;
+        },
+      },
+    ];
+  });
 });
 
 const { data: balanceInBool } = useAsyncData(
@@ -64,10 +49,10 @@ const { data: balanceInBool } = useAsyncData(
     if (!address.value) {
       return Promise.resolve(BigInt(0));
     }
-    const networkApi = new BaseEvmApi(network.value.rpc);
+    const networkApi = new BaseEvmApi(network.rpc);
     return networkApi.getBalance({
       address: address.value,
-      contractAddress: tokenInBool.value?.address,
+      contractAddress: props.token.address,
     });
   },
   {
@@ -78,10 +63,10 @@ const { data: balanceInBool } = useAsyncData(
 const { data: balanceInTarget } = useAsyncData(
   `deposit-data-target-balance-${props.token.symbol}`,
   () => {
-    if (!targetNetwork.value || !address.value) {
+    if (!selectedNetwork.value || !address.value) {
       return Promise.resolve(BigInt(0));
     }
-    const targetApi = new BaseEvmApi(targetNetwork.value?.rpcUrl);
+    const targetApi = new BaseEvmApi(selectedNetwork.value.rpc);
     return targetApi.getBalance({
       address: address.value,
       contractAddress: tokenInTarget.value.address,
@@ -96,7 +81,7 @@ const { data: balanceInTarget } = useAsyncData(
 const items = computed(() => {
   const balanceInBoolFormat = ethers.formatUnits(
     balanceInBool.value ?? '0',
-    tokenInBool.value?.decimals,
+    props.token.decimals,
   );
   const balanceInTargetFormat = ethers.formatUnits(
     balanceInTarget.value ?? '0',
@@ -107,8 +92,8 @@ const items = computed(() => {
       label: 'Balance in your wallet',
       value: `${formatAmount(
         balanceInTargetFormat,
-        tokenInBool.value?.decimals,
-      )} ${tokenInBool.value?.symbol ?? ''}`,
+        props.token.decimals,
+      )} ${props.token.symbol}`,
     },
     {
       label: 'Balance in Bool Chain',
@@ -132,7 +117,7 @@ async function onSubmit() {
     if (!amount.value) {
       throw new Error('Please input amount!');
     }
-    else if (!targetNetwork.value) {
+    else if (!selectedNetwork.value) {
       throw new Error('Please select network!');
     }
     else if (!address.value) {
@@ -141,14 +126,14 @@ async function onSubmit() {
     confirming.value = true;
 
     // Check wallet network
-    if (chainId.value !== Number(targetNetwork.value.id)) {
-      const result = await switchNetwork(Number(targetNetwork.value.id));
+    if (chainId.value !== selectedNetwork.value.chainId) {
+      const result = await switchNetwork(selectedNetwork.value.chainId);
       if (!result) return;
     }
 
     const bridgeApi = new BridgeApi(
-      targetNetwork.value.rpcUrl,
-      selectNetwork.value.consumer,
+      selectedNetwork.value.rpc,
+      selectedNetwork.value.contracts.consumer,
     );
 
     const amountParse = ethers.parseUnits(
@@ -158,7 +143,7 @@ async function onSubmit() {
 
     const approveParam = {
       contract: tokenInTarget.value.address,
-      approvedAddress: selectNetwork.value.consumer,
+      approvedAddress: selectedNetwork.value.contracts.consumer,
       address: address.value,
       amount: amountParse,
     };
@@ -184,7 +169,7 @@ async function onSubmit() {
           action: {
             label: t('viewTx'),
             onClick: () => {
-              window.open(`${targetNetwork.value!.scanUrl}/tx/${approveTx.hash}`, '_blank');
+              window.open(`${selectedNetwork.value.explorer}/tx/${approveTx.hash}`, '_blank');
             },
           },
         });
@@ -192,7 +177,7 @@ async function onSubmit() {
     }
 
     const tx = await bridgeApi.bridgeOut(provider(), {
-      dstChainId: network.value.chainId,
+      dstChainId: network.chainId,
       amount: amountParse,
       dstRecipient: address.value!,
       customData: '0x',
@@ -202,12 +187,12 @@ async function onSubmit() {
       swapRecordSrcTokenAmount: amount.value,
       swapRecordDstTokenAmount: amount.value,
       swapRecordSrcChainHash: tx.hash,
-      swapRecordSrcChainId: Number(targetNetwork.value!.id)?.toString() ?? '',
-      swapRecordDstChainId: network.value!.chainId?.toString() ?? '',
+      swapRecordSrcChainId: selectedNetwork.value.chainId.toString(),
+      swapRecordDstChainId: network.chainId.toString(),
       swapRecordDstUserAddress: address.value ?? '',
       swapRecordSrcChainTime: Date.now().toString(),
       swapRecordSrcTokenName: tokenInTarget.value?.name,
-      swapRecordDstTokenName: tokenInBool.value?.name,
+      swapRecordDstTokenName: props.token.name,
       swapRecordDstTokenSymbol: tokenInTarget.value.symbol,
       swapRecordStatus: 'Pending',
     };
@@ -225,7 +210,7 @@ async function onSubmit() {
       action: {
         label: t('viewTx'),
         onClick: () => {
-          window.open(`${targetNetwork.value!.scanUrl}/tx/${tx.hash}`, '_blank');
+          window.open(`${selectedNetwork.value.explorer}/tx/${tx.hash}`, '_blank');
         },
       },
     });
@@ -308,11 +293,11 @@ async function onSubmit() {
             class="flex items-center text-white space-x-4 text-base leading-4"
           >
             <UAvatar
-              :src="selectNetwork.icon"
-              :alt="selectNetwork.name"
+              :src="selectedNetwork.icon"
+              :alt="selectedNetwork.name"
               class="w-[30px] h-[30px] bg-gray-500/50"
             />
-            <div>{{ selectNetwork.name }}</div>
+            <div>{{ selectedNetwork.name }}</div>
           </div>
 
           <div class="grow" />

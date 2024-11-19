@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { formatAmount } from '#imports';
 
-const tradeStore = useTradeStore();
 const { isMD, isXL } = useDevice();
 
 const { replace, currentRoute } = useRouter();
 const { $api } = useNuxtApp();
-const { currantToken } = storeToRefs(tradeStore);
+const { currentPair } = useNetworkConfig();
 const columns = computed(() => {
-  const token0 = currantToken.value?.tokens[0];
-  const token1 = currantToken.value?.tokens[1];
+  const token0 = currentPair.value?.tokens[0];
+  const token1 = currentPair.value?.tokens[1];
   return [
     {
       value: 'price',
@@ -36,7 +35,7 @@ const { data } = useAsyncData(
   'order-book',
   () => {
     return $api.blockchainOrderBooks({
-      pair: currantToken.value?.value.toUpperCase().split('-').join('/'),
+      pair: currentPair.value?.value.toUpperCase().split('-').join('/'),
     });
   },
   {
