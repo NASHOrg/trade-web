@@ -5,7 +5,7 @@ import { BaseEvmApi } from '~/utils/contracts/api';
 const props = defineProps<{
   address?: string;
   token: { address?: string; decimals?: number; symbol?: string };
-  config?: { showSymbol: boolean };
+  config?: { showSymbol: boolean; refresh: boolean };
 }>();
 const emit = defineEmits<{
   (e: 'change', value: string): void;
@@ -14,7 +14,7 @@ const emit = defineEmits<{
 const { network } = useNetworkConfig();
 const api = new BaseEvmApi(network.value.rpc);
 
-const { data: balance } = useAsyncData(
+const { data: balance, status, refresh: refreshBalance } = useAsyncData(
   `token-balance-${props.address}-${props.token.address ?? ''}`,
   () => {
     if (!props.address) {
@@ -30,13 +30,6 @@ const { data: balance } = useAsyncData(
 
 const formatedBalance = computed(() => {
   if (balance.value === undefined) return '';
-  if (props.config?.showSymbol) {
-    return (
-      formatAmount(formatUnits(balance.value!, props.token.decimals), 2)
-      + ' '
-      + props.token.symbol
-    );
-  }
   return formatAmount(formatUnits(balance.value!, props.token.decimals), 2);
 });
 
@@ -52,15 +45,29 @@ watch(
 </script>
 
 <template>
-  <div>
+  <div class="inline-flex items-center">
     <div
-      v-if="balance === undefined"
+      v-if="status === 'pending'"
       class="min-w-[40px]"
     >
       <USkeleton class="w-full h-[14px]" />
     </div>
     <div v-else>
       {{ formatedBalance }}
+    </div>
+    <span v-if="config?.showSymbol">
+      {{ props.token.symbol }}
+    </span>
+    <div
+      v-if="config?.refresh"
+      class="cursor-pointer text-primary"
+      @click="() => refreshBalance()"
+    >
+      <UIcon
+        name="i-ic-round-refresh"
+        size="13"
+        :class="{ 'animate-spin': status === 'pending' }"
+      />
     </div>
   </div>
 </template>

@@ -2,6 +2,7 @@
 import { ethers } from 'ethers';
 import { BaseEvmApi } from '~/utils/contracts/api';
 import { WithdrawModal, DepositModal, HistoryModal } from '#components';
+import PendingTransactionAmount from '~/components/PendingTransactionAmount.vue';
 
 const { address } = useWallet();
 const { isMD } = useDevice();
@@ -52,12 +53,6 @@ const buttons = [
     value: 'withdraw',
     onClick: onWithdraw,
     icon: resolveComponent('IconWithdraw'),
-  },
-  {
-    label: t('history'),
-    value: 'history',
-    onClick: onOpenHistory,
-    icon: resolveComponent('IconHistory'),
   },
 ];
 </script>
@@ -115,6 +110,16 @@ const buttons = [
         <component :is="item.icon" />
         <span class="hidden md:block">{{ item.label }}</span>
       </UButton>
+      <PendingTransactionAmount>
+        <UButton
+          class="rounded-[8px] !bg-[#2e2e2e] !text-white !text-[16px] !border-none"
+          color="white"
+          @click="onOpenHistory"
+        >
+          <IconHistory />
+          <span class="hidden md:block">{{ t('history') }}</span>
+        </UButton>
+      </PendingTransactionAmount>
     </div>
   </div>
 </template>

@@ -12,7 +12,8 @@ const queryparams = ref({
   bridgeNo: '32',
 });
 
-const { data, status } = useAsyncData<{
+const { counter } = useInterval(10000, { controls: true });
+const { data, status, refresh } = useAsyncData<{
   items: BridgeHistory[];
   pageNo: number;
   totalCount: string;
@@ -32,7 +33,6 @@ const { data, status } = useAsyncData<{
     watch: [() => queryparams.value.pageNo, address],
   },
 );
-const records = ref<BridgeHistory[]>([]);
 
 async function checkTransactionStatus() {
   if (history.value.length === 0) return;
@@ -50,27 +50,21 @@ async function checkTransactionStatus() {
     data: BridgeHistory[];
   }>(`${$config.public.bridgeApiUrl}/bool-ultimate-bridge/swap/swap-record:check`, { method: 'POST', body: { checkInfos } });
   const hashes = result.data.map(d => d.swapRecordSrcChainHash);
+  if (hashes.length > 0 && queryparams.value.pageNo === 1) {
+    refresh();
+  }
   history.value = history.value.filter(
     h => !hashes.includes(h.swapRecordSrcChainHash!),
   );
 }
 
-useInfiniteScroll(
-  document,
-  (state) => {
-    if (state.arrivedState.bottom) queryparams.value.pageNo++;
-  },
-  {
-    canLoadMore() {
-      if (records.value.length === 0 && queryparams.value.pageNo === 1) return false;
-      if (status.value !== 'success') return false;
-      return data?.value?.totalPage !== undefined
-        ? data.value.pageNo < data?.value?.totalPage
-        : true;
-    },
-    distance: 4,
-  },
-);
+watch(counter, () => {
+  checkTransactionStatus();
+});
+
+const records = computed(() => {
+  return [...history.value, ...(data.value?.items ?? [])];
+});
 
 watchOnce(history, checkTransactionStatus, { immediate: true });
 </script>
@@ -82,7 +76,7 @@ watchOnce(history, checkTransactionStatus, { immediate: true });
   >
     <div class="flex flex-col w-full md:space-y-6 space-y-[10px] px-[14px] md:px-[24px]">
       <div
-        v-if="status === 'pending' && records.length === 0"
+        v-if="status === 'pending'"
         class="w-full my-[100px] flex flex-col justify-center items-center"
       >
         <UIcon
@@ -91,7 +85,7 @@ watchOnce(history, checkTransactionStatus, { immediate: true });
         />
       </div>
       <div
-        v-else-if="Number(data?.totalCount) === 0"
+        v-else-if="records.length === 0"
         class="my-[50px] flex flex-col justify-center mx-auto items-center"
       >
         <img
@@ -116,15 +110,6 @@ watchOnce(history, checkTransactionStatus, { immediate: true });
           :record="item"
         />
       </template>
-      <div
-        v-if="status === 'pending' && records.length > 0"
-        class="flex justify-center my-auto py-2"
-      >
-        <UIcon
-          class="animate-spin text-primary-500 w-6 h-6"
-          name="quill:loading-spin"
-        />
-      </div>
       <TablePagination
         v-if="data && data.totalPage > 1"
         v-model:current="queryparams.pageNo"

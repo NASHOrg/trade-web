@@ -112,7 +112,7 @@ export class BaseEvmApi {
         _address,
         param.approvedAddress,
       );
-      return new BigNumber(approved).gte(
+      return new BigNumber(approved.toString()).gte(
         new BigNumber(param.amount.toString()),
       );
     }

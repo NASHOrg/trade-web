@@ -46,11 +46,11 @@ function onWithdraw(token: (typeof data.value)[number]['token']) {
   <div
     class="w-full md:px-6 px-3 md:pt-6 pt-3 border-[1px] border-[#2E2E2E] rounded-xl bg-[#121212]"
   >
-    <div class="w-full grid grid-cols-3 text-sm font-normal">
+    <div class="w-full grid grid-cols-[100px_1fr_100px] text-sm font-normal">
       <span
         v-for="item in columns"
         :key="item.id"
-        class="first:text-start last:text-end text-center"
+        class="text-center"
       >
         {{ item.label }}
       </span>

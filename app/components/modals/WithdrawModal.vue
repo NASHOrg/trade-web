@@ -160,7 +160,7 @@ async function onSubmit() {
       contract: tokenInBool.value!.address,
       approvedAddress: consumer,
       address: address.value,
-      amount: MaxUint256,
+      amount: amountParse,
     };
 
     const isApproved = await bridgeApi.isApprove(approveParam);
@@ -168,6 +168,7 @@ async function onSubmit() {
     if (!isApproved) {
       const approveTx = await bridgeApi.approve(provider(), {
         ...approveParam,
+        amount: MaxUint256,
       });
       await new Promise((resolve, reject) => {
         toast.promise(bridgeApi.checkTransaction(approveTx.hash), {
@@ -211,11 +212,12 @@ async function onSubmit() {
       swapRecordStatus: 'Pending',
     };
     add(params);
+    const tokenKey = `token-balance-${address.value}-${tokenInBool.value.address ?? ''}`;
 
     toast.promise(bridgeApi.checkTransaction(tx.hash), {
       loading: t('sendTransaction'),
       success: () => {
-        refreshNuxtData();
+        refreshNuxtData(tokenKey);
         return t('transactionSuccess');
       },
       error: () => t('transactionFail'),

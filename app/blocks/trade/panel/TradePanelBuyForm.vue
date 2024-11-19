@@ -23,6 +23,7 @@ const props = defineProps<{
 const tradeStore = useTradeStore();
 const { addOrder } = useOrders();
 const balance = ref<string | undefined>();
+const balanceKey = ref(0);
 
 const { address, open, chainId, switchNetwork } = useWallet();
 const { t } = useI18n();
@@ -209,7 +210,7 @@ async function onBuy() {
       loading: t('sendTransaction'),
       success: () => {
         addOrder(order);
-        refreshNuxtData();
+        balanceKey.value += 1;
         return t('transactionSuccess');
       },
       error: () => t('transactionFail'),
@@ -326,10 +327,11 @@ watch(
         <span class="hidden md:inline">:</span>
         <TokenBalance
           v-if="currantToken?.tokens[1]"
+          :key="balanceKey"
           class="ms-1"
           :address="address"
           :token="currantToken.tokens[1]"
-          :config="{ showSymbol: true }"
+          :config="{ showSymbol: true, refresh: true }"
           @change="(value) => (balance = value)"
         />
       </div>
