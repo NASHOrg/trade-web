@@ -22,7 +22,7 @@ export const betaTestnet = {
     },
     usdt: {
       name: 'USDT',
-      address: '0x3fFa3237b30b15eF3368132a2AC9D262d8502bB3',
+      address: '0xf9007019014c8CdFA78f21e97995F6a4D3493729',
       icon: '/images/usdt.png',
       symbol: 'USDT',
       decimals: 18,
