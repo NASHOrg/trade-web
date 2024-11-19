@@ -10,7 +10,7 @@ export const betaTestnet = {
   explorer: 'https://beta-testnet.boolscan.com',
   icon: 'https://bool.network/bool-network-orange.png',
   contracts: {
-    trade: '0x2919101b87334B05d4D67dB9f17C26EEDc6D22B5',
+    trade: '0xD79d119793f9A7B10A03DFccab6e225fdf901e19',
   },
   tokens: {
     bool: {
@@ -25,7 +25,7 @@ export const betaTestnet = {
       address: '0xf9007019014c8CdFA78f21e97995F6a4D3493729',
       icon: '/images/usdt.png',
       symbol: 'USDT',
-      decimals: 18,
+      decimals: 6,
     },
   },
   bridge: {
