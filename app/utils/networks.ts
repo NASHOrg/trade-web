@@ -10,7 +10,7 @@ export const betaTestnet = {
   explorer: 'https://beta-testnet.boolscan.com',
   icon: 'https://bool.network/bool-network-orange.png',
   contracts: {
-    trade: '0x1E3f592CfcEbE18824e19Cb6Ca7Ba8f91939Bca4',
+    trade: '0xD79d119793f9A7B10A03DFccab6e225fdf901e19',
   },
   tokens: {
     bool: {

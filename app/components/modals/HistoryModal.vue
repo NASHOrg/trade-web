@@ -90,11 +90,18 @@ watchOnce(history, checkTransactionStatus, { immediate: true });
           name="quill:loading-spin"
         />
       </div>
-      <img
+      <div
         v-else-if="Number(data?.totalCount) === 0"
-        class="my-[50px] flex justify-center size-[72px] mx-auto"
-        src="/images/empty_box.png"
+        class="my-[50px] flex flex-col justify-center mx-auto items-center"
       >
+        <img
+          class="size-[72px]"
+          src="/images/empty_box.png"
+        >
+        <div class="text-sm font-medium text-gray-500">
+          {{ t('noTransactions') }}
+        </div>
+      </div>
       <template v-else>
         <HistoryCard
           v-for="item in history"

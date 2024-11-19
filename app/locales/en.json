@@ -175,5 +175,6 @@
   "qty": "Qty",
   "canceled": "Canceled",
   "partlyMatched": "Partly Matched",
-  "fullMatched": "Full Matched"
+  "fullMatched": "Full Matched",
+  "noTransactions": "No transactions"
 }

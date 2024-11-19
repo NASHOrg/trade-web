@@ -193,7 +193,7 @@ onMounted(() => {
         width="72"
       />
       <div class="text-sm font-medium text-gray-500">
-        No transactions
+        {{ t('noTransactions') }}
       </div>
     </div>
     <template v-else>
