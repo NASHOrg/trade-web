@@ -315,15 +315,17 @@ watch(
         <span class="text-white text-xs"> {{ tokenSymbolList[1] }}</span>
       </div>
     </div>
-    <div class="flex justify-between items-center !mt-3">
+    <div class="flex flex-col md:flex-row justify-start md:justify-between gap-1 items-end md:items-center !mt-3">
       <div
         v-if="address"
         key="balance"
-        class="text-white text-[14px] flex space-x-1"
+        class="w-full md:w-fit inline-flex justify-between text-white text-[14px]"
       >
-        <span>Balance:</span>
+        <span>Balance</span>
+        <span class="hidden md:inline">:</span>
         <TokenBalance
           v-if="currantToken?.tokens[1]"
+          class="ms-1"
           :address="address"
           :token="currantToken.tokens[1]"
           :config="{ showSymbol: true }"
@@ -331,7 +333,6 @@ watch(
         />
       </div>
       <div v-else />
-
       <UButton
         to=""
         variant="outline"
