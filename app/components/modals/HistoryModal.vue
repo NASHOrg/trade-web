@@ -21,7 +21,7 @@ const { data, status } = useAsyncData<{
   'bridge-history-recods',
   async () => {
     const data: any = await $fetch(`${$config.public.bridgeApiUrl}/bool-ultimate-bridge/swap/swap-records`, {
-      query: { ...queryparams.value, address: address.value },
+      query: { ...queryparams.value, userAddress: address.value },
     });
     if (data.code === '000') {
       return data.data;
@@ -29,7 +29,7 @@ const { data, status } = useAsyncData<{
   },
   {
     server: false,
-    watch: [() => queryparams.value.pageNo],
+    watch: [() => queryparams.value.pageNo, address],
   },
 );
 const records = ref<BridgeHistory[]>([]);
@@ -92,7 +92,7 @@ watchOnce(history, checkTransactionStatus, { immediate: true });
       </div>
       <img
         v-else-if="Number(data?.totalCount) === 0"
-        class="my-[50px] flex justify-center "
+        class="my-[50px] flex justify-center size-[72px] mx-auto"
         src="/images/empty_box.png"
       >
       <template v-else>

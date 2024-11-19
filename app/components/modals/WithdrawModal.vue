@@ -93,6 +93,7 @@ const { data: bridgeFee } = useAsyncData(
   },
   {
     server: false,
+    watch: [address],
   },
 );
 

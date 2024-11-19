@@ -89,6 +89,7 @@ const { data: balanceInTarget } = useAsyncData(
   },
   {
     server: false,
+    watch: [address],
   },
 );
 
