@@ -111,7 +111,7 @@ const onSelectPrice = (price: string) => {
         class="w-full flex flex-col justify-end xl:space-y-2.5 md:space-y-1.5 space-y-1"
       >
         <div
-          v-for="item in sellBList.slice(0, 12)"
+          v-for="item in sellBList.slice(0, 11)"
           :key="JSON.stringify(item)"
           class="sell-price-item w-full grid md:px-4 px-2 md:py-1.5 py-1 md:grid-cols-3 grid-cols-2 md:text-[14px] text-xs text-start cursor-pointer hover:bg-gray-50/10"
           :style="item.style"
