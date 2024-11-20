@@ -143,7 +143,7 @@ const onSelectPrice = (price: string) => {
           {{ formatAmount(data.latestPrice, 5, { endPad: true }) }}
         </span>
         <span class="md:text-[14px] text-[8px] whitespace-nowrap text-[#999]">
-          ≈ {{ formatAmount(data.latestPrice, 2) }} USD
+          ≈ {{ formatAmount(data.latestPrice, 2, { rounded: true, endPad: true }) }} USD
         </span>
       </div>
 

@@ -91,7 +91,7 @@ export function formatAmount(
   options?: { endPad?: boolean; format?: boolean; rounded?: boolean },
 ) {
   const amount = new BigNumber(value);
-  const roundedMode = options?.rounded ? BigNumber.ROUND_UP : BigNumber.ROUND_DOWN;
+  const roundedMode = options?.rounded ? BigNumber.ROUND_HALF_UP : BigNumber.ROUND_DOWN;
 
   if (!options?.format) {
     return amount
