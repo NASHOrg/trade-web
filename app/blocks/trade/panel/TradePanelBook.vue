@@ -105,14 +105,13 @@ const onSelectPrice = (price: string) => {
 
     <div
       v-if="data"
-      class="w-full grow grid"
-      style="grid-template-rows: 1fr auto 1fr"
+      class="w-full h-full grid grid-rows-[1fr_40px_1fr]"
     >
       <div
-        class="w-full h-full flex flex-col justify-end xl:space-y-2.5 md:space-y-1.5 space-y-1"
+        class="w-full flex flex-col justify-end xl:space-y-2.5 md:space-y-1.5 space-y-1"
       >
         <div
-          v-for="item in sellBList"
+          v-for="item in sellBList.slice(0, 12)"
           :key="JSON.stringify(item)"
           class="sell-price-item w-full grid md:px-4 px-2 md:py-1.5 py-1 md:grid-cols-3 grid-cols-2 md:text-[14px] text-xs text-start cursor-pointer hover:bg-gray-50/10"
           :style="item.style"
@@ -135,7 +134,7 @@ const onSelectPrice = (price: string) => {
       </div>
 
       <div
-        class="md:px-4 px-2 md:py-1.5 xl:py-2.5 py-1 flex items-end cursor-pointer"
+        class="md:px-4 px-2 flex items-center cursor-pointer"
         @click="onSelectPrice(data.latestPrice)"
       >
         <span
@@ -149,10 +148,10 @@ const onSelectPrice = (price: string) => {
       </div>
 
       <div
-        class="h-full flex flex-col justify-start xl:space-y-2.5 space-y-1.5"
+        class="flex flex-col justify-start xl:space-y-2.5 md:space-y-1.5 space-y-1"
       >
         <div
-          v-for="item in buyBList"
+          v-for="item in buyBList.slice(0, 11)"
           :key="JSON.stringify(item)"
           class="buy-price-item w-full grid md:px-4 px-2 md:py-1.5 py-1 md:grid-cols-3 grid-cols-2 md:text-[14px] text-xs text-start cursor-pointer hover:bg-gray-50/10"
           :style="item.style"

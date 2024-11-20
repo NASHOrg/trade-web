@@ -13,7 +13,6 @@ const balance = ref<string | undefined>();
 const { address, open, chainId, switchNetwork } = useWallet();
 const { t } = useI18n();
 const { currentPair } = useNetworkConfig();
-const { currentRoute } = useRouter();
 const { network, tradeApi } = useNetworkConfig();
 
 const { data } = useNuxtData('order-book');
@@ -118,21 +117,8 @@ const amountPercent = computed({
 watch(
   data,
   () => {
-    if (!state.price) {
-      state.price = data.value?.latestPrice;
-    }
-  },
-  {
-    deep: true,
-  },
-);
-
-watch(
-  currentRoute,
-  () => {
-    const _price = Number(currentRoute.value.query?.price ?? '0');
-    if (_price && !Number.isNaN(_price)) {
-      price.value = _price.toString();
+    if (!state.price && data.value) {
+      state.price = formatAmount(data.value?.latestPrice, 5);
     }
   },
   {

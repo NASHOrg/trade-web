@@ -26,7 +26,6 @@ const balanceKey = ref(0);
 
 const { address, open, chainId, switchNetwork } = useWallet();
 const { t } = useI18n();
-const { currentRoute } = useRouter();
 const { network, tradeApi, currentPair } = useNetworkConfig();
 
 const { data } = useNuxtData('order-book');
@@ -35,7 +34,7 @@ const state = reactive<{
   quantity: string | undefined;
   total: string | undefined;
 }>({
-  price: data.value?.latestPrice,
+  price: formatAmount(data.value?.latestPrice, 5),
   quantity: undefined,
   total: undefined,
 });
@@ -116,12 +115,6 @@ const amountPercent = computed({
   },
   set(value) {
     if (!balance.value) return;
-    if (!Number(state.price || '0')) {
-      const _price = Number(currentRoute.value.query?.price ?? '0');
-      if (_price && !Number.isNaN(_price)) {
-        price.value = _price.toString();
-      }
-    }
     total.value = BN(balance.value.toString())
       .times(BN(value ?? 0).dividedBy(100))
       .dp(2, 1)
@@ -132,8 +125,8 @@ const amountPercent = computed({
 watch(
   data,
   () => {
-    if (!price.value) {
-      price.value = data.value?.latestPrice;
+    if (!state.price && data.value) {
+      state.price = formatAmount(data.value?.latestPrice, 5);
     }
   },
   {
@@ -141,18 +134,6 @@ watch(
   },
 );
 
-watch(
-  currentRoute,
-  () => {
-    const _price = Number(currentRoute.value.query?.price ?? '0');
-    if (_price && !Number.isNaN(_price)) {
-      price.value = _price.toString();
-    }
-  },
-  {
-    deep: true,
-  },
-);
 const modal = useModal();
 function onDeposit() {
   const token = currentPair.value.tokens[1]!;
@@ -232,7 +213,6 @@ watch(
     }
     else {
       price.value = data.value?.latestPrice;
-      refreshNuxtData('order-book');
     }
   },
   {
