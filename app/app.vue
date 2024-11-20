@@ -1,5 +1,20 @@
 <script lang="ts" setup>
 import { Toaster } from 'vue-sonner';
+
+const { metadata } = useAppConfig();
+useHead({
+  title: metadata.name,
+  meta: [
+    { name: 'description', content: metadata.description },
+  ],
+});
+
+useSeoMeta({
+  title: metadata.name,
+  description: metadata.description,
+  ogTitle: metadata.name,
+  ogDescription: metadata.description,
+});
 </script>
 
 <template>
