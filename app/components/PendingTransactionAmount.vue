@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { BridgeHistory } from '~/types/common';
 
-const { history } = useBridgeHistory();
+const { history, remove } = useBridgeHistory();
 const { $config } = useNuxtApp();
 const { counter } = useInterval(10000, { controls: true });
 
@@ -21,9 +21,7 @@ async function checkTransactionStatus() {
     data: BridgeHistory[];
   }>(`${$config.public.bridgeApiUrl}/bool-ultimate-bridge/swap/swap-record:check`, { method: 'POST', body: { checkInfos } });
   const hashes = result.data.map(d => d.swapRecordSrcChainHash);
-  history.value = history.value.filter(
-    h => !hashes.includes(h.swapRecordSrcChainHash!),
-  );
+  remove(hashes);
 }
 
 watch(counter, () => {

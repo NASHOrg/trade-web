@@ -17,6 +17,8 @@ const { currentRoute } = useRouter();
 const { network, tradeApi } = useNetworkConfig();
 
 const { data } = useNuxtData('order-book');
+
+const balanceKey = ref(0);
 const state = reactive<{
   price: string | undefined;
   quantity: string | undefined;
@@ -177,7 +179,7 @@ async function onSell() {
       loading: t('sendTransaction'),
       success: () => {
         addOrder(order);
-        refreshNuxtData();
+        balanceKey.value += 1;
         return t('transactionSuccess');
       },
       error: () => t('transactionFail'),
@@ -294,6 +296,7 @@ watch(
         <span>Balance:</span>
         <TokenBalance
           v-if="currentPair.tokens[0]"
+          :key="balanceKey"
           :address="address"
           :token="currentPair.tokens[0]"
           :config="{ showSymbol: true, refresh: true }"

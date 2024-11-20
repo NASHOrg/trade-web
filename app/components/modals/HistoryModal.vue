@@ -3,7 +3,7 @@ import type { BridgeHistory } from '~/types/common';
 
 const { $config } = useNuxtApp();
 const { t } = useI18n();
-const { history } = useBridgeHistory();
+const { history, remove } = useBridgeHistory();
 const { address } = useWallet();
 
 const queryparams = ref({
@@ -53,9 +53,7 @@ async function checkTransactionStatus() {
   if (hashes.length > 0 && queryparams.value.pageNo === 1) {
     refresh();
   }
-  history.value = history.value.filter(
-    h => !hashes.includes(h.swapRecordSrcChainHash!),
-  );
+  remove(hashes);
 }
 
 watch(counter, () => {

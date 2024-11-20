@@ -13,6 +13,7 @@ import { Toaster } from 'vue-sonner';
       position="bottom-right"
       rich-colors
       theme="dark"
+      expand
     />
   </div>
 </template>
