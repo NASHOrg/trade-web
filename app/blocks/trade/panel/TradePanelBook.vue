@@ -48,7 +48,7 @@ const sellBList = computed(() => {
   const allQty = (data.value?.orderSellBList ?? []).reduce((sum, item) => {
     return (sum += Number(item.qty));
   }, 0);
-  const list = (data.value?.orderSellBList ?? [])
+  const list = (data.value?.orderSellBList?.slice(0, 11) ?? [])
     .map((item) => {
       return {
         ...item,
@@ -67,7 +67,7 @@ const sellBList = computed(() => {
 });
 
 const buyBList = computed(() => {
-  const allQty = (data.value?.orderBuyBList ?? []).reduce((sum, item) => {
+  const allQty = (data.value?.orderBuyBList?.slice(0, 11) ?? []).reduce((sum, item) => {
     return (sum += Number(item.qty));
   }, 0);
   const list = (data.value?.orderBuyBList ?? []).map((item) => {
@@ -105,7 +105,7 @@ const onSelectPrice = (price: string) => {
 
     <div
       v-if="data"
-      class="w-full h-full grid grid-rows-[1fr_40px_1fr]"
+      class="w-full h-full grid grid-rows-[1fr_44px_1fr]"
     >
       <div
         class="w-full flex flex-col justify-end xl:space-y-2.5 md:space-y-1.5 space-y-1"
