@@ -22,7 +22,7 @@ export const betaTestnet = {
     usdc: {
       name: 'USDC',
       address: '0xf9007019014c8CdFA78f21e97995F6a4D3493729',
-      icon: '/images/usdt.png',
+      icon: '/images/usdc.png',
       symbol: 'USDC',
       decimals: 6,
     },
