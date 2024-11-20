@@ -20,11 +20,10 @@ const columns = computed(() => {
       label: t('time'),
     },
     {
-      key: 'pair',
-      label: t('pair'),
+      key: '3',
     },
     {
-      key: '2',
+      key: '4',
     },
     {
       key: 'price',
@@ -74,7 +73,7 @@ const queryParams = ref({
 });
 
 const { data, status } = useAsyncData(
-  `trade-${props.trade.orderId}`,
+  `trade-${props.trade.orderId}-${props.trade.type}`,
   () =>
     $api.blockchainTradeHistoryDetail({
       ...queryParams.value,
@@ -90,7 +89,7 @@ const datas = computed(() => {
   return (data.value?.items ?? []).map((item) => {
     return {
       ...item,
-      price: formatAmount(item.price || '0', 2),
+      price: formatAmount(item.price || '0', 5),
       qty: formatAmount(item.qty || '0', 2),
       u: formatAmount(item.u.toString(), 2),
     };
@@ -196,6 +195,10 @@ const datas = computed(() => {
 
         <template #time-data="{ row }">
           <span> {{ formatDate(Number(row.tradeTime)) }}</span>
+        </template>
+
+        <template #price-data="{ row }">
+          <span> {{ formatAmount(row.price, 5) }}</span>
         </template>
       </UTable>
     </template>

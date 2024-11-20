@@ -128,7 +128,7 @@ function payToken(pair: string) {
 
 function isExpanded(row: (typeof datas.value)[number]) {
   return expandRows.value.openedRows.some(
-    item => item.orderId === row.orderId,
+    item => item.orderId + item.type === row.orderId + row.type,
   );
 }
 </script>
@@ -164,7 +164,7 @@ function isExpanded(row: (typeof datas.value)[number]) {
         v-for="item in datas"
         :key="item.orderId"
         class="md:hidden mt-[10px] p-[16px] w-full flex flex-col space-y-[16px] border-b border-[#eaeaaea] dark:border-[#2e2e2e] last:border-b-0"
-        @click="expanded === item.orderId ? expanded = '' : expanded =item.orderId"
+        @click="expanded === (item.orderId+item.type) ? expanded = '' : expanded = (item.orderId+item.type)"
       >
         <div class="flex justify-between">
           <div class="flex space-x-[8px] items-center">
@@ -264,7 +264,7 @@ function isExpanded(row: (typeof datas.value)[number]) {
       </div>
       <UTable
         v-model:expand="expandRows"
-        by="orderId"
+        :by="(a:any, z:any) => a.orderId+a.type === z.orderId+z.type"
         class="hidden md:block w-full"
         :columns="columns"
         :rows="datas"
