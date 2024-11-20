@@ -57,6 +57,7 @@ const { data: balanceInBool } = useAsyncData(
   },
   {
     server: false,
+    watch: [address],
   },
 );
 
