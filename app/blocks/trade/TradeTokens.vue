@@ -46,7 +46,7 @@ function onSelect(id: string) {
       <span
         v-for="item in cols"
         :key="item.id"
-        class=" col-span-1 text-xs font-normal leading-[14px] first:text-start last:text-end text-center"
+        class="col-span-1 text-[14px] font-normal leading-[14px] first:text-start last:text-end text-center"
       >
         {{ item.label }}
       </span>
@@ -67,17 +67,12 @@ function onSelect(id: string) {
             :class="
               [
                 'first:text-start last:text-end text-center',
-                'text-xs font-normal leading-[14px] first:text-start last:text-end text-center text-ellipsis overflow-hidden',
+                'text-[14px] font-normal leading-[14px] first:text-start last:text-end text-center text-ellipsis overflow-hidden',
               ].join(' ')
             "
           >
             <template v-if="item.id === 'label'">
               <div class="flex items-center space-x-1.5">
-                <!-- <UIcon
-                  name="i-mingcute-star-fill"
-                  size="12"
-                  class="bg-[#404040] min-w-3 h-3 text-[12px]"
-                /> -->
                 <span>{{ token.label }}</span>
               </div>
             </template>
@@ -86,7 +81,7 @@ function onSelect(id: string) {
               <span v-else>{{ $t("buy") }}</span>
             </template>
             <template v-else-if="['price'].includes(item.id)">
-              {{ formatAmount(data?.latestPrice ?? '0', 5) }}
+              {{ formatAmount(data?.latestPrice ?? '0', 5, { format: true }) }}
             </template>
           </span>
         </div>
