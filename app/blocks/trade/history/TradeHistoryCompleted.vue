@@ -15,7 +15,7 @@ const columns = computed(() => {
       label: t('time'),
     },
     {
-      key: 'pair',
+      key: 'pairLabel',
       label: t('pair'),
     },
     {
@@ -94,8 +94,20 @@ watch(counter, () => {
 });
 
 const datas = computed(() => {
-  return (data.value?.items ?? []).map((item) => {
+  const records = (data.value?.items ?? []).map((item) => {
     return { ...item };
+  });
+  return records.map((r) => {
+    const pair = pairs.find(p => p.value === r.pair)!;
+    return {
+      ...r,
+      pair,
+      pairLabel: pair.label,
+      time: formatDate(r.tradeTime),
+      qty: formatAmount(r.qty, 2, { format: true }),
+      price: formatAmount(r.price || '0', 5, { format: true }),
+      u: formatAmount(r.u, 2, { format: true }),
+    };
   });
 });
 
@@ -121,11 +133,6 @@ function onSelect(info: (typeof datas.value)[number]) {
   }
 }
 
-function payToken(pair: string) {
-  const _pair = pairs.find(p => p.value === pair)!;
-  return _pair.tokens[1]!;
-}
-
 function isExpanded(row: (typeof datas.value)[number]) {
   return expandRows.value.openedRows.some(
     item => item.orderId + item.type === row.orderId + row.type,
@@ -136,7 +143,7 @@ function isExpanded(row: (typeof datas.value)[number]) {
 <template>
   <div class="w-full flex flex-col items-center select-none">
     <div
-      v-if="!data && status === 'pending'"
+      v-if="status === 'pending'"
       class="my-[78px] w-[68px] h-[68px] flex flex-col justify-center items-center"
     >
       <UIcon
@@ -173,22 +180,22 @@ function isExpanded(row: (typeof datas.value)[number]) {
               :max="2"
             >
               <UAvatar
-                src="/images/bol.png"
-                alt="BOL"
+                :src="item.pair.tokens[0]!.icon"
+                :alt="item.pair.tokens[0]!.symbol"
                 :ui="{
                   size: { sm: 'size-[20px]' },
                 }
                 "
               />
               <UAvatar
-                :src="payToken(item.pair!).icon"
+                :src="item.pair.tokens[1]!.icon"
                 :ui="{
                   size: { sm: 'size-[20px]' },
                 }"
-                :alt="payToken(item.pair!).symbol"
+                :alt="item.pair.tokens[1]!.symbol"
               />
             </UAvatarGroup>
-            <span>{{ item.pair }}</span>
+            <span>{{ item.pairLabel }}</span>
             <span
               class="rounded-[3px] px-[4px] py-[2px]"
               :class="item.type === 1 ? 'text-buy bg-buy-300/10 dark:bg-buy-600/30' : 'text-sell bg-sell-300/10 dark:bg-sell-600/30'"
@@ -230,31 +237,10 @@ function isExpanded(row: (typeof datas.value)[number]) {
           class="flex justify-between w-full"
         >
           <span class="text-[#999]">{{ row.label }}</span>
-          <div
-            v-if="row.key === 'qty'"
-          >
-            {{ formatAmount(item.qty, 2) }}
-          </div>
-          <div
-            v-else-if="row.key === 'value'"
-          >
-            {{ formatAmount(item.u, 2) }}
-          </div>
-          <div
-            v-else-if="row.key === 'time'"
-            class="text-center"
-          >
-            {{ formatDate(item.tradeTime) }}
-          </div>
-          <div
-            v-else
-            class="text-center"
-          >
-            {{ formatAmount(item.price, 5) }}
-          </div>
+          <span>{{ item[row.key] }}</span>
         </div>
         <TradeHistoryChildren
-          v-if="item.orderId === expanded"
+          v-if="item.orderId+item.type === expanded"
           :trade="item"
         />
         <IconArrowDown
@@ -332,15 +318,6 @@ function isExpanded(row: (typeof datas.value)[number]) {
           >
             {{ t('canceled') }}
           </UBadge>
-        </template>
-        <template #qty-data="{ row }">
-          <span> {{ formatAmount(Number(row.qty), 2) }}</span>
-        </template>
-        <template #u-data="{ row }">
-          <span> {{ formatAmount(Number(row.u), 2) }}</span>
-        </template>
-        <template #time-data="{ row }">
-          <span> {{ formatDate(Number(row.tradeTime)) }}</span>
         </template>
         <template #expand-data="{ row }">
           <div class="flex items-center space-x-2">

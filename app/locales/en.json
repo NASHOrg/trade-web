@@ -176,5 +176,6 @@
   "canceled": "Canceled",
   "partlyMatched": "Partly Matched",
   "fullMatched": "Full Matched",
-  "noTransactions": "No transactions"
+  "noTransactions": "No transactions",
+  "orderTime": "Order Time"
 }

@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import type { BlockchainTradeHistory } from '~/types/swagger';
-
 const props = defineProps<{
-  trade: BlockchainTradeHistory['items'][number];
+  trade: {
+    type: string;
+    orderId: string;
+  };
 }>();
 const { $api } = useNuxtApp();
 const { t } = useI18n();
@@ -89,9 +90,10 @@ const datas = computed(() => {
   return (data.value?.items ?? []).map((item) => {
     return {
       ...item,
-      price: formatAmount(item.price || '0', 5),
-      qty: formatAmount(item.qty || '0', 2),
-      u: formatAmount(item.u.toString(), 2),
+      time: formatDate(item.tradeTime),
+      price: formatAmount(item.price || '0', 5, { format: true }),
+      qty: formatAmount(item.qty || '0', 2, { format: true }),
+      u: formatAmount(item.u.toString(), 2, { format: true }),
     };
   });
 });
@@ -139,28 +141,7 @@ const datas = computed(() => {
             class="flex justify-between w-full"
           >
             <span class="text-[#999]">{{ row.label }}</span>
-            <div
-              v-if="row.key === 'qty'"
-            >
-              {{ formatAmount(item.qty, 2) }}
-            </div>
-            <div
-              v-else-if="row.key === 'u'"
-            >
-              {{ formatAmount(item.u, 2) }}
-            </div>
-            <div
-              v-else-if="row.key === 'time'"
-              class="text-center"
-            >
-              {{ formatDate(item.tradeTime) }}
-            </div>
-            <div
-              v-else
-              class="text-center"
-            >
-              {{ formatAmount(item.price, 5) }}
-            </div>
+            <span>{{ item[row.key] }}</span>
           </div>
         </div>
       </div>
@@ -187,18 +168,6 @@ const datas = computed(() => {
               :data-index="count"
             >
           </colgroup>
-        </template>
-
-        <template #u-data="{ row }">
-          <span> {{ formatAmount(Number(row.u), 2) }}</span>
-        </template>
-
-        <template #time-data="{ row }">
-          <span> {{ formatDate(Number(row.tradeTime)) }}</span>
-        </template>
-
-        <template #price-data="{ row }">
-          <span> {{ formatAmount(row.price, 5) }}</span>
         </template>
       </UTable>
     </template>

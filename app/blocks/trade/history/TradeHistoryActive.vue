@@ -37,18 +37,13 @@ watch(counter, () => {
   }
 });
 
-function payToken(pair: string) {
-  const _pair = pairs.find(p => p.value === pair)!;
-  return _pair.tokens[1]!;
-}
-
 const columns = computed(() => [
   {
     key: 'time',
     label: t('time'),
   },
   {
-    key: 'pair',
+    key: 'pairLabel',
     label: t('pair'),
   },
   {
@@ -98,7 +93,23 @@ const smColumns = computed(() => [
 const datas = computed(() => {
   const localOrders = orders.value.filter(o => !data.value?.items.map(i => i.txHash).includes(o.txHash));
   const userOrders = [...localOrders, ...(data.value?.items ?? [])];
-  return userOrders.filter(o => !cancelledOrders.value.includes(o.txHash));
+  const _orders = userOrders.filter(o => !cancelledOrders.value.includes(o.txHash));
+  return _orders.map((o) => {
+    const pair = pairs.find(p => p.value === o.pair)!;
+    const price = formatAmount(o.price.toString(), 5, { format: true });
+    const qty = `${formatAmount(o.filledQty.toString(), 2, { format: true })}/${formatAmount(o.qty.toString(), 2, { format: true })}`;
+    const value = `${formatAmount(o.filledU.toString(), 2, { format: true })}/${formatAmount(o.originalU.toString(), 2, { format: true })}`;
+    const time = formatDate(o.time);
+    return {
+      ...o,
+      pair: pair,
+      pairLabel: pair.label,
+      price,
+      qty,
+      value,
+      time,
+    };
+  });
 });
 
 watch(data, () => {
@@ -212,22 +223,22 @@ onMounted(() => {
               :max="2"
             >
               <UAvatar
-                src="/images/bol.png"
-                alt="BOL"
+                :src="item.pair.tokens[0]!.icon"
+                :alt="item.pair.tokens[0]!.symbol"
                 :ui="{
                   size: { sm: 'size-[20px]' },
                 }
                 "
               />
               <UAvatar
-                :src="payToken(item.pair!).icon"
+                :src="item.pair.tokens[1]!.icon"
                 :ui="{
                   size: { sm: 'size-[20px]' },
                 }"
-                :alt="payToken(item.pair!).symbol"
+                :alt="item.pair.tokens[1]!.symbol"
               />
             </UAvatarGroup>
-            <span>{{ item.pair }}</span>
+            <span>{{ item.pairLabel }}</span>
             <span
               class="rounded-[3px] px-[4px] py-[2px]"
               :class="item.type === 1 ? 'text-buy bg-buy-300/10 dark:bg-buy-600/30' : 'text-sell bg-sell-300/10 dark:bg-sell-600/30'"
@@ -254,34 +265,7 @@ onMounted(() => {
           class="flex justify-between w-full text-[14px]"
         >
           <span class="text-[#999]">{{ row.label }}</span>
-          <div
-            v-if="row.key === 'qty'"
-            class="inline-flex items-center space-x-[2px]"
-          >
-            <span>{{ formatAmount(item.filledQty.toString(), 2) }}</span>
-            <span>/</span>
-            <span>{{ formatAmount(item.qty, 2) }}</span>
-          </div>
-          <div
-            v-else-if="row.key === 'value'"
-            class="inline-flex items-center space-x-[2px]"
-          >
-            <span>{{ formatAmount(item.filledU.toString(), 2) }}</span>
-            <span>/</span>
-            <span>{{ formatAmount(item.originalU.toString(), 2) }}</span>
-          </div>
-          <div
-            v-else-if="row.key === 'time'"
-            class="text-center"
-          >
-            {{ formatDate(item.time) }}
-          </div>
-          <div
-            v-else
-            class="text-center"
-          >
-            {{ formatAmount(item.price, 5) }}
-          </div>
+          <span>{{ item[row.key] }}</span>
         </div>
       </div>
       <UTable
@@ -308,16 +292,6 @@ onMounted(() => {
           <span />
         </template>
 
-        <template #qty-data="{ row }">
-          <span>{{ formatAmount(row["filledQty"], 2) }}</span>
-          <span>/</span>
-          <span>{{ formatAmount(row["qty"], 2) }}</span>
-        </template>
-        <template #value-data="{ row }">
-          <span>{{ formatAmount(row["filledU"], 2) }}</span>
-          <span>/</span>
-          <span>{{ formatAmount(row["originalU"], 2) }}</span>
-        </template>
         <template #type-data="{ row }">
           <div>
             <span
@@ -329,10 +303,6 @@ onMounted(() => {
               class="text-buy"
             >{{ t("buy") }}</span>
           </div>
-        </template>
-
-        <template #time-data="{ row }">
-          <span> {{ formatDate(Number(row.time)) }}</span>
         </template>
 
         <template #action-data="{ row }">
