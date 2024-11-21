@@ -182,6 +182,8 @@ async function onBuy() {
       verified: false,
     };
     const qty = quantity.value;
+    const symbols = currentPair.value?.label.split('/');
+    const value = state.total;
     price.value = undefined;
     quantity.value = undefined;
     toast.promise(tradeApi.checkTransaction(tx.hash), {
@@ -192,7 +194,7 @@ async function onBuy() {
         return t('transactionSuccess');
       },
       error: () => t('transactionFail'),
-      description: `Buy ${qty} BOL`,
+      description: `Buy ${qty} ${symbols[0]} with ${value} ${symbols[1]}`,
       action: {
         label: t('viewTx'),
         onClick: () => {
@@ -343,7 +345,7 @@ watch(
         :loading="isBuying"
         @click="onBuy"
       >
-        Buy Bol
+        {{ `${t('buy')} ${currentPair.tokens[0]!.symbol}` }}
       </UButton>
 
       <div

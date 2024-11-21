@@ -78,7 +78,7 @@ const columns = computed(() => {
             {{
               formatAmount(item[col.value], col.value === "price" ? 5 : 2, {
                 endPad: true,
-                format: col.value === "value",
+                format: true,
                 rounded: col.value === 'qty',
               })
             }}

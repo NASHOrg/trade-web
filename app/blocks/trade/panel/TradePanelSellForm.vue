@@ -163,7 +163,9 @@ async function onSell() {
       pair: currentPair.value?.value,
       verified: false,
     };
+    const symbols = currentPair.value?.label.split('/');
     const qty = quantity.value;
+    const value = state.total;
     price.value = undefined;
     quantity.value = undefined;
     toast.promise(tradeApi.checkTransaction(tx.hash), {
@@ -174,7 +176,7 @@ async function onSell() {
         return t('transactionSuccess');
       },
       error: () => t('transactionFail'),
-      description: `Sell ${qty} BOL`,
+      description: `Sell ${qty} ${symbols[0]} with ${value} ${symbols[1]}`,
       action: {
         label: t('viewTx'),
         onClick: () => {
@@ -324,7 +326,7 @@ watch(
         :disabled="balance === undefined || total === '0'"
         @click="onSell"
       >
-        Sell Bol
+        {{ `${t('sell')} ${currentPair.tokens[0]!.symbol}` }}
       </UButton>
       <div
         class="flex justify-center items-center mt-2 space-x-[8px] text-[#B0B0B0] text-[14px]"
