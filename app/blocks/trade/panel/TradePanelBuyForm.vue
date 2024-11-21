@@ -22,6 +22,7 @@ const props = defineProps<{
 
 const { addOrder } = useOrders();
 const balance = ref<string | undefined>();
+const selectedPrice = useState<string>('selected-price');
 const balanceKey = ref(0);
 
 const { address, open, chainId, switchNetwork } = useWallet();
@@ -133,6 +134,10 @@ watch(
     deep: true,
   },
 );
+
+watch(selectedPrice, () => {
+  state.price = formatAmount(selectedPrice.value, 5);
+});
 
 const modal = useModal();
 function onDeposit() {

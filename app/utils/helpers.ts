@@ -111,7 +111,7 @@ export function formatAmount(
     BigNumber.config({ EXPONENTIAL_AT: 100 });
     /// return with 0.{decimal}f format
     return amount.toString().replace(/0\.(0+)([1-9][0-9]*)/, (match, zeros, rest) => {
-      return `0.{${zeros.length}}${BigNumber(rest).dp(2).toString()}`;
+      return `0.{${zeros.length}}${rest.slice(0, decimal)}`;
     });
   }
 

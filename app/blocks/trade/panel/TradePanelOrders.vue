@@ -3,6 +3,7 @@ const { currentPair } = useNetworkConfig();
 const { $api } = useNuxtApp();
 const { counter } = useInterval(3000, { controls: true });
 const { isMD } = useDevice();
+const selectedPrice = useState('selected-price');
 
 const queryParams = ref({
   pageNo: 1,
@@ -65,6 +66,7 @@ const columns = computed(() => {
         v-for="(item, i) in data?.items ?? []"
         :key="i"
         class="grid md:px-4 px-2 md:py-2.5 py-1 md:grid-cols-3 grid-cols-2 md:text-[14px] text-xs text-start cursor-pointer hover:bg-gray-50/10"
+        @click="selectedPrice = item.price"
       >
         <span
           v-for="col in columns"

@@ -3,9 +3,10 @@ import { formatAmount } from '#imports';
 
 const { isMD, isXL } = useDevice();
 
-const { replace, currentRoute } = useRouter();
 const { $api } = useNuxtApp();
 const { currentPair } = useNetworkConfig();
+const selectedPrice = useState('selected-price');
+
 const columns = computed(() => {
   const token0 = currentPair.value?.tokens[0];
   const token1 = currentPair.value?.tokens[1];
@@ -85,7 +86,7 @@ const buyBList = computed(() => {
 });
 
 const onSelectPrice = (price: string) => {
-  replace({ query: { ...(currentRoute.value.query ?? {}), price } });
+  selectedPrice.value = price;
 };
 </script>
 
@@ -166,7 +167,7 @@ const onSelectPrice = (price: string) => {
             {{
               formatAmount(item[col.value], col.value === "price" ? 5 : 2, {
                 endPad: true,
-                format: col.value === "value",
+                format: true,
               })
             }}
           </span>

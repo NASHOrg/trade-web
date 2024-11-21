@@ -14,6 +14,7 @@ const { address, open, chainId, switchNetwork } = useWallet();
 const { t } = useI18n();
 const { currentPair } = useNetworkConfig();
 const { network, tradeApi } = useNetworkConfig();
+const selectedPrice = useState<string>('selected-price');
 
 const { data } = useNuxtData('order-book');
 
@@ -125,6 +126,10 @@ watch(
     deep: true,
   },
 );
+
+watch(selectedPrice, () => {
+  state.price = formatAmount(selectedPrice.value, 5);
+});
 
 const isSelling = ref(false);
 async function onSell() {
