@@ -58,6 +58,9 @@ function setTooltip() {
   if (!mainChartContainer.value || !mainChart || !candlestickSeries || !histogramSeries) return;
   const allData = candlestickSeries.data();
   const values = histogramSeries.data();
+  if (allData.length === 0) {
+    return;
+  }
   const data = allData[allData.length - 1];
   const value = values[values.length - 1] as any;
   tooltipData.value = { ...data as any, value: value.value };

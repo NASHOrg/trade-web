@@ -38,6 +38,14 @@ watch(() => isMD || showChart, (value) => {
 const timePriceForToken = computed(() => {
   if (!tradeData.value) return;
   const items = tradeData.value.items as any[];
+  if (items.length === 0) {
+    return [
+      { id: '24H-high', label: '24H High', value: '0' },
+      { id: '24H-low', label: '24H Low', value: '0' },
+      { id: '24H-vol', label: '24H Vol', value: '0' },
+
+    ];
+  }
   const high = BN.max(...items.slice(0, 24).map(item => BN(item.highPrice)));
   const low = BN.min(...items.slice(0, 24).map(item => BN(item.lowPrice)));
   const vol = items.slice(0, 24).reduce((acc, item) => acc.plus(BN(item.tradeAmount)), BN(0));
@@ -51,8 +59,9 @@ const timePriceForToken = computed(() => {
 const priceChange = computed(() => {
   if (!tradeData.value) return 0;
   const items = tradeData.value.items as any[];
+  if (items.length === 0) return '0';
   const dailyData = items.slice(0, 24);
-  const close = dailyData[0].closePrice;
+  const close = dailyData[0]?.closePrice || '0';
   const open = dailyData[dailyData.length - 1].openPrice;
   const price = BN(close).minus(open).div(open).times(100).dp(2, 1).toString();
   return Number(price);
