@@ -163,7 +163,8 @@ async function onBuy() {
     const pay = tradeApi.calcUsdt(state.quantity, state.price);
     const isApproved = await tradeApi.isUsdtApproved(address.value, pay);
     if (!isApproved) {
-      await tradeApi.approveUsdt(provider);
+      const res = await tradeApi.approveUsdt(provider);
+      await tradeApi.checkTransaction(res.hash);
     }
     const tx = await tradeApi.createBuyOrder(provider, { amount, pay });
     const order = {
