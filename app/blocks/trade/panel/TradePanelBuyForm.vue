@@ -316,10 +316,9 @@ watch(
       </div>
       <div v-else />
       <UButton
-        to=""
         variant="outline"
         size="xs"
-        class="rounded-[4px] h-[22px] text-[12px] !px-1"
+        class="rounded-[4px] text-[12px] !px-3 mt-1 md:mt-0"
         @click="onDeposit"
       >
         {{ t("addFund") }}

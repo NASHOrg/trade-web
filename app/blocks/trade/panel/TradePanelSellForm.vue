@@ -284,9 +284,10 @@ watch(
       <div
         v-if="address"
         key="balance"
-        class="text-white text-[14px] flex space-x-1"
+        class="w-full text-white text-[14px] flex space-x-1 justify-between md:justify-start"
       >
-        <span>Balance:</span>
+        <span>Balance</span>
+        <span class="hidden md:inline">:</span>
         <TokenBalance
           v-if="currentPair.tokens[0]"
           :key="balanceKey"
@@ -315,7 +316,7 @@ watch(
         class="h-[40px] rounded-full border-0 ring-0 text-sm font-normal bg-[#272727]"
         @click="open"
       >
-        <span class="text-primary"> Connect Wallet</span>
+        <span class="text-primary">Connect Wallet</span>
       </UButton>
       <UButton
         v-else
