@@ -86,7 +86,7 @@ function onSelect(id: string) {
               <span v-else>{{ $t("buy") }}</span>
             </template>
             <template v-else-if="['price'].includes(item.id)">
-              {{ data?.latestPrice ?? '0' }}
+              {{ formatAmount(data?.latestPrice ?? '0', 5) }}
             </template>
           </span>
         </div>
