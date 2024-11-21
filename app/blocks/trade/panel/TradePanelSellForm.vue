@@ -61,7 +61,6 @@ const quantity = computed({
     else {
       state.total = BN(state.quantity || '0')
         .times(state.price || '0')
-        .dp(2, 1)
         .toString();
     }
   },
