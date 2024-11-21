@@ -305,7 +305,7 @@ watch(
       </UButton> -->
     </div>
     <div class="grow" />
-    <div class="pt-5 w-full pb-6">
+    <div class="pt-5 w-full">
       <UButton
         v-if="!address"
         block
@@ -326,6 +326,24 @@ watch(
       >
         Sell Bol
       </UButton>
+      <div
+        class="flex justify-center items-center mt-2 space-x-[8px] text-[#B0B0B0] text-[14px]"
+      >
+        <UPopover
+          :popper="{ placement: 'top' }"
+          mode="hover"
+        >
+          <IconHelp />
+          <template #panel>
+            <div class="flex flex-col p-2 text-[12px] space-y-[8px]">
+              <span>{{ $t("tradingFeeRate") }}</span>
+              <span>{{ $t("buyer") }}: 0.00%</span>
+              <span>{{ $t("seller") }}: {{ currentPair.fee }}</span>
+            </div>
+          </template>
+        </UPopover>
+        <span>{{ $t("tradingFee") }}</span>
+      </div>
     </div>
   </div>
 </template>

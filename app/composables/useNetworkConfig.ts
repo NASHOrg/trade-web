@@ -19,8 +19,7 @@ export function useNetworkConfig() {
     ({
       value: `BOOL/${pair[1]!.symbol}`,
       label: pair.map(item => item.symbol).join(' / '),
-      type: 0,
-      price: '0.01',
+      fee: '0.80%',
       tokens: pair,
     }),
   );

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BN from 'bignumber.js';
 import { formatAmount } from '#imports';
 
 const { isMD, isXL } = useDevice();
@@ -124,12 +125,17 @@ const onSelectPrice = (price: string) => {
             class="first:text-start text-end"
             :class="{ 'text-sell': col.value === 'price' }"
           >
-            {{
-              formatAmount(item[col.value], col.value === "price" ? 5 : 2, {
-                endPad: true,
-                format: col.value === "value",
-              })
-            }}
+            <span v-if="col.value === 'price'">
+              {{ formatAmount(BN(item.value).div(BN(item.qty)), 5, { endPad: true, format: true }) }}
+            </span>
+            <span v-else>
+              {{
+                formatAmount(item[col.value], 2, {
+                  endPad: true,
+                  format: col.value === "value",
+                })
+              }}
+            </span>
           </span>
         </div>
       </div>
@@ -164,12 +170,16 @@ const onSelectPrice = (price: string) => {
             class="first:text-start text-end"
             :class="{ 'text-buy': col.value === 'price' }"
           >
-            {{
-              formatAmount(item[col.value], col.value === "price" ? 5 : 2, {
+            <span v-if="col.value === 'price'">
+              {{ formatAmount(BN(item.value).div(BN(item.qty)), 5, { endPad: true, format: true }) }}
+            </span>
+            <span v-else>{{
+              formatAmount(item[col.value], 2, {
                 endPad: true,
                 format: true,
               })
             }}
+            </span>
           </span>
         </div>
       </div>

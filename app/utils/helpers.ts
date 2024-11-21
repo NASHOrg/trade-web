@@ -115,6 +115,15 @@ export function formatAmount(
     });
   }
 
+  const formatMinimum = BigNumber(1).div(BigNumber(10).pow(5));
+  if (amount.isLessThan(formatMinimum)) {
+    BigNumber.config({ EXPONENTIAL_AT: 100 });
+    /// return with 0.{decimal}f format
+    return amount.toString().replace(/0\.(0+)([1-9][0-9]*)/, (match, zeros, rest) => {
+      return `0.{zeros}${rest.slice(0, decimal)}`;
+    });
+  }
+
   if (amount.isGreaterThanOrEqualTo(units.trillion)) {
     return `${amount
       .dividedBy(units.trillion)

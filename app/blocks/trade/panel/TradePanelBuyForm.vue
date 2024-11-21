@@ -357,8 +357,8 @@ watch(
           <template #panel>
             <div class="flex flex-col p-2 text-[12px] space-y-[8px]">
               <span>{{ $t("tradingFeeRate") }}</span>
-              <span>{{ $t("maker") }}: 0.00%</span>
-              <span>{{ $t("taker") }}: 0.30%</span>
+              <span>{{ $t("buyer") }}: 0.00%</span>
+              <span>{{ $t("seller") }}: {{ currentPair.fee }}</span>
             </div>
           </template>
         </UPopover>
