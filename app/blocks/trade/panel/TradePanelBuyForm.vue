@@ -284,7 +284,7 @@ watch(
     </div>
     <div class="form-item">
       <span>Value</span>
-      <div class="flex justify-end items-center space-x-[10px]">
+      <div class="flex justify-end items-center">
         <CustomInput
           v-model="total"
           placeholder="0.0"
@@ -370,7 +370,7 @@ watch(
 
 <style scoped>
 .form-item {
-  @apply h-[40px] bg-[#242424] text-[#B0B0B0] rounded-[4px] flex justify-between items-center px-[16px] text-sm font-normal;
+  @apply h-[40px] bg-[#242424] text-[#B0B0B0] rounded-[4px] flex justify-between items-center px-[14px] text-sm font-normal;
   @apply border-[1px] border-[#4D4D4D];
 }
 </style>

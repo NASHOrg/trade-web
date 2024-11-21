@@ -94,9 +94,7 @@ watch(counter, () => {
 });
 
 const datas = computed(() => {
-  const records = (data.value?.items ?? []).map((item) => {
-    return { ...item };
-  });
+  const records = data.value?.items ?? [];
   return records.map((r) => {
     const pair = pairs.find(p => p.value === r.pair)!;
     return {
@@ -143,7 +141,7 @@ function isExpanded(row: (typeof datas.value)[number]) {
 <template>
   <div class="w-full flex flex-col items-center select-none">
     <div
-      v-if="status === 'pending'"
+      v-if="status === 'pending' && (!data || queryParams.pageNo > 1)"
       class="my-[78px] w-[68px] h-[68px] flex flex-col justify-center items-center"
     >
       <UIcon
@@ -170,7 +168,7 @@ function isExpanded(row: (typeof datas.value)[number]) {
       <div
         v-for="item in datas"
         :key="item.orderId"
-        class="md:hidden mt-[10px] p-[16px] w-full flex flex-col space-y-[16px] border-b border-[#eaeaaea] dark:border-[#2e2e2e] last:border-b-0"
+        class="md:hidden mt-[10px] p-[16px] w-full flex flex-col space-y-[14px] border-b border-[#eaeaaea] dark:border-[#2e2e2e] last:border-b-0"
         @click="expanded === (item.orderId+item.type) ? expanded = '' : expanded = (item.orderId+item.type)"
       >
         <div class="flex justify-between">
@@ -234,14 +232,14 @@ function isExpanded(row: (typeof datas.value)[number]) {
         <div
           v-for="row in smColumns"
           :key="row.key"
-          class="flex justify-between w-full"
+          class="flex justify-between w-full text-[14px]"
         >
           <span class="text-[#999]">{{ row.label }}</span>
           <span>{{ item[row.key] }}</span>
         </div>
         <TradeHistoryChildren
           v-if="item.orderId+item.type === expanded"
-          :trade="item"
+          :trade="{ type: item.type.toString(), orderId: item.orderId }"
         />
         <IconArrowDown
           class="transition-transform w-[12px] mx-auto cursor-pointer"

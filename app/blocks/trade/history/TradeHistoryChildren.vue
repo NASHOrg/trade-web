@@ -111,7 +111,6 @@ const datas = computed(() => {
         class="animate-spin text-primary-500 w-6 h-6 flex justify-center"
         name="quill:loading-spin"
       />
-      <span class="text-sm font-medium text-gray-400">Loading...</span>
     </div>
     <div
       v-else-if="data && Number(data.totalCount) === 0"
@@ -129,7 +128,7 @@ const datas = computed(() => {
       </div>
     </div>
     <template v-else>
-      <div class="md:hidden flex flex-col space-y-[16px] w-full">
+      <div class="md:hidden flex flex-col space-y-[14px] w-full">
         <div
           v-for="item in datas"
           :key="item.orderId"
@@ -138,7 +137,7 @@ const datas = computed(() => {
           <div
             v-for="row in smColumns"
             :key="row.key"
-            class="flex justify-between w-full"
+            class="flex justify-between w-full text-[14px]"
           >
             <span class="text-[#999]">{{ row.label }}</span>
             <span>{{ item[row.key] }}</span>

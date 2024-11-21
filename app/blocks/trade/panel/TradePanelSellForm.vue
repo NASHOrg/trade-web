@@ -283,7 +283,7 @@ watch(
       <div
         v-if="address"
         key="balance"
-        class="w-full text-white text-[14px] flex space-x-1 justify-between md:justify-start"
+        class="w-full text-white text-[14px] flex justify-between md:justify-start"
       >
         <span>Balance</span>
         <span class="hidden md:inline">:</span>
@@ -291,6 +291,7 @@ watch(
           v-if="currentPair.tokens[0]"
           :key="balanceKey"
           :address="address"
+          class="ms-1"
           :token="currentPair.tokens[0]"
           :config="{ showSymbol: true, refresh: true }"
           @change="(value) => (balance = value)"
@@ -352,7 +353,7 @@ watch(
 
 <style scoped>
 .form-item {
-  @apply h-[40px] bg-[#242424] text-[#B0B0B0] rounded-[4px] flex justify-between items-center px-[16px] text-sm font-normal;
+  @apply h-[40px] bg-[#242424] text-[#B0B0B0] rounded-[4px] flex justify-between items-center px-[14px] text-sm font-normal;
   @apply border-[1px] border-[#4D4D4D];
 }
 </style>
