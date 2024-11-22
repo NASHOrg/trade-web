@@ -117,8 +117,11 @@ async function initChart() {
       priceFormat: {
         type: 'volume',
       },
+      lastValueVisible: false,
       priceScaleId: '',
+      priceLineVisible: false,
       color: '#333',
+      base: 0,
     });
   }
 
@@ -129,7 +132,6 @@ async function initChart() {
       borderVisible: false,
       wickUpColor: '#0AC49E',
       wickDownColor: '#E24444',
-      priceLineColor: '#E24444',
       priceScaleId: 'right', // 使用右侧价格刻度
       priceLineVisible: true,
       priceFormat: {
@@ -158,7 +160,7 @@ async function initChart() {
   const valumeData = list.map(d => ({
     time: d.time,
     value: d.value ?? 1000 * Math.random(),
-    color: d.close >= d.open ? '#0AC49E' : '#E24444',
+    color: d.close >= d.open ? '#0AC49E90' : '#E2444490',
   })) as any;
   histogramSeries.setData(valumeData);
   setTooltip();
@@ -198,7 +200,7 @@ function updateChart() {
     histogramSeries.update({
       time: data.time,
       value: Number(item.tradeAmount),
-      color: Number(item.closePrice) >= Number(item.openPrice) ? '#0AC49E' : '#E24444',
+      color: Number(item.closePrice) >= Number(item.openPrice) ? '#0AC49E90' : '#E2444490',
     });
     if (tooltipData.value?.time === data.time) {
       tooltipData.value = data as any;
