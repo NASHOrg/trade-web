@@ -177,5 +177,6 @@
   "partlyMatched": "Partly Matched",
   "fullMatched": "Full Matched",
   "noTransactions": "No transactions",
-  "orderTime": "Order Time"
+  "orderTime": "Order Time",
+  "fee": "Fee"
 }

@@ -35,6 +35,10 @@ const columns = computed(() => {
       label: t('value'),
     },
     {
+      key: 'fee',
+      label: t('fee'),
+    },
+    {
       key: 'expand',
     },
     {
@@ -58,8 +62,12 @@ const smColumns = computed(() => {
       label: t('totalQty'),
     },
     {
-      key: 'value',
+      key: 'u',
       label: t('totalValue'),
+    },
+    {
+      key: 'fee',
+      label: t('fee'),
     },
   ];
 });
@@ -105,6 +113,7 @@ const datas = computed(() => {
       qty: formatAmount(r.qty, 2, { format: true }),
       price: formatAmount(r.price || '0', 5, { format: true }),
       u: formatAmount(r.u, 2, { format: true }),
+      fee: formatAmount(r.fee, 2, { format: true }),
     };
   });
 });

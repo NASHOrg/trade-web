@@ -612,6 +612,8 @@ export interface paths {
                                 u: string;
                                 /** @description 0 初始化 1完全成交 2部分成交 -1撤单 */
                                 status: number;
+                                /** @description 手续费 */
+                                fee: number;
                             }[];
                         };
                     };
@@ -676,6 +678,8 @@ export interface paths {
                                 filledU: number;
                                 /** @description 哈希 */
                                 txHash: string;
+                                /** @description 手续费 */
+                                fee: number;
                             }[];
                         };
                     };
