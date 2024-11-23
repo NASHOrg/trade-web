@@ -43,7 +43,6 @@ const timePriceForToken = computed(() => {
       { id: '24H-high', label: '24H High', value: '0' },
       { id: '24H-low', label: '24H Low', value: '0' },
       { id: '24H-vol', label: '24H Vol', value: '0' },
-
     ];
   }
   const high = BN.max(...items.slice(0, 24).map(item => BN(item.highPrice)));

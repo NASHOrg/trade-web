@@ -171,7 +171,7 @@ const onSelectPrice = (price: string) => {
             :class="{ 'text-buy': col.value === 'price' }"
           >
             <span v-if="col.value === 'price'">
-              {{ formatAmount(BN(item.value).div(BN(item.qty)), 5, { endPad: true, format: true }) }}
+              {{ formatAmount(item.price, 5, { endPad: true, format: true }) }}
             </span>
             <span v-else>{{
               formatAmount(item[col.value], 2, {

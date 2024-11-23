@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { Toaster } from 'vue-sonner';
 
+const colorMode = useColorMode();
+colorMode.value = 'dark';
 const { metadata } = useAppConfig();
 useHead({
   title: metadata.name,

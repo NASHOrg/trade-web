@@ -85,7 +85,6 @@ export class TradeApi extends BaseEvmApi {
       .times(BN(price))
       .times(10 ** this.token.decimals)
       .toFixed(0, BN.ROUND_DOWN);
-    console.log(receive);
     return BigInt(receive);
   }
 
