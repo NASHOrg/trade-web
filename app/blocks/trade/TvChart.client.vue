@@ -3,7 +3,7 @@ import type { IChartApi, ISeriesApi, Time } from 'lightweight-charts';
 import { createChart } from 'lightweight-charts';
 
 const props = defineProps<{
-  range: 'day' | 'hour';
+  range: ChartRange;
 }>();
 
 const { $api } = useNuxtApp();
@@ -25,13 +25,13 @@ const tooltipData = ref<{
 } | undefined>();
 
 const { counter } = useInterval(3000, { controls: true });
-const type = computed(() => props.range === 'day' ? '1' : '0');
 
 const { data: newData } = useAsyncData(
   `trade-statistic-${props.range}`,
   () => {
     return $api.blockchainTradeStatistic({
-      type: type.value,
+      type: rangeType(props.range),
+      ...rangeParams(props.range),
     });
   },
   {
@@ -41,18 +41,46 @@ const { data: newData } = useAsyncData(
 );
 
 const maxVisibleBars = 100;
-// function changeChartRange() {
-//   const visibleLogicalRange = mainChart!.timeScale()
-//     .getVisibleLogicalRange();
-//   if (!visibleLogicalRange) return;
-//   if (visibleLogicalRange.from <= -50) {
-//     const newData = hourData.map(t => ({
-//       ...t, time: timeToLocal(t.time), close: t.open, open: t.close,
-//     }));
-//     const existingData = candlestickSeries!.data();
-//     candlestickSeries!.setData([...newData, ...existingData] as any);
-//   }
-// }
+let fetchOldData = false;
+async function changeChartRange() {
+  const visibleLogicalRange = mainChart!.timeScale()
+    .getVisibleLogicalRange();
+  if (!visibleLogicalRange) return;
+  if (visibleLogicalRange.from <= -20 && !fetchOldData) {
+    fetchOldData = true;
+    const existingData = candlestickSeries!.data();
+    const time = existingData[0]!.time;
+    const tradeData = await $api.blockchainTradeStatistic(
+      { type: rangeType(props.range),
+        ...rangeParams(props.range, Number(time)),
+      },
+    );
+    let list = (tradeData ?? [])
+      .map((item) => {
+        return {
+          time: Number(item.time) / 1000,
+          open: Number(item.openPrice),
+          high: Number(item.highPrice),
+          low: Number(item.lowPrice),
+          close: Number(item.closePrice),
+          value: Number(item.tradeAmount),
+        };
+      }).reverse();
+    if (list.length === 0) {
+      fetchOldData = false;
+      return;
+    }
+    list = list.slice(0, list.length - 1);
+    const valumeData = list.map(d => ({
+      time: d.time,
+      value: d.value ?? 1000 * Math.random(),
+      color: d.close >= d.open ? '#0AC49E90' : '#E2444490',
+    })) as any;
+    candlestickSeries!.setData([...list, ...existingData] as any);
+    histogramSeries!.setData([...valumeData, ...histogramSeries!.data()!]);
+    fetchOldData = false;
+  }
+}
 
 function setTooltip() {
   if (!mainChartContainer.value || !mainChart || !candlestickSeries || !histogramSeries) return;
@@ -71,13 +99,17 @@ function setTooltip() {
     const values = histogramSeries!.data();
     const data = param.time ? allData.find(t => t.time === param.time)! : allData[allData.length - 1]!;
     const value = param.time ? values.find(t => t.time === param.time)! : values[values.length - 1]!;
-    tooltipData.value = { ...data as any, value: (value as any).value };
+    tooltipData.value = { ...data as any, value: (value as any)?.value };
   });
 }
 
 async function initChart() {
-  const tradeData = await $api.blockchainTradeStatistic({ type: type.value });
-  const list = (tradeData!.items ?? [])
+  const tradeData = await $api.blockchainTradeStatistic(
+    { type: rangeType(props.range),
+      ...rangeParams(props.range),
+    },
+  );
+  const list = (tradeData ?? [])
     .map((item) => {
       return {
         time: timeToLocal(Number(item.time) / 1000),
@@ -178,14 +210,14 @@ async function initChart() {
     });
   }
 
-  // mainChart.timeScale().subscribeVisibleTimeRangeChange(changeChartRange);
+  mainChart.timeScale().subscribeVisibleTimeRangeChange(changeChartRange);
 }
 
 function updateChart() {
   if (!candlestickSeries || !histogramSeries) {
     return;
   }
-  const item = newData.value?.items?.[0];
+  const item = newData.value?.[0];
 
   if (item) {
     const data = {

@@ -758,8 +758,12 @@ export interface paths {
         get: {
             parameters: {
                 query: {
-                    /** type {0:hour, 1:day, 2:month} */
+                    /** type {0:hour, 1:day, 2:month，3:minute, 4: 15minutes} */
                     type: string;
+                    /** 起始时间 */
+                    start: string;
+                    /** 截止时间 */
+                    end: string;
                 };
             };
             responses: {
@@ -769,27 +773,13 @@ export interface paths {
                         msg?: string;
                         code?: string;
                         data?: {
-                            hasPrev?: boolean;
-                            pageNo?: number;
-                            totalPage?: number;
-                            pageSize?: number;
-                            hasNext?: boolean;
-                            totalCount?: number;
-                            items?: {
-                                /** @description 交易数量 */
-                                tradeAmount: number;
-                                /** @description 最高价 */
-                                highPrice: number;
-                                /** @description 最低价 */
-                                lowPrice: number;
-                                /** @description 开盘价 */
-                                openPrice: number;
-                                /** @description 收盘价 */
-                                closePrice: number;
-                                /** @description 时间节点 */
-                                time: number;
-                            }[];
-                        };
+                            tradeAmount: number;
+                            highPrice: number;
+                            lowPrice: number;
+                            openPrice: number;
+                            closePrice: number;
+                            time: string;
+                        }[];
                     };
                 };
             };

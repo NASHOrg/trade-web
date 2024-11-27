@@ -7,7 +7,7 @@ const showChart = useStorage<boolean>('xbit-show-shart', false);
 const { currentPair } = useNetworkConfig();
 const { $api } = useNuxtApp();
 const { isMD } = useDevice();
-const range = ref<'hour' | 'day'>('hour');
+const range = ref<ChartRange>('15min');
 
 const { data: tradeData } = useNuxtData('trade-statistic-hour');
 
@@ -18,6 +18,7 @@ useAsyncData(
   () => {
     return $api.blockchainTradeStatistic({
       type: '0',
+      ...rangeParams('hour'),
     });
   },
   {
@@ -37,7 +38,7 @@ watch(() => isMD || showChart, (value) => {
 
 const timePriceForToken = computed(() => {
   if (!tradeData.value) return;
-  const items = tradeData.value.items as any[];
+  const items = tradeData.value as any[];
   if (items.length === 0) {
     return [
       { id: '24H-high', label: '24H High', value: '0' },
@@ -57,7 +58,7 @@ const timePriceForToken = computed(() => {
 
 const priceChange = computed(() => {
   if (!tradeData.value) return 0;
-  const items = tradeData.value.items as any[];
+  const items = tradeData.value as any[];
   if (items.length === 0) return '0';
   const dailyData = items.slice(0, 24);
   const close = dailyData[0]?.closePrice || '0';
@@ -67,9 +68,11 @@ const priceChange = computed(() => {
 });
 
 const timeSpecifiedTrade = [
-  { id: 'hour', label: '1Hour' },
-  { id: 'day', label: '1Day' },
-  // { id: "2", label: "1month" },
+  { id: 'minute', label: '1m' },
+  { id: '15min', label: '15m' },
+  { id: 'hour', label: '1H' },
+  { id: 'day', label: '1D' },
+  { id: 'month', label: '1M' },
 ] as const;
 
 const slideover = useSlideover();
@@ -100,8 +103,8 @@ function openTokens() {
           >--</span>
           <span
             v-else
-            :class="priceChange >= 0 ? 'text-buy' : 'text-sell'"
-          >{{ `${priceChange >= 0 ? '+' : ''}${priceChange}%` }}</span>
+            :class="Number(priceChange) >= 0 ? 'text-buy' : 'text-sell'"
+          >{{ `${Number(priceChange) >= 0 ? '+' : ''}${priceChange}%` }}</span>
         </div>
 
         <div

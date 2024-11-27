@@ -1,5 +1,77 @@
-// Lightweight Charts™ Example: Realtime updates
-// https://tradingview.github.io/lightweight-charts/tutorials/demos/realtime-updates
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
+
+export type ChartRange = 'day' | 'hour' | 'minute' | '15min' | 'month';
+
+const oneMinute = 60;
+const oneHour = 60 * oneMinute;
+const oneDay = 24 * 60 * oneMinute;
+
+export const rangeType = (range: ChartRange) => {
+  switch (range) {
+    case 'day':
+      return '1';
+    case 'hour':
+      return '0';
+    case 'minute':
+      return '3';
+    case '15min':
+      return '4';
+    case 'month':
+      return '2';
+  }
+};
+
+export const rangeInterval = (range: ChartRange) => {
+  switch (range) {
+    case 'day':
+      return 30 * oneDay;
+    case 'hour':
+      return 5 * oneDay;
+    case 'minute':
+      return 5 * oneHour;
+    case '15min':
+      return oneDay;
+    case 'month':
+      return 150 * oneDay;
+  };
+};
+
+export const rangeParams = (range: ChartRange, time?: number) => {
+  let now = time ?? Math.floor(new Date().getTime() / 1000);
+  switch (range) {
+    case 'day':
+      now = Math.ceil(now / oneDay) * oneDay;
+      break;
+    case 'hour':
+      now = Math.ceil(now / oneHour) * oneHour;
+      break;
+    case 'minute':
+      now = Math.ceil(now / oneMinute) * oneMinute;
+      break;
+    case '15min':
+      now = Math.ceil(now / (15 * oneMinute)) * (15 * oneMinute);
+      break;
+    case 'month': {
+      const nextMonth = dayjs.unix(now).utc().endOf('month').add(1, 'day').startOf('day');
+      now = nextMonth.unix();
+      break;
+    }
+  }
+  const intervalValue = rangeInterval(range);
+  if (range === 'month') {
+    return {
+      start: dayjs(now * 1000).utc().subtract(2, 'month').valueOf().toString(),
+      end: (now * 1000).toString(),
+    };
+  }
+  return {
+    start: ((now - intervalValue) * 1000).toString(),
+    end: (now * 1000).toString(),
+  };
+};
 
 let randomFactor = 5 + Math.random() * 5;
 const samplePoint = (i: number) =>
