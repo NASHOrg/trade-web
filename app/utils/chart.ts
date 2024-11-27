@@ -40,7 +40,10 @@ export const rangeInterval = (range: ChartRange) => {
 };
 
 export const rangeParams = (range: ChartRange, time?: number) => {
-  let now = time ?? Math.floor(new Date().getTime() / 1000);
+  let now = Math.floor(new Date().getTime() / 1000);
+  if (time) {
+    now = time - dayjs().utcOffset() * 60;
+  }
   switch (range) {
     case 'day':
       now = Math.ceil(now / oneDay) * oneDay;

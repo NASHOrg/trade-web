@@ -50,6 +50,7 @@ async function changeChartRange() {
     fetchOldData = true;
     const existingData = candlestickSeries!.data();
     const time = existingData[0]!.time;
+    console.log(existingData, rangeParams(props.range, Number(time)));
     const tradeData = await $api.blockchainTradeStatistic(
       { type: rangeType(props.range),
         ...rangeParams(props.range, Number(time)),
@@ -58,7 +59,7 @@ async function changeChartRange() {
     let list = (tradeData ?? [])
       .map((item) => {
         return {
-          time: Number(item.time) / 1000,
+          time: timeToLocal(Number(item.time) / 1000),
           open: Number(item.openPrice),
           high: Number(item.highPrice),
           low: Number(item.lowPrice),
