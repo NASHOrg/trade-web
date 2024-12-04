@@ -1,9 +1,4 @@
 <script setup lang="ts">
-// const img = useImage();
-// const backgroundStyles = computed(() => {
-//   const imgUrl = img('images/background_lg.png');
-//   return { backgroundImage: `url('${imgUrl}')` };
-// });
 const mode = useColorMode();
 const { $api } = useNuxtApp();
 const { pairList } = useNetworkConfig();

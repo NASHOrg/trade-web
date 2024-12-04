@@ -25,7 +25,7 @@ const { data: balance, status, refresh: refreshBalance } = useAsyncData(
       contractAddress: props.token.address,
     });
   },
-  { watch: [() => props.address], immediate: true, server: false },
+  { watch: [() => props.address, () => props.token.address], immediate: true, server: false },
 );
 
 const formatedBalance = computed(() => {

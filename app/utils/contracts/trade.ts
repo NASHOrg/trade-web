@@ -48,7 +48,6 @@ export class TradeApi extends BaseEvmApi {
     provider: BrowserProvider,
     { amount, receive }: { amount: bigint; receive: bigint },
   ) {
-    console.log(this.contractAddress);
     const res = await this.contract
       .getFunction('placeOrderSellB')
       .populateTransaction(receive, { value: amount });

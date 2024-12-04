@@ -168,7 +168,6 @@ async function onBuy() {
     const amount = parseUnits(state.quantity, currentPair.value.tokens[0]!.decimals);
     const pay = tradeApi().calcValue(state.quantity, state.price);
     const isApproved = await tradeApi().isTokenBApproved(address.value, pay);
-    console.log({ isApproved, pay });
     if (!isApproved) {
       const res = await tradeApi().approveTokenB(provider);
       await tradeApi().checkTransaction(res.hash);
