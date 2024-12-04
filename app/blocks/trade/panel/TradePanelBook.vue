@@ -34,10 +34,10 @@ const columns = computed(() => {
 const { counter } = useInterval(3000, { controls: true });
 
 const { data } = useAsyncData(
-  'order-book',
+  'order-book' + currentPair.value.value,
   () => {
     return $api.blockchainOrderBooks({
-      pair: currentPair.value?.value.toUpperCase().split('-').join('/'),
+      pair: currentPair.value?.value,
     });
   },
   {

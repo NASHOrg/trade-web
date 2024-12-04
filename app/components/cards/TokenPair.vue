@@ -1,29 +1,15 @@
 <script setup lang="ts">
-const props = defineProps<{ pair: typeof currentPair.value }>();
+defineProps<{ pair: typeof currentPair.value }>();
 const router = useRouter();
-const { $api } = useNuxtApp();
 const { currentPair } = useNetworkConfig();
-const counter = useInterval(10000);
-const { data } = useAsyncData(
-  'order-book',
-  () => {
-    return $api.blockchainOrderBooks({
-      pair: props.pair.value,
-    });
-  },
-  {
-    watch: [counter],
-    server: false,
-  },
-);
 
 function onSelect(id: string) {
-  // emits('select', id);
   router.replace({
     path: '/trade',
     query: { ...(router.currentRoute.value.query ?? {}), pair: id },
   });
 }
+
 const cols = computed(() => {
   return [
     { id: 'label', label: 'Pair' },
@@ -54,7 +40,7 @@ const cols = computed(() => {
         </div>
       </template>
       <template v-else-if="['price'].includes(item.id)">
-        {{ formatAmount(data?.latestPrice ?? '0', 5, { format: true }) }}
+        {{ formatAmount(pair.price ?? '0', 5, { format: true }) }}
       </template>
     </span>
   </div>

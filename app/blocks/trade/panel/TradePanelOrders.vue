@@ -10,15 +10,15 @@ const queryParams = ref({
   pageSize: 100,
 });
 const { data } = useAsyncData(
-  `trade-orders`,
+  `trade-orders-${currentPair.value.value}`,
   () => {
     return $api.blockchainTradeHistory({
       ...queryParams.value,
-      pair: currentPair.value?.value.toUpperCase().split('-').join('/'),
+      pair: currentPair.value?.value,
     });
   },
   {
-    watch: [queryParams, currentPair, counter],
+    watch: [queryParams, () => currentPair.value.value, counter],
     immediate: true,
     deep: true,
     server: false,

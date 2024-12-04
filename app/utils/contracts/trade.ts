@@ -2,7 +2,7 @@ import type { BrowserProvider } from 'ethers';
 import { Contract } from 'ethers';
 import BN from 'bignumber.js';
 import { BaseEvmApi } from './api';
-import { TradeABI } from './abis/trade';
+import { TradeABI, TradeNativeABI } from './abis/trade';
 import { Order, OrderType } from './interfaces/order';
 import type { Token } from '~/types/common';
 
@@ -29,7 +29,11 @@ export class TradeApi extends BaseEvmApi {
   readonly contractAddress: string;
 
   get contract() {
-    return new Contract(this.contractAddress, TradeABI, this.provider);
+    // native token use TradeNativeABI
+    if (this.tokenA.address) {
+      return new Contract(this.contractAddress, TradeABI, this.provider);
+    }
+    return new Contract(this.contractAddress, TradeNativeABI, this.provider);
   }
 
   async createBuyOrder(
@@ -46,11 +50,20 @@ export class TradeApi extends BaseEvmApi {
 
   async createSellOrder(
     provider: BrowserProvider,
-    { amount, receive }: { amount: bigint; receive: bigint },
+    { amount, receive, isNative }: { amount: bigint; receive: bigint; isNative: boolean },
   ) {
-    const res = await this.contract
-      .getFunction('placeOrderSellB')
-      .populateTransaction(receive, { value: amount });
+    let res;
+    if (isNative) {
+      res = await this.contract
+        .getFunction('placeOrderSellB')
+        .populateTransaction(receive, { value: amount });
+    }
+    else {
+      res = await this.contract
+        .getFunction('placeOrderSellB')
+        .populateTransaction(receive, amount);
+    }
+    console.log(res);
     const signer = await provider.getSigner();
     await signer.estimateGas(res);
     return signer.sendTransaction(res);

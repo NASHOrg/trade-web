@@ -14,7 +14,7 @@ const { data: tradeData } = useNuxtData('trade-statistic-hour');
 const { counter, pause, reset } = useInterval(3000, { controls: true });
 
 useAsyncData(
-  `trade-statistic-hour`,
+  `trade-statistic-hour` + currentPair.value.value,
   () => {
     return $api.blockchainTradeStatistic({
       type: '0',

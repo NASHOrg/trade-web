@@ -161,14 +161,15 @@ async function onSell() {
     }
     const amount = parseUnits(state.quantity, currentPair.value.tokens[0]!.decimals);
     const receive = tradeApi().calcValue(state.price, state.quantity);
-    if (currentPair.value.tokens[0]!.address) {
+    const isNative = !currentPair.value.tokens[0]!.address;
+    if (!isNative) {
       const isApproved = await tradeApi().isTokenAApproved(address.value, amount);
       if (!isApproved) {
         const res = await tradeApi().approveTokenA(provider);
         await tradeApi().checkTransaction(res.hash);
       }
     }
-    const tx = await tradeApi().createSellOrder(provider, { amount, receive });
+    const tx = await tradeApi().createSellOrder(provider, { amount, receive, isNative });
     const order = {
       price: Number(state.price),
       qty: state.quantity!,
