@@ -8,6 +8,9 @@ const slideover = useSlideover();
 function openTokens() {
   slideover.open(TokensSlideover);
 }
+useHead({
+  title: currentPair.value.label,
+});
 </script>
 
 <template>

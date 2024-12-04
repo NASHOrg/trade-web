@@ -1,10 +1,15 @@
 <script setup lang="ts">
 const mode = useColorMode();
-const { $api } = useNuxtApp();
+const { $config } = useNuxtApp();
 const { pairList } = useNetworkConfig();
 await callOnce(async () => {
-  const data = await $api.blockchainPairs({});
-  pairList.value = data!;
+  const data = await $fetch(`${$config.public.baseUrl}/blockchain/pairs`, {
+    headers: {
+      'Cache-Control': 'max-age=60',
+    },
+  }) as any;
+  console.log(data);
+  pairList.value = data!.data;
 });
 
 mode.value = 'dark';
