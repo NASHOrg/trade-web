@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import BN from 'bignumber.js';
 import { toast } from 'vue-sonner';
-import { parseEther } from 'ethers';
+import { parseUnits } from 'ethers';
+import { DepositModal } from '#components';
 
 const props = defineProps<{
   mode: 'limit' | 'market';
@@ -114,6 +115,12 @@ const amountPercent = computed({
   },
 });
 
+watch(() => currentPair.value.value, () => {
+  state.price = undefined;
+  state.quantity = undefined;
+  state.total = undefined;
+});
+
 watch(
   data,
   () => {
@@ -130,6 +137,13 @@ watch(selectedPrice, () => {
   state.price = formatAmount(selectedPrice.value, 5);
 });
 
+const modal = useModal();
+function onDeposit() {
+  const token = currentPair.value.tokens[1]!;
+  if (token) {
+    modal.open(DepositModal, { token });
+  }
+}
 const isSelling = ref(false);
 async function onSell() {
   try {
@@ -145,9 +159,16 @@ async function onSell() {
     if (!state.quantity || !state.price) {
       return;
     }
-    const amount = parseEther(state.quantity);
-    const receive = tradeApi.calcUsdt(state.price, state.quantity);
-    const tx = await tradeApi.createSellOrder(provider, { amount, receive });
+    const amount = parseUnits(state.quantity, currentPair.value.tokens[0]!.decimals);
+    const receive = tradeApi().calcValue(state.price, state.quantity);
+    if (currentPair.value.tokens[0]!.address) {
+      const isApproved = await tradeApi().isTokenAApproved(address.value, amount);
+      if (!isApproved) {
+        const res = await tradeApi().approveTokenA(provider);
+        await tradeApi().checkTransaction(res.hash);
+      }
+    }
+    const tx = await tradeApi().createSellOrder(provider, { amount, receive });
     const order = {
       price: Number(state.price),
       qty: state.quantity!,
@@ -167,7 +188,7 @@ async function onSell() {
     const value = state.total;
     price.value = undefined;
     quantity.value = undefined;
-    toast.promise(tradeApi.checkTransaction(tx.hash), {
+    toast.promise(tradeApi().checkTransaction(tx.hash), {
       loading: t('sendTransaction'),
       success: () => {
         addOrder(order);
@@ -298,14 +319,15 @@ watch(
         />
       </div>
       <div v-else />
-      <!-- <UButton
-        to=""
+      <UButton
+        v-if="currentPair.tokens[0]?.symbol === 'USDC'"
         variant="outline"
         size="xs"
-        class="rounded-[4px] h-[22px] text-[12px] !px-1"
+        class="rounded-[4px] text-[12px] !px-3 mt-1 md:mt-0"
+        @click="onDeposit"
       >
-        Add Fund
-      </UButton> -->
+        {{ t("addFund") }}
+      </UButton>
     </div>
     <div class="grow" />
     <div class="pt-5 w-full">

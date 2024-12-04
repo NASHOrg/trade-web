@@ -1,5 +1,4 @@
 export const betaTestnet = {
-  baseUrl: 'https://beta-api.boolscan.com/bool-network-beta',
   rpc: 'https://betatest-rpc-node-http.bool.network',
   chainId: 481,
   symbol: 'tBOL',
@@ -30,7 +29,6 @@ export const betaTestnet = {
 };
 
 export const sepolia = {
-  baseUrl: '',
   rpc: 'https://eth-sepolia-public.unifra.io',
   explorer: 'https://sepolia.etherscan.io',
   chainId: 11155111,
@@ -54,7 +52,6 @@ export const sepolia = {
 };
 
 export const betaMainnet = {
-  baseUrl: 'https://beta-mainnet-api.boolscan.com/bool-network-beta-mainnet',
   rpc: 'https://beta-rpc-node-http.bool.network',
   chainId: 11100,
   symbol: 'BOL',
@@ -86,7 +83,6 @@ export const betaMainnet = {
 };
 
 export const ethereum = {
-  baseUrl: '',
   rpc: 'https://rpc.ankr.com/eth',
   explorer: 'https://etherscan.io',
   chainId: 1,

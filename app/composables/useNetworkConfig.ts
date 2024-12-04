@@ -1,10 +1,12 @@
 import type { Token } from '~/types/common';
-import { StakeApi } from '~/utils/contracts/stake';
+import type { BlockchainPairs } from '~/types/swagger';
 import { TradeApi } from '~/utils/contracts/trade';
 import { betaMainnet, betaTestnet, ethereum, sepolia } from '~/utils/networks';
 
 export function useNetworkConfig() {
   const { currentRoute } = useRouter();
+  // Fetch from server
+  const pairList = useState<NonNullable<BlockchainPairs>>('paris', () => []);
   const config = useRuntimeConfig();
   const boolNetwork = config.public.network === 'beta_mainnet' ? betaMainnet : betaTestnet;
   const bridgeNetworks = [config.public.network === 'beta_mainnet' ? ethereum : sepolia];
@@ -13,14 +15,30 @@ export function useNetworkConfig() {
     return boolNetwork.tokens;
   });
 
-  const payToken = config.public.network === 'beta_mainnet' ? tokens.value.usdt! : tokens.value.usdc!;
-  const tokenPairs = [[tokens.value.bool!, payToken]];
-  const pairs = tokenPairs.map(pair =>
+  // const payToken = config.public.network === 'beta_mainnet' ? tokens.value.usdt! : tokens.value.usdc!;
+  // const tokenPairs = [[tokens.value.bool!, payToken]];
+  const pairs = pairList.value.map(pair =>
     ({
-      value: `BOOL/${pair[1]!.symbol}`,
-      label: pair.map(item => item.symbol).join(' / '),
+      value: pair.name,
+      address: pair.address,
+      label: pair.name,
       fee: '0.80%',
-      tokens: pair,
+      tokens: [
+        {
+          address: pair.tokenAAddress,
+          symbol: pair.name.split('/')[0],
+          decimals: Number(pair.tokenADecimal),
+          name: pair.name.split('/')[0],
+          icon: pair.tokenAIcon,
+        },
+        {
+          address: pair.tokenBAddress,
+          decimals: Number(pair.tokenBDecimal),
+          symbol: pair.name.split('/')[1],
+          name: pair.name.split('/')[1],
+          icon: pair.tokenBIcon,
+        },
+      ],
     }),
   );
 
@@ -33,17 +51,20 @@ export function useNetworkConfig() {
   });
 
   return {
+    pairList,
     networks: [boolNetwork, ...bridgeNetworks],
     network: boolNetwork,
     bridgeNetworks,
     tokens,
     pairs,
     currentPair,
-    stakeApi: new StakeApi(boolNetwork.rpc),
-    tradeApi: new TradeApi({
-      rpc: boolNetwork.rpc,
-      contract: boolNetwork.contracts.trade!,
-      token: tokens.value.usdc!,
-    }),
+    tradeApi: () => new TradeApi(
+      {
+        rpc: boolNetwork.rpc,
+        contract: currentPair.value.address,
+        tokenA: currentPair.value.tokens[0]!,
+        tokenB: currentPair.value.tokens[1]!,
+      },
+    ),
   };
 }

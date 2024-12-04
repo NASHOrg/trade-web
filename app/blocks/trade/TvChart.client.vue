@@ -7,6 +7,7 @@ const props = defineProps<{
 }>();
 
 const { $api } = useNuxtApp();
+const { currentPair } = useNetworkConfig();
 
 const inited = ref(false);
 const { isMD } = useDevice();
@@ -30,6 +31,7 @@ const { data: newData } = useAsyncData(
   `trade-statistic-${props.range}`,
   () => {
     return $api.blockchainTradeStatistic({
+      pair: currentPair.value?.value,
       type: rangeType(props.range),
       ...rangeParams(props.range),
     });
@@ -53,6 +55,7 @@ async function changeChartRange() {
     console.log(existingData, rangeParams(props.range, Number(time)));
     const tradeData = await $api.blockchainTradeStatistic(
       { type: rangeType(props.range),
+        pair: currentPair.value?.value,
         ...rangeParams(props.range, Number(time)),
       },
     );
@@ -107,6 +110,7 @@ function setTooltip() {
 async function initChart() {
   const tradeData = await $api.blockchainTradeStatistic(
     { type: rangeType(props.range),
+      pair: currentPair.value?.value,
       ...rangeParams(props.range),
     },
   );

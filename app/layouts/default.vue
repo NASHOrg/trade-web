@@ -5,6 +5,13 @@
 //   return { backgroundImage: `url('${imgUrl}')` };
 // });
 const mode = useColorMode();
+const { $api } = useNuxtApp();
+const { pairList } = useNetworkConfig();
+await callOnce(async () => {
+  const data = await $api.blockchainPairs({});
+  pairList.value = data!;
+});
+
 mode.value = 'dark';
 </script>
 

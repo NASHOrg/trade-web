@@ -9,19 +9,23 @@ import type { Token } from '~/types/common';
 export class TradeApi extends BaseEvmApi {
   constructor({
     rpc,
-    token,
+    tokenA,
+    tokenB,
     contract,
   }: {
     rpc: string;
-    token: { address?: string; decimals: number };
+    tokenA: { address?: string; decimals: number };
+    tokenB: { address?: string; decimals: number };
     contract: string;
   }) {
     super(rpc);
     this.contractAddress = contract;
-    this.token = token;
+    this.tokenA = tokenA;
+    this.tokenB = tokenB;
   }
 
-  readonly token;
+  readonly tokenA;
+  readonly tokenB;
   readonly contractAddress: string;
 
   get contract() {
@@ -44,6 +48,7 @@ export class TradeApi extends BaseEvmApi {
     provider: BrowserProvider,
     { amount, receive }: { amount: bigint; receive: bigint },
   ) {
+    console.log(this.contractAddress);
     const res = await this.contract
       .getFunction('placeOrderSellB')
       .populateTransaction(receive, { value: amount });
@@ -64,26 +69,43 @@ export class TradeApi extends BaseEvmApi {
     return signer.sendTransaction(res);
   }
 
-  isUsdtApproved(address: string, amount: bigint) {
+  isTokenBApproved(address: string, amount: bigint) {
+    console.log(this.contractAddress);
     return super.isApprove({
-      contract: this.token.address!,
+      contract: this.tokenB.address!,
       approvedAddress: this.contractAddress,
       amount,
       address,
     });
   }
 
-  approveUsdt(provider: BrowserProvider) {
+  approveTokenB(provider: BrowserProvider) {
     return super.approve(provider, {
-      contract: this.token.address!,
+      contract: this.tokenB.address!,
       approvedAddress: this.contractAddress,
     });
   }
 
-  calcUsdt(price: string, bool: string) {
+  isTokenAApproved(address: string, amount: bigint) {
+    return super.isApprove({
+      contract: this.tokenA.address!,
+      approvedAddress: this.contractAddress,
+      amount,
+      address,
+    });
+  }
+
+  approveTokenA(provider: BrowserProvider) {
+    return super.approve(provider, {
+      contract: this.tokenA.address!,
+      approvedAddress: this.contractAddress,
+    });
+  }
+
+  calcValue(price: string, bool: string) {
     const receive = BN(bool)
       .times(BN(price))
-      .times(10 ** this.token.decimals)
+      .times(10 ** this.tokenB.decimals)
       .toFixed(0, BN.ROUND_DOWN);
     return BigInt(receive);
   }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { parseEther } from 'ethers';
+import { parseUnits } from 'ethers';
 import BN from 'bignumber.js';
 import { toast } from 'vue-sonner';
 import { DepositModal } from '#components';
@@ -122,6 +122,12 @@ const amountPercent = computed({
   },
 });
 
+watch(() => currentPair.value.value, () => {
+  state.price = undefined;
+  state.quantity = undefined;
+  state.total = undefined;
+});
+
 watch(
   data,
   () => {
@@ -159,14 +165,15 @@ async function onBuy() {
       if (!result) return;
     }
     if (!state.quantity || !state.price) return;
-    const amount = parseEther(state.quantity);
-    const pay = tradeApi.calcUsdt(state.quantity, state.price);
-    const isApproved = await tradeApi.isUsdtApproved(address.value, pay);
+    const amount = parseUnits(state.quantity, currentPair.value.tokens[0]!.decimals);
+    const pay = tradeApi().calcValue(state.quantity, state.price);
+    const isApproved = await tradeApi().isTokenBApproved(address.value, pay);
+    console.log({ isApproved, pay });
     if (!isApproved) {
-      const res = await tradeApi.approveUsdt(provider);
-      await tradeApi.checkTransaction(res.hash);
+      const res = await tradeApi().approveTokenB(provider);
+      await tradeApi().checkTransaction(res.hash);
     }
-    const tx = await tradeApi.createBuyOrder(provider, { amount, pay });
+    const tx = await tradeApi().createBuyOrder(provider, { amount, pay });
     const order = {
       price: Number(state.price),
       qty: state.quantity!,
@@ -186,7 +193,7 @@ async function onBuy() {
     const value = state.total;
     price.value = undefined;
     quantity.value = undefined;
-    toast.promise(tradeApi.checkTransaction(tx.hash), {
+    toast.promise(tradeApi().checkTransaction(tx.hash), {
       loading: t('sendTransaction'),
       success: () => {
         addOrder(order);
@@ -316,6 +323,7 @@ watch(
       </div>
       <div v-else />
       <UButton
+        v-if="currentPair.tokens[1]?.symbol === 'USDC'"
         variant="outline"
         size="xs"
         class="rounded-[4px] text-[12px] !px-3 mt-1 md:mt-0"

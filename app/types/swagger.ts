@@ -568,8 +568,11 @@ export interface paths {
                      */
                     pageSize: number;
                     address?: string;
-                    /** 不传查所有pair */
-                    pair?: string;
+                    /**
+                     * 如果查用户的交易记录，可不传
+                     * 如果查全部交易记录，则为必传
+                     */
+                    pair: string;
                 };
             };
             responses: {
@@ -616,6 +619,43 @@ export interface paths {
                                 fee: number;
                             }[];
                         };
+                    };
+                };
+            };
+        };
+    };
+    "/blockchain/pairs": {
+        get: {
+            parameters: {};
+            responses: {
+                /** successful operation */
+                200: {
+                    schema: {
+                        /** 代码 */
+                        code?: string;
+                        /** 错误信息 */
+                        msg?: string;
+                        /** 数据 */
+                        data?: {
+                            /** 币对名称 */
+                            name: string;
+                            /** 交易合约地址 */
+                            address: string;
+                            /** A币地址 */
+                            tokenAAddress: string;
+                            /** A币位数 */
+                            tokenADecimal: string;
+                            /** A币图标 */
+                            tokenAIcon: string;
+                            /** B币地址 */
+                            tokenBAddress: string;
+                            /** B币位数 */
+                            tokenBDecimal: string;
+                            /** B币图标 */
+                            tokenBIcon: string;
+                        }[];
+                        /** 是否失败 */
+                        fail?: boolean;
                     };
                 };
             };
@@ -693,8 +733,8 @@ export interface paths {
                 query: {
                     /** 不填默认10 */
                     size?: string;
-                    /** 不填默认BOOL/USDT */
-                    pair?: string;
+                    /** 必传 */
+                    pair: string;
                 };
             };
             responses: {
@@ -764,6 +804,8 @@ export interface paths {
                     start: string;
                     /** 截止时间 */
                     end: string;
+                    /** 代币对 */
+                    pair: string;
                 };
             };
             responses: {
@@ -1437,6 +1479,8 @@ export type UserRebateWithdrawPostParams = paths["/user/rebate:withdraw"]['post'
 export type UserRebateWithdrawPost = paths["/user/rebate:withdraw"]['post']['responses'][200]['schema']['data'];
 export type BlockchainTradeHistoryGetParams = paths["/blockchain/trade-history"]['get']['parameters']['query'];
 export type BlockchainTradeHistory = paths["/blockchain/trade-history"]['get']['responses'][200]['schema']['data'];
+export type BlockchainPairsGetParams = paths["/blockchain/pairs"]['get']['parameters'];
+export type BlockchainPairs = paths["/blockchain/pairs"]['get']['responses'][200]['schema']['data'];
 export type BlockchainUserOrdersGetParams = paths["/blockchain/user-orders"]['get']['parameters']['query'];
 export type BlockchainUserOrders = paths["/blockchain/user-orders"]['get']['responses'][200]['schema']['data'];
 export type BlockchainOrderBooksGetParams = paths["/blockchain/order-books"]['get']['parameters']['query'];

@@ -18,6 +18,7 @@ useAsyncData(
   () => {
     return $api.blockchainTradeStatistic({
       type: '0',
+      pair: currentPair.value?.value,
       ...rangeParams('hour'),
     });
   },
@@ -153,11 +154,11 @@ function openTokens() {
       v-if="isMD || showChart"
       class="grow md:h-auto h-[300px] relative"
     >
-      <TvChart
-        :key="range"
-        :range="range"
-        class="ms-[10px] md:ms-0"
-      />
+      <!-- <TvChart -->
+      <!--   :key="range" -->
+      <!--   :range="range" -->
+      <!--   class="ms-[10px] md:ms-0" -->
+      <!-- /> -->
     </div>
   </div>
 </template>
