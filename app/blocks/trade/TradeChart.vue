@@ -155,7 +155,7 @@ function openTokens() {
       class="grow md:h-auto h-[300px] relative"
     >
       <TvChart
-        :key="range"
+        :key="`${currentPair.value}-${range}`"
         :range="range"
         class="ms-[10px] md:ms-0"
       />

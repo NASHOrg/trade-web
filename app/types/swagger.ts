@@ -653,6 +653,8 @@ export interface paths {
                             tokenBDecimal: string;
                             /** B币图标 */
                             tokenBIcon: string;
+                            /** 订单簿币价 */
+                            price: string;
                         }[];
                         /** 是否失败 */
                         fail?: boolean;

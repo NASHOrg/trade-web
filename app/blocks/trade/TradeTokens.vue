@@ -1,11 +1,25 @@
 <script setup lang="ts">
 const { pairs } = useNetworkConfig();
-
+const { $api } = useNuxtApp();
 const cols = computed(() => {
   return [
     { id: 'label', label: 'Pair' },
     { id: 'price', label: 'Price' },
   ];
+});
+const counter = useInterval(3000);
+const { data: tokenPairs } = useAsyncData('token-pairs', async () => {
+  const data = await $api.blockchainPairs({});
+  if (!data) return;
+  return data.map((item: any) => ({
+    value: item.name,
+    label: item.name,
+    price: item.price,
+  }));
+}, {
+  server: false,
+  lazy: true,
+  watch: [counter],
 });
 </script>
 
@@ -39,7 +53,7 @@ const cols = computed(() => {
     <div class="w-full py-2 overflow-y-auto scrollbar">
       <div class="w-full">
         <TokenPair
-          v-for="item in pairs"
+          v-for="item in tokenPairs ?? pairs"
           :key="item.value"
           :pair="item"
         />
