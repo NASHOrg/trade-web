@@ -7,6 +7,9 @@ const cols = computed(() => {
     { id: 'price', label: 'Price' },
   ];
 });
+const searchValue = ref<undefined | string>();
+
+// Auto refresh token pairs every 3 seconds to update price
 const counter = useInterval(3000);
 const { data: tokenPairs } = useAsyncData('token-pairs', async () => {
   const data = await $api.blockchainPairs({});
@@ -21,12 +24,21 @@ const { data: tokenPairs } = useAsyncData('token-pairs', async () => {
   lazy: true,
   watch: [counter],
 });
+
+const pairsData = computed(() => {
+  const data = tokenPairs.value ?? pairs;
+  if (searchValue.value) {
+    return data.filter((item: any) => item.label.toLowerCase().includes(searchValue.value!.toLowerCase()));
+  }
+  return data;
+});
 </script>
 
 <template>
   <div class="w-full h-full flex flex-col">
-    <div class="w-full px-4 pt-2.5">
+    <div class="relative w-full px-4 pt-2.5">
       <UInput
+        v-model="searchValue"
         class="h-8"
         placeholder="Search"
         icon="i-heroicons-magnifying-glass-20-solid"
@@ -38,6 +50,14 @@ const { data: tokenPairs } = useAsyncData('token-pairs', async () => {
           },
         }"
       />
+      <div
+        v-if="searchValue"
+        class="absolute right-6 top-4 p-1 cursor-pointer flex items-center justify-center"
+        @click="searchValue=undefined"
+      >
+        <IconClose class="size-[12px]" />
+      </div>
+      <span v-else />
     </div>
 
     <div class="grid grid-cols-2 text-[#999999] px-4 pt-4">
@@ -53,9 +73,9 @@ const { data: tokenPairs } = useAsyncData('token-pairs', async () => {
     <div class="w-full py-2 overflow-y-auto scrollbar">
       <div class="w-full">
         <TokenPair
-          v-for="item in tokenPairs ?? pairs"
+          v-for="item in pairsData"
           :key="item.value"
-          :pair="item"
+          :pair="item!"
         />
       </div>
     </div>

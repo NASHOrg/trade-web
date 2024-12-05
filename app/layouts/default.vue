@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const mode = useColorMode();
 const { $config } = useNuxtApp();
 const { pairList } = useNetworkConfig();
 await callOnce(async () => {
@@ -8,11 +7,8 @@ await callOnce(async () => {
       'Cache-Control': 'max-age=60',
     },
   }) as any;
-  console.log(data);
   pairList.value = data!.data;
 });
-
-mode.value = 'dark';
 </script>
 
 <template>

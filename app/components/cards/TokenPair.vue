@@ -40,7 +40,7 @@ const cols = computed(() => {
         </div>
       </template>
       <template v-else-if="['price'].includes(item.id)">
-        {{ !pair.price ? '' : formatAmount(pair.price ?? '0', 5, { format: true }) }}
+        {{ !pair.price ? '' : formatAmount(pair.price ?? '0', 5, { format: true, endPad: true }) }}
       </template>
     </span>
   </div>

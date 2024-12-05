@@ -23,6 +23,7 @@ export function useNetworkConfig() {
       address: pair.address,
       label: pair.name,
       fee: '0.80%',
+      price: pair.price,
       tokens: [
         {
           address: pair.tokenBAddress,
