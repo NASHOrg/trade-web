@@ -21,7 +21,7 @@ function onClose() {
           class="cursor-pointer"
           @click="onClose"
         >
-          <IconClose class="w-5 h-5" />
+          <IconClose class="size-[12px]" />
         </div>
       </div>
       <TradeTokens @select="onClose" />
