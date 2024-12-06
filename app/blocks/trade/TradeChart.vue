@@ -9,12 +9,12 @@ const { $api } = useNuxtApp();
 const { isMD } = useDevice();
 const range = ref<ChartRange>('minute');
 
-const { data: tradeData } = useNuxtData('trade-statistic-hour');
+const { data: tradeData } = useNuxtData('trade-statistic-hour-' + currentPair.value.value);
 
 const { counter, pause, reset } = useInterval(3000, { controls: true });
 
 useAsyncData(
-  `trade-statistic-hour` + currentPair.value.value,
+  `trade-statistic-hour-${currentPair.value.value}`,
   () => {
     return $api.blockchainTradeStatistic({
       type: '0',

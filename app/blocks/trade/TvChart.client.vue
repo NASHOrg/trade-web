@@ -28,7 +28,7 @@ const tooltipData = ref<{
 const { counter } = useInterval(3000, { controls: true });
 
 const { data: newData } = useAsyncData(
-  `trade-statistic-${props.range}-${currentPair.value?.value}`,
+  `trade-statistic-${props.range}${currentPair.value?.value}`,
   () => {
     return $api.blockchainTradeStatistic({
       pair: currentPair.value?.value,
