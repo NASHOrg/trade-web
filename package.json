@@ -50,6 +50,7 @@
     "@vueuse/core": "^10.10.0",
     "@vueuse/nuxt": "^10.10.0",
     "dotenv": "^16.4.5",
+    "dotenv-cli": "^7.4.4",
     "eslint": "9.9.0",
     "esrun": "^3.2.26",
     "husky": "^9.0.11",

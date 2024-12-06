@@ -4,4 +4,4 @@ ADD . /usr/src/node/server/
 
 WORKDIR /usr/src/node/server/
 
-CMD [ "sh", "-c", "yarn start" ]
+CMD [ "sh", "-c", "./node_modules/.bin/dotenv -- yarn start" ]
