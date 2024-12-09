@@ -76,7 +76,7 @@ const expanded = ref<string>('');
 
 const queryParams = ref({
   pageNo: 1,
-  pageSize: 10,
+  pageSize: 100,
 });
 
 const { data, status, refresh } = useAsyncData(

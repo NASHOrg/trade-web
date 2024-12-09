@@ -169,7 +169,7 @@ const onSelectPrice = (price: string) => {
   &::before {
     content: "";
     width: var(--sell-bar-width);
-    @apply bg-sell/20;
+    @apply bg-sell/10;
     animation: price-bar-animation linear 0.3s;
   }
 }
@@ -186,7 +186,7 @@ const onSelectPrice = (price: string) => {
   &::before {
     content: "";
     width: var(--buy-bar-width);
-    @apply bg-buy/20;
+    @apply bg-buy/10;
     animation: price-bar-animation linear 0.3s;
   }
 }
