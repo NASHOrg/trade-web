@@ -42,7 +42,7 @@ const { data: newData } = useAsyncData(
   },
 );
 
-const maxVisibleBars = 80;
+const maxVisibleBars = 120;
 let fetchOldData = false;
 async function changeChartRange() {
   const visibleLogicalRange = mainChart!.timeScale()
