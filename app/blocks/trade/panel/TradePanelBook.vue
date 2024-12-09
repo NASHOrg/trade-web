@@ -2,7 +2,7 @@
 import BN from 'bignumber.js';
 import { formatAmount } from '#imports';
 
-const { isMD, isXL } = useDevice();
+const { isMD } = useDevice();
 
 const { $api } = useNuxtApp();
 const { currentPair } = useNetworkConfig();
@@ -46,45 +46,14 @@ const { data } = useAsyncData(
   },
 );
 
-const sellBList = computed(() => {
-  const allQty = (data.value?.orderSellBList ?? []).reduce((sum, item) => {
-    return (sum += Number(item.qty));
-  }, 0);
-  const list = (data.value?.orderSellBList?.slice(0, 11) ?? [])
-    .map((item) => {
-      return {
-        ...item,
-        qty: item.qty,
-        style: {
-          '--sell-bar-width': `${(Number(item.qty) / allQty) * 100}%`,
-        },
-      };
-    })
-    .reverse();
-
-  if (!isXL.value) {
-    return list.slice(0, 5);
-  }
-  return list;
-});
-
-const buyBList = computed(() => {
-  const allQty = (data.value?.orderBuyBList?.slice(0, 11) ?? []).reduce((sum, item) => {
-    return (sum += Number(item.qty));
-  }, 0);
-  const list = (data.value?.orderBuyBList ?? []).map((item) => {
-    return {
-      ...item,
-      style: {
-        '--buy-bar-width': `${(Number(item.qty) / allQty) * 100}%`,
-      },
-    };
-  });
-  if (!isXL.value) {
-    return list.slice(0, 5);
-  }
-  return list;
-});
+function itemWidth(item: { qty: string }) {
+  if (!data.value) return '0';
+  const maxQty = BN.max(
+    ...(data.value?.orderSellBList?.slice(0, 11) ?? []).map(a => BN(a.qty)),
+    ...(data.value?.orderBuyBList?.slice(0, 11) ?? []).map(a => BN(a.qty)),
+  );
+  return BN(item.qty).div(maxQty).times(BN(100)).toFixed(0);
+}
 
 const onSelectPrice = (price: string) => {
   selectedPrice.value = price;
@@ -113,10 +82,10 @@ const onSelectPrice = (price: string) => {
         class="w-full flex flex-col justify-end xl:space-y-2.5 md:space-y-1.5 space-y-1"
       >
         <div
-          v-for="item in sellBList.slice(0, 11)"
+          v-for="item in data.orderSellBList?.slice(0, 11) ?? []"
           :key="JSON.stringify(item)"
           class="sell-price-item w-full grid md:px-4 px-2 md:py-1.5 py-1 md:grid-cols-3 grid-cols-2 md:text-[14px] text-xs text-start cursor-pointer hover:bg-gray-50/10"
-          :style="item.style"
+          :style="{ '--sell-bar-width': itemWidth(item) + '%' }"
           @click="onSelectPrice(item.price)"
         >
           <span
@@ -126,7 +95,7 @@ const onSelectPrice = (price: string) => {
             :class="{ 'text-sell': col.value === 'price' }"
           >
             <span v-if="col.value === 'price'">
-              {{ formatAmount(BN(item.value).div(BN(item.qty)), 5, { endPad: true, format: true }) }}
+              {{ formatAmount(BN(item.value).div(BN(item.qty)).toString(), 5, { endPad: true, format: true }) }}
             </span>
             <span v-else>
               {{
@@ -158,10 +127,10 @@ const onSelectPrice = (price: string) => {
         class="flex flex-col justify-start xl:space-y-2.5 md:space-y-1.5 space-y-1"
       >
         <div
-          v-for="item in buyBList.slice(0, 11)"
+          v-for="item in data.orderBuyBList?.slice(0, 11) ?? []"
           :key="JSON.stringify(item)"
           class="buy-price-item w-full grid md:px-4 px-2 md:py-1.5 py-1 md:grid-cols-3 grid-cols-2 md:text-[14px] text-xs text-start cursor-pointer hover:bg-gray-50/10"
-          :style="item.style"
+          :style="{ '--buy-bar-width': itemWidth(item) + '%' }"
           @click="onSelectPrice(item.price)"
         >
           <span
