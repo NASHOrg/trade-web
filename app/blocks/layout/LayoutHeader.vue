@@ -67,7 +67,7 @@
       <!--      > -->
       <!--        <IconLanguage /> -->
       <!--      </ULink> -->
-      <ConnectWalletButton />
+      <LazyConnectWalletButton />
       <!-- <div
         class="w-5 h-5 block lg:hidden relative text-white mx-2 cursor-pointer"
         @click="toggleMenu"
