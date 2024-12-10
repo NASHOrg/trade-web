@@ -37,6 +37,10 @@ const columns = computed(() => {
 
 const { counter } = useInterval(3000, { controls: true });
 
+function onEnter(el: any) {
+  el.classList.add('price-item-animate');
+}
+
 const { data } = useAsyncData(
   'order-book' + currentPair.value.value,
   () => {
@@ -92,32 +96,36 @@ const onSelectPrice = (price: string) => {
       <div
         class="w-full flex flex-col justify-end xl:space-y-2.5 md:space-y-1.5 space-y-1"
       >
-        <div
-          v-for="item in data.orderSellBList?.slice(0, orderAmount) ?? []"
-          :key="item.price"
-          class="sell-price-item w-full grid md:px-4 px-2 md:py-1.5 py-1 md:grid-cols-3 grid-cols-2 md:text-[14px] text-xs text-start cursor-pointer hover:bg-gray-50/10"
-          :style="{ '--sell-bar-width': itemWidth(item) + '%' }"
-          @click="onSelectPrice(item.price)"
+        <TransitionGroup
+          @enter="onEnter"
         >
-          <span
-            v-for="col in columns"
-            :key="col.value"
-            class="first:text-start text-end"
-            :class="{ 'text-sell': col.value === 'price' }"
+          <div
+            v-for="item in data.orderSellBList?.slice(0, orderAmount) ?? []"
+            :key="JSON.stringify(item)"
+            class="sell-price-item before:bg-sell w-full grid md:px-4 px-2 md:py-1.5 py-1 md:grid-cols-3 grid-cols-2 md:text-[14px] text-xs text-start cursor-pointer hover:bg-gray-50/10"
+            :style="{ '--bar-width': itemWidth(item) + '%' }"
+            @click="onSelectPrice(item.price)"
           >
-            <span v-if="col.value === 'price'">
-              {{ formatAmount(BN(item.value).div(BN(item.qty)).toString(), 5, { endPad: true, format: true }) }}
+            <span
+              v-for="col in columns"
+              :key="col.value"
+              class="first:text-start text-end"
+              :class="{ 'text-sell': col.value === 'price' }"
+            >
+              <span v-if="col.value === 'price'">
+                {{ formatAmount(BN(item.value).div(BN(item.qty)).toString(), 5, { endPad: true, format: true }) }}
+              </span>
+              <span v-else>
+                {{
+                  formatAmount(item[col.value], 2, {
+                    endPad: true,
+                    format: col.value === "value",
+                  })
+                }}
+              </span>
             </span>
-            <span v-else>
-              {{
-                formatAmount(item[col.value], 2, {
-                  endPad: true,
-                  format: col.value === "value",
-                })
-              }}
-            </span>
-          </span>
-        </div>
+          </div>
+        </TransitionGroup>
       </div>
 
       <div
@@ -137,38 +145,42 @@ const onSelectPrice = (price: string) => {
       <div
         class="flex flex-col justify-start xl:space-y-2.5 md:space-y-1.5 space-y-1"
       >
-        <div
-          v-for="item in data.orderBuyBList?.slice(0, orderAmount) ?? []"
-          :key="JSON.stringify(item)"
-          class="buy-price-item w-full grid md:px-4 px-2 md:py-1.5 py-1 md:grid-cols-3 grid-cols-2 md:text-[14px] text-xs text-start cursor-pointer hover:bg-gray-50/10"
-          :style="{ '--buy-bar-width': itemWidth(item) + '%' }"
-          @click="onSelectPrice(item.price)"
+        <TransitionGroup
+          @enter="onEnter"
         >
-          <span
-            v-for="col in columns"
-            :key="col.value"
-            class="first:text-start text-end"
-            :class="{ 'text-buy': col.value === 'price' }"
+          <div
+            v-for="item in data.orderBuyBList?.slice(0, orderAmount) ?? []"
+            :key="JSON.stringify(item)"
+            class="buy-price-item before:bg-buy w-full grid md:px-4 px-2 md:py-1.5 py-1 md:grid-cols-3 grid-cols-2 md:text-[14px] text-xs text-start cursor-pointer hover:bg-gray-50/10"
+            :style="{ '--bar-width': itemWidth(item) + '%' }"
+            @click="onSelectPrice(item.price)"
           >
-            <span v-if="col.value === 'price'">
-              {{ formatAmount(item.price, 5, { endPad: true, format: true }) }}
+            <span
+              v-for="col in columns"
+              :key="col.value"
+              class="first:text-start text-end"
+              :class="{ 'text-buy': col.value === 'price' }"
+            >
+              <span v-if="col.value === 'price'">
+                {{ formatAmount(item.price, 5, { endPad: true, format: true }) }}
+              </span>
+              <span v-else>{{
+                formatAmount(item[col.value], 2, {
+                  endPad: true,
+                  format: true,
+                })
+              }}
+              </span>
             </span>
-            <span v-else>{{
-              formatAmount(item[col.value], 2, {
-                endPad: true,
-                format: true,
-              })
-            }}
-            </span>
-          </span>
-        </div>
+          </div>
+        </TransitionGroup>
       </div>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.sell-price-item {
+.price-item-animate {
   @keyframes price-bar-animation {
     0% {
       width: 100%;
@@ -187,56 +199,21 @@ const onSelectPrice = (price: string) => {
       opacity: .1;
     }
     100% {
-      width: var(--buy-bar-width);
+      width: var(--bar-width);
       opacity: .1;
     }
   }
   &::before {
-    content: "";
-    width: var(--sell-bar-width);
-    @apply bg-sell;
-    opacity: .1;
     animation: price-bar-animation linear 0.4s;
   }
 }
-
-.buy-price-item {
-  @keyframes price-bar-animation {
-    0% {
-      width: 100%;
-      opacity: .2;
-    }
-    25% {
-      width: 100%;
-      opacity: .4;
-    }
-    50% {
-      width: 100%;
-      opacity: .2;
-    }
-    51% {
-      width: 0;
-      opacity: .1;
-    }
-    100% {
-      width: var(--buy-bar-width);
-      opacity: .1;
-    }
-  }
-  &::before {
-    content: "";
-    width: var(--buy-bar-width);
-    @apply bg-buy;
-    opacity: .1;
-    animation: price-bar-animation linear 0.4s;
-  }
-}
-
 .sell-price-item,
 .buy-price-item {
   position: relative;
-
   &::before {
+    content: '';
+    width: var(--bar-width);
+    opacity: .1;
     position: absolute;
     height: 100%;
     right: 0;
