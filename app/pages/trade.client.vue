@@ -46,26 +46,13 @@ useHead({
       </div>
 
       <div
-        :class="
-          [
-            'xl:col-span-6 xl:row-span-6',
-            'md:col-span-7 md:row-span-6',
-            '',
-          ].join(' ')
-        "
+        class="xl:col-span-6 xl:row-span-6 md:col-span-7 md:row-span-5"
       >
         <TradeChart />
       </div>
 
       <div
-        class="xl:border-l-[2px] xl:border-t-[0px] border-t-[2px] border-[#2E2E2E]"
-        :class="
-          [
-            'xl:col-span-2 xl:row-span-10',
-            'md:col-span-7 md:row-span-5',
-            '',
-          ].join(' ')
-        "
+        class="xl:border-l-[2px] xl:border-t-[0px] border-t-[2px] border-[#2E2E2E] xl:col-span-2 xl:row-span-10 md:col-span-7 md:row-span-6"
       >
         <TradeOrders />
       </div>

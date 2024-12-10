@@ -2,11 +2,15 @@
 import BN from 'bignumber.js';
 import { formatAmount } from '#imports';
 
-const { isMD } = useDevice();
+const { isMD, isXL } = useDevice();
 
 const { $api } = useNuxtApp();
 const { currentPair } = useNetworkConfig();
 const selectedPrice = useState('selected-price');
+
+const orderAmount = computed(() => {
+  return isXL.value ? 12 : 5;
+});
 
 const columns = computed(() => {
   const token0 = currentPair.value?.tokens[0];
@@ -49,8 +53,8 @@ const { data } = useAsyncData(
 function itemWidth(item: { qty: string }) {
   if (!data.value) return '0';
   const maxQty = BN.max(
-    ...(data.value?.orderSellBList?.slice(0, 11) ?? []).map(a => BN(a.qty)),
-    ...(data.value?.orderBuyBList?.slice(0, 11) ?? []).map(a => BN(a.qty)),
+    ...(data.value?.orderSellBList?.slice(0, orderAmount.value) ?? []).map(a => BN(a.qty)),
+    ...(data.value?.orderBuyBList?.slice(0, orderAmount.value) ?? []).map(a => BN(a.qty)),
   );
   return BN(item.qty).div(maxQty).times(BN(100)).toFixed(0);
 }
@@ -82,7 +86,7 @@ const onSelectPrice = (price: string) => {
         class="w-full flex flex-col justify-end xl:space-y-2.5 md:space-y-1.5 space-y-1"
       >
         <div
-          v-for="item in data.orderSellBList?.slice(0, 11) ?? []"
+          v-for="item in data.orderSellBList?.slice(0, orderAmount) ?? []"
           :key="JSON.stringify(item)"
           class="sell-price-item w-full grid md:px-4 px-2 md:py-1.5 py-1 md:grid-cols-3 grid-cols-2 md:text-[14px] text-xs text-start cursor-pointer hover:bg-gray-50/10"
           :style="{ '--sell-bar-width': itemWidth(item) + '%' }"
@@ -127,7 +131,7 @@ const onSelectPrice = (price: string) => {
         class="flex flex-col justify-start xl:space-y-2.5 md:space-y-1.5 space-y-1"
       >
         <div
-          v-for="item in data.orderBuyBList?.slice(0, 11) ?? []"
+          v-for="item in data.orderBuyBList?.slice(0, orderAmount) ?? []"
           :key="JSON.stringify(item)"
           class="buy-price-item w-full grid md:px-4 px-2 md:py-1.5 py-1 md:grid-cols-3 grid-cols-2 md:text-[14px] text-xs text-start cursor-pointer hover:bg-gray-50/10"
           :style="{ '--buy-bar-width': itemWidth(item) + '%' }"
