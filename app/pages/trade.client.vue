@@ -59,14 +59,7 @@ useHead({
 
       <div
         v-if="isXL"
-        class="border-t-[1px] border-[#2E2E2E]"
-        :class="
-          [
-            'xl:col-span-6 xl:row-span-5',
-            'md:col-span-3 md:row-span-6',
-            '',
-          ].join(' ')
-        "
+        class="border-t-[1px] border-[#2E2E2E] xl:col-span-6 xl:row-span-5 md:col-span-3 md:row-span-6"
       >
         <TradeForm />
       </div>

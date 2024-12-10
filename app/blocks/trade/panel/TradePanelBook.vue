@@ -87,7 +87,7 @@ const onSelectPrice = (price: string) => {
       >
         <div
           v-for="item in data.orderSellBList?.slice(0, orderAmount) ?? []"
-          :key="JSON.stringify(item)"
+          :key="item.price"
           class="sell-price-item w-full grid md:px-4 px-2 md:py-1.5 py-1 md:grid-cols-3 grid-cols-2 md:text-[14px] text-xs text-start cursor-pointer hover:bg-gray-50/10"
           :style="{ '--sell-bar-width': itemWidth(item) + '%' }"
           @click="onSelectPrice(item.price)"
@@ -163,35 +163,65 @@ const onSelectPrice = (price: string) => {
 <style lang="scss" scoped>
 .sell-price-item {
   @keyframes price-bar-animation {
-    from {
-      width: 0;
+    0% {
+      width: 100%;
+      opacity: .2;
     }
-    to {
-      width: var(--sell-bar-width);
+    25% {
+      width: 100%;
+      opacity: .4;
+    }
+    50% {
+      width: 100%;
+      opacity: .2;
+    }
+    51% {
+      width: 0;
+      opacity: .1;
+    }
+    100% {
+      width: var(--buy-bar-width);
+      opacity: .1;
     }
   }
   &::before {
     content: "";
     width: var(--sell-bar-width);
-    @apply bg-sell/10;
-    animation: price-bar-animation linear 0.3s;
+    @apply bg-sell;
+    opacity: .1;
+    animation: price-bar-animation linear 0.4s;
   }
 }
 
 .buy-price-item {
   @keyframes price-bar-animation {
-    from {
-      width: 0;
+    0% {
+      width: 100%;
+      opacity: .2;
     }
-    to {
+    25% {
+      width: 100%;
+      opacity: .4;
+    }
+    50% {
+      width: 100%;
+      opacity: .2;
+    }
+    51% {
+      width: 0;
+      opacity: .1;
+    }
+    100% {
       width: var(--buy-bar-width);
+      opacity: .1;
     }
   }
   &::before {
     content: "";
     width: var(--buy-bar-width);
-    @apply bg-buy/10;
-    animation: price-bar-animation linear 0.3s;
+    @apply bg-buy;
+    opacity: .1;
+    animation: price-bar-animation linear 0.4s;
   }
 }
 
