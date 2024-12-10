@@ -50,6 +50,13 @@ const { data } = useAsyncData(
   },
 );
 
+watch(data, () => {
+  if (data.value) {
+    useHead({
+      title: `${formatAmount(data.value.latestPrice, 5)} | ${currentPair.value.label}`,
+    });
+  }
+});
 function itemWidth(item: { qty: string }) {
   if (!data.value) return '0';
   const maxQty = BN.max(
