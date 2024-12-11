@@ -89,7 +89,6 @@ const { data, status } = useAsyncData(
       type: props.trade.type.toString(),
       orderId: props.trade.orderId,
       pair: props.trade.pair,
-
     }),
   {
     server: false,
