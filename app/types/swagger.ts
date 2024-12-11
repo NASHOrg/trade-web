@@ -837,6 +837,8 @@ export interface paths {
                     pageSize: number;
                     orderId: string;
                     type: string;
+                    /** 币对 */
+                    pair: string;
                 };
             };
             responses: {

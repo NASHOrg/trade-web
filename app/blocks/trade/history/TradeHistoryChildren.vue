@@ -88,6 +88,8 @@ const { data, status } = useAsyncData(
       ...queryParams.value,
       type: props.trade.type.toString(),
       orderId: props.trade.orderId,
+      pair: props.trade.pair,
+
     }),
   {
     server: false,
