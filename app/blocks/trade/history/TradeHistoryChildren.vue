@@ -3,6 +3,7 @@ const props = defineProps<{
   trade: {
     type: string;
     orderId: string;
+    pair: string;
   };
 }>();
 const { $api } = useNuxtApp();

@@ -248,7 +248,7 @@ function isExpanded(row: (typeof datas.value)[number]) {
         </div>
         <TradeHistoryChildren
           v-if="item.orderId+item.type === expanded"
-          :trade="{ type: item.type.toString(), orderId: item.orderId }"
+          :trade="{ type: item.type.toString(), orderId: item.orderId, pair: item.pairLabel }"
         />
         <IconArrowDown
           class="transition-transform w-[12px] mx-auto cursor-pointer"
@@ -295,7 +295,9 @@ function isExpanded(row: (typeof datas.value)[number]) {
         </template>
 
         <template #expand="{ row }">
-          <TradeHistoryChildren :trade="row" />
+          <TradeHistoryChildren
+            :trade="{ type: row.type.toString(), orderId: row.orderId, pair: row.pairLabel }"
+          />
         </template>
         <template #status-data="{ row }">
           <UBadge
