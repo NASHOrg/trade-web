@@ -8,7 +8,7 @@ const { $config } = useNuxtApp();
 const { pairList } = useNetworkConfig();
 
 await callOnce(async () => {
-  const data = await $fetch(`${$config.public.baseUrl}/bool-stake-reward/blockchain/pairs`, {
+  const data = await $fetch(`${$config.internalBaseUrl}/bool-stake-reward/blockchain/pairs`, {
     headers: {
       'Cache-Control': 'max-age=60',
     },

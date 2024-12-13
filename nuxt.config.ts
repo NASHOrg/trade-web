@@ -18,6 +18,7 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    internalBaseUrl: '',
     public: {
       baseUrl: '',
       network: '',
