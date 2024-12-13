@@ -1,11 +1,29 @@
 <script setup lang="ts">
+import { BindCodeModal } from '#components';
+
 const { open, address } = useWallet();
 const { $localePath } = useNuxtApp();
 const router = useRouter();
 const { disconnect } = useWallet();
+const { clearToken } = useToken();
+const { $authApi } = useNuxtApp();
+
+const { userToken } = useToken();
+const { data: user } = useAsyncData(
+  'user',
+  async () => {
+    if (!userToken.value) return Promise.resolve(null);
+    return $authApi.userUser({}, userToken.value);
+  },
+  {
+    lazy: false,
+    watch: [userToken],
+    server: false,
+  },
+);
 
 const options = computed(() => {
-  return [
+  const menus = [
     [
       {
         label: 'Account',
@@ -19,12 +37,28 @@ const options = computed(() => {
       {
         label: 'Disconnect',
         icon: 'i-material-symbols-logout',
-        click: () => {
+        click: async () => {
+          const _address = address.value;
           disconnect();
+          await new Promise(resolve => setTimeout(resolve, 200));
+          clearToken(_address!);
         },
       },
     ],
   ];
+  if (user.value && !user.value.userInvitationAddress) {
+    menus.unshift([
+      {
+        label: 'Bind Inviter',
+        icon: 'i-prime-sparkles',
+        click: async () => {
+          const modal = useModal();
+          modal.open(BindCodeModal);
+        },
+      },
+    ]);
+  }
+  return menus;
 });
 </script>
 
@@ -56,7 +90,7 @@ const options = computed(() => {
     </UDropdown>
 
     <UButton
-      v-else
+      v-show="!address"
       class="h-[30px] text-sm leading-6 font-normal px-[10px]"
       :ui="{ rounded: 'rounded-[4px]' }"
       @click="open"

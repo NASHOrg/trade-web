@@ -7,6 +7,7 @@ import PendingTransactionAmount from '~/components/PendingTransactionAmount.vue'
 const { address } = useWallet();
 const { isMD } = useDevice();
 const { network, currentPair } = useNetworkConfig();
+const { $authApi } = useNuxtApp();
 const { t } = useI18n();
 const api = new BaseEvmApi(network.rpc);
 
@@ -20,6 +21,20 @@ const { data } = useAsyncData(`user-assets-${address.value}`, async () => {
   server: false,
   watch: [address],
 });
+
+const { userToken } = useToken();
+const { data: user } = useAsyncData(
+  'user',
+  async () => {
+    if (!userToken.value) return Promise.resolve(null);
+    return $authApi.userUser({}, userToken.value);
+  },
+  {
+    lazy: false,
+    watch: [userToken],
+    server: false,
+  },
+);
 
 const balanceFormat = computed(() => {
   return ethers.formatEther(data.value?.balance || '0');
@@ -54,6 +69,11 @@ const buttons = [
     icon: resolveComponent('IconWithdraw'),
   },
 ];
+
+const inviteLink = computed(() => {
+  const url = window.location.protocol + '//' + window.location.host;
+  return `${url}?ref=${user.value?.userInvitationCode}`;
+});
 </script>
 
 <template>
@@ -96,6 +116,15 @@ const buttons = [
           {{ formatAmount(balanceFormat, 6) }}
           {{ network?.symbol }}
         </span>
+      </div>
+    </div>
+    <div class="inline-flex space-x-[10px] mt-[14px] items-center">
+      <span class="text-[16px]">Invitation Link:</span>
+      <div class="text-[14px] py-2 px-4 rounded-full bg-[#2e2e2e] inline-flex items-center space-x-2">
+        <span>
+          {{ inviteLink }}
+        </span>
+        <CopyButton :source="inviteLink || ''" />
       </div>
     </div>
     <div class="flex space-x-[10px] md:space-x-[32px] mt-[28px]">

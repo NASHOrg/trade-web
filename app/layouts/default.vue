@@ -1,14 +1,32 @@
 <script setup lang="ts">
+import { SignInModal } from '#components';
+
+const { address } = useWallet();
+const { userToken } = useToken();
+const modal = useModal();
 const { $config } = useNuxtApp();
 const { pairList } = useNetworkConfig();
+
 await callOnce(async () => {
-  const data = await $fetch(`${$config.public.baseUrl}/blockchain/pairs`, {
+  const data = await $fetch(`${$config.public.baseUrl}/bool-stake-reward/blockchain/pairs`, {
     headers: {
       'Cache-Control': 'max-age=60',
     },
   }) as any;
   pairList.value = data!.data;
 });
+
+watch([address, userToken], () => {
+  if (address.value) {
+    if (!userToken.value) {
+      console.log('sign message');
+      modal.open(SignInModal);
+    }
+  }
+  else {
+    modal.close();
+  }
+}, { immediate: true, deep: true });
 </script>
 
 <template>

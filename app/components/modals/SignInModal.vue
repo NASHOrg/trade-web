@@ -1,21 +1,19 @@
 <script setup lang="ts">
 import { toast } from 'vue-sonner';
 
-// const store = useUserStore();
 const isLoading = ref(false);
-const { $api } = useNuxtApp();
-const { signMessage, address, open, disconnect } = useWallet();
+const { $authApi } = useNuxtApp();
+const { signMessage, address, disconnect, open: openWalletModal } = useWallet();
 const route = useRoute();
-const checked = ref(true);
-const input = ref('');
 const modal = useModal();
 
 const referral = route.query.ref as string | undefined;
+const input = ref(referral);
 
 const { data } = useAsyncData(
   async () => {
     if (!address.value) return Promise.resolve(undefined);
-    return $api.userCheck({ address: address.value });
+    return $authApi.userCheck({ address: address.value });
   },
   {
     watch: [address],
@@ -30,37 +28,34 @@ async function signIn() {
   }
   try {
     isLoading.value = true;
-    const tokens = JSON.parse(localStorage.getItem('tokens') ?? '{}');
-    const message = await $api.userMsgToLogin({});
+    const { setToken } = useToken();
+    const message = await $authApi.userMsgToLogin({});
     const signature = await signMessage(message);
-    if (data.value === false && input.value) {
-      const response = await $api.userUserLoginPost({
+    if (!data.value && input.value) {
+      const response = await $authApi.userUserLoginPost({
         address: address.value!,
         message,
         signature: signature!,
         invitationCode: input.value,
       });
-      tokens[address.value!] = response;
-      localStorage.setItem('tokens', JSON.stringify(tokens));
+      setToken(response);
+      // localStorage.setItem('tokens', JSON.stringify(tokens));
       // store.token = response;
       modal.close();
       return;
     }
-    const response = await $api.userUserLoginPost({
+    const response = await $authApi.userUserLoginPost({
       address: address.value!,
       signature: signature!,
       message,
-      invitationCode: checked.value ? referral : undefined,
     });
-    tokens[address.value!] = response;
-    localStorage.setItem('tokens', JSON.stringify(tokens));
+    setToken(response);
+    // localStorage.setItem('tokens', JSON.stringify(tokens));
     // store.token = response;
     modal.close();
   }
   catch (error: any) {
-    if ('message' in error && error.message) {
-      handleJsonRpcError(error, toast);
-    }
+    toast.error(error.message);
   }
   finally {
     isLoading.value = false;
@@ -68,36 +63,36 @@ async function signIn() {
 }
 
 function cancel() {
+  openWalletModal();
   disconnect();
-  open();
   modal.close();
 }
 </script>
 
 <template>
   <UModal prevent-close>
-    <div class="py-[48px] px-[66px] flex flex-col justify-center">
-      <div class="flex flex-row item-center">
-        <span class="text-[24px] font-bold text-primary">Sign In</span>
+    <div class="py-[48px] px-[28px] flex flex-col justify-center">
+      <div class="inline-flex items-center">
+        <span class="text-[28px] font-bold text-primary">Sign In</span>
         <div
-          class="h-fit rounded-full py-1 px-4 bg-gray-600 text-white text-center text-[14px] ml-4"
+          class="h-fit rounded-full py-1 px-4 bg-gray-600 text-white text-center text-[14px] ms-4"
         >
           {{ shortAddress(address ?? "") }}
         </div>
       </div>
-
-      <div class="mt-2 text-[18px]">
-        {{ $t("verifyTip") }}
+      <div class="text-[18px] mt-4 text-white dark:text-white leading-6">
+        Sign this message to prove you own this wallet and proceed.
       </div>
+
       <div
-        v-if="!referral && data !== true"
-        class="flex flex-col mt-4"
+        v-show="data === false"
+        class="flex flex-col mt-4 text-white"
       >
         <label
           for="referral"
           class="w-full flex flex-row justify-between"
         >
-          <span class="font-semibold">{{ $t("referalCode") }}</span>
+          <span class="font-semibold">Invitation Code (optional)</span>
         </label>
         <UInput
           v-model="input"
@@ -111,19 +106,21 @@ function cancel() {
           <UButton
             block
             variant="outline"
-            class="rounded-full"
             color="white"
+            class="h-[40px] rounded-full border ring-0 text-sm font-medium text-white"
+            size="md"
             @click="cancel"
           >
-            {{ $t("changeWallet") }}
+            Change Wallet
           </UButton>
           <UButton
             block
-            class="rounded-full"
             :loading="isLoading"
+            class="h-[40px] rounded-full border-0 ring-0 text-sm font-medium"
+            size="md"
             @click="signIn"
           >
-            {{ $t("signIn") }}
+            Sign In
           </UButton>
         </div>
       </div>

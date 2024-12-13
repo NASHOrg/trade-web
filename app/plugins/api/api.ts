@@ -2,6 +2,7 @@ import { ofetch } from 'ofetch';
 import type { ApiProvider } from '~/types/api';
 import type { paths } from '~/types/swagger';
 import type { paths as BotPaths } from '~/types/bot-swagger';
+import type { paths as AuthPaths } from '~/types/auth-swagger';
 import type { OpArgType, OpenapiPaths, OpReturnType } from '~/types/fetcher';
 
 export class Api {
@@ -112,5 +113,5 @@ export class Api {
     for: <Paths extends OpenapiPaths<Paths>>() => this.fetcher<Paths>(),
   };
 
-  ft = this.Fetcher.for<paths & BotPaths>();
+  ft = this.Fetcher.for<paths & BotPaths & AuthPaths>();
 }

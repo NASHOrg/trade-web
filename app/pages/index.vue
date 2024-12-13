@@ -1,9 +1,6 @@
 <script lang="ts" setup>
-definePageMeta({
-  middleware: () => {
-    return navigateTo('/trade');
-  },
-});
+const route = useRoute();
+navigateTo({ path: '/trade', query: route.query });
 </script>
 
 <template>
