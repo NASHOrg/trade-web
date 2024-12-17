@@ -112,6 +112,37 @@ export const betaMainnet = {
   },
 };
 
+export const ultraLiquidMainnet = {
+  rpc: 'https://ultra-node-rpc.bool.network',
+  chainId: 11101,
+  symbol: 'BOL',
+  name: 'Ultra Liquid Mainnet',
+  value: 'ultra_liquid_mainnet',
+  feeRate: 3000,
+  explorer: 'https://beta-mainnet.boolscan.com',
+  icon: 'https://bool.network/bool-network-orange.png',
+  contracts: {
+    trade: '0x',
+    consumer: '0x',
+  },
+  tokens: {
+    bool: {
+      name: 'BOL',
+      symbol: 'BOL',
+      decimals: 18,
+      address: '',
+      icon: 'https://bool.network/bool-orange.png',
+    },
+    usdt: {
+      name: 'USDT',
+      address: '0x3fFa3237b30b15eF3368132a2AC9D262d8502bB3',
+      icon: '/images/usdt.png',
+      symbol: 'USDT',
+      decimals: 18,
+    },
+  },
+};
+
 export const ethereum = {
   rpc: 'https://rpc.ankr.com/eth',
   explorer: 'https://etherscan.io',
