@@ -1,14 +1,14 @@
 import type { Token } from '~/types/common';
 import type { BlockchainPairs } from '~/types/swagger';
 import { TradeApi } from '~/utils/contracts/trade';
-import { betaMainnet, betaTestnet, ethereum, sepolia } from '~/utils/networks';
+import { betaMainnet, ultraLiquidTestnet, ethereum, sepolia } from '~/utils/networks';
 
 export function useNetworkConfig() {
   const { currentRoute } = useRouter();
   // Fetch from server
   const pairList = useState<NonNullable<BlockchainPairs>>('paris', () => []);
   const config = useRuntimeConfig();
-  const boolNetwork = config.public.network === 'beta_mainnet' ? betaMainnet : betaTestnet;
+  const boolNetwork = config.public.network === 'beta_mainnet' ? betaMainnet : ultraLiquidTestnet;
   const bridgeNetworks = [config.public.network === 'beta_mainnet' ? ethereum : sepolia];
 
   const tokens = computed<{ [key: string]: Token }>(() => {

@@ -41,7 +41,7 @@ pipeline {
           script {
             def envCmd
             if (env.BRANCH_NAME ==~ /(.*master.*)|(.*main.*)/) {
-                envCmd = 'cp .env.prod .env'
+                envCmd = 'cp .env.production .env'
             } else {
                 envCmd = 'cp .env.preview .env'
             }

@@ -28,6 +28,36 @@ export const betaTestnet = {
   },
 };
 
+export const ultraLiquidTestnet = {
+  rpc: 'https://ultra-test-node-rpc.bool.network',
+  chainId: 483,
+  symbol: 'tBOL',
+  name: 'Ultra Liquid Testnet',
+  value: 'ultra_liquid_testnet',
+  explorer: 'https://beta-testnet.boolscan.com',
+  icon: 'https://bool.network/bool-network-orange.png',
+  contracts: {
+    trade: '0x52295088d335EF9BEDc5837b59cA144c1Fd48983',
+    consumer: '0x97668c00FdD830cFF4578bD66283E512FE2b9C71',
+  },
+  tokens: {
+    bool: {
+      name: 'BOL',
+      symbol: 'tBOL',
+      decimals: 18,
+      icon: 'https://bool.network/bool-orange.png',
+      address: '',
+    },
+    usdc: {
+      name: 'USDC',
+      address: '0xf9007019014c8CdFA78f21e97995F6a4D3493729',
+      icon: '/images/usdc.png',
+      symbol: 'USDC',
+      decimals: 6,
+    },
+  },
+};
+
 export const sepolia = {
   rpc: 'https://eth-sepolia-public.unifra.io',
   explorer: 'https://sepolia.etherscan.io',
