@@ -15,6 +15,12 @@ export default defineAppConfig({
     projectId: walletConfig.projectId,
   },
   metadata: walletConfig.metadata,
+  // Frequent fetch intervals
+  fetch: {
+    fast: 1000,
+    medium: 3000,
+    slow: 10000,
+  },
   ui: {
     primary: 'main',
     gray: 'neutral',

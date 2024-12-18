@@ -11,7 +11,8 @@ const range = ref<ChartRange>('15min');
 
 const { data: tradeData } = useNuxtData('trade-statistic-hour-' + currentPair.value.value);
 
-const { counter, pause, reset } = useInterval(3000, { controls: true });
+const appConfig = useAppConfig();
+const { counter, pause, reset } = useInterval(appConfig.fetch.fast, { controls: true });
 
 useAsyncData(
   `trade-statistic-hour-${currentPair.value.value}`,

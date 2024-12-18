@@ -35,7 +35,8 @@ const columns = computed(() => {
   ];
 });
 
-const { counter } = useInterval(3000, { controls: true });
+const appConfig = useAppConfig();
+const { counter } = useInterval(appConfig.fetch.fast, { controls: true });
 
 function onEnter(el: any) {
   el.classList.add('price-item-animate');

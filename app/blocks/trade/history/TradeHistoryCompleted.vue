@@ -3,7 +3,8 @@ const { $api } = useNuxtApp();
 const { t } = useI18n();
 const { pairs } = useNetworkConfig();
 const { address } = useWallet();
-const { counter } = useInterval(10000, { controls: true });
+const appConfig = useAppConfig();
+const { counter } = useInterval(appConfig.fetch.medium, { controls: true });
 
 const columns = computed(() => {
   return [

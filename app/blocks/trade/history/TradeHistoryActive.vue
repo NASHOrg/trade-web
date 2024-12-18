@@ -5,7 +5,8 @@ const { address, chainId, switchNetwork, open } = useWallet();
 const { network, tradeApi, pairs } = useNetworkConfig();
 const { t } = useI18n();
 const { $api } = useNuxtApp();
-const { counter } = useInterval(10000, { controls: true });
+const appConfig = useAppConfig();
+const { counter } = useInterval(appConfig.fetch.medium, { controls: true });
 const { cancelledOrders, orders, addCancelledOrder, removeOrders } = useOrders();
 
 const queryParams = ref({

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 const { currentPair } = useNetworkConfig();
 const { $api } = useNuxtApp();
-const { counter } = useInterval(3000, { controls: true });
+const appConfig = useAppConfig();
+const { counter } = useInterval(appConfig.fetch.fast, { controls: true });
 const { isMD } = useDevice();
 const selectedPrice = useState('selected-price');
 
