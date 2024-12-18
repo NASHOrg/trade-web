@@ -34,7 +34,7 @@ export const ultraLiquidTestnet = {
   symbol: 'tBOL',
   name: 'Ultra Liquid Testnet',
   value: 'ultra_liquid_testnet',
-  explorer: 'https://beta-testnet.boolscan.com',
+  explorer: 'https://ultra-test-explorer.bool.network',
   icon: 'https://bool.network/bool-network-orange.png',
   contracts: {
     trade: '0x52295088d335EF9BEDc5837b59cA144c1Fd48983',
