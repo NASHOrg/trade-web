@@ -83,7 +83,7 @@ const queryParams = ref({
 });
 
 const { data, status } = useAsyncData(
-  `trade-${props.trade.orderId}-${props.trade.type}-{props.pair}`,
+  `trade-${props.trade.orderId}-${props.trade.type}-${props.trade.pair}`,
   () =>
     $api.blockchainTradeHistoryDetail({
       ...queryParams.value,
