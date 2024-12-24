@@ -29,6 +29,7 @@
     "color": "^4.2.3",
     "dayjs": "^1.11.11",
     "ethers": "^6.12.2",
+    "fflate": "^0.8.2",
     "lightweight-charts": "^4.2.1",
     "mersenne-twister": "^1.1.0",
     "nuxt": "^3.14.159",

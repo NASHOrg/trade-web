@@ -4,9 +4,9 @@ import { formatAmount } from '#imports';
 
 const { isMD, isXL } = useDevice();
 
-const { $api } = useNuxtApp();
 const { currentPair } = useNetworkConfig();
 const selectedPrice = useState('selected-price');
+const { orderbook: data, status } = useOrderBook();
 
 const orderAmount = computed(() => {
   return isXL.value ? 12 : 5;
@@ -35,25 +35,9 @@ const columns = computed(() => {
   ];
 });
 
-const appConfig = useAppConfig();
-const { counter } = useInterval(appConfig.fetch.fast, { controls: true });
-
 function onEnter(el: any) {
   el.classList.add('price-item-animate');
 }
-
-const { data } = useAsyncData(
-  'order-book' + currentPair.value.value,
-  () => {
-    return $api.blockchainOrderBooks({
-      pair: currentPair.value?.value,
-    });
-  },
-  {
-    watch: [counter],
-    server: false,
-  },
-);
 
 watch(data, () => {
   if (data.value) {
@@ -89,9 +73,17 @@ const onSelectPrice = (price: string) => {
         {{ column.label }}
       </div>
     </div>
-
     <div
-      v-if="data"
+      v-if="status !== 'OPEN'"
+      class="h-full w-full flex justify-center"
+    >
+      <UIcon
+        class="animate-spin text-primary-500 my-auto w-6 h-6"
+        name="quill:loading-spin"
+      />
+    </div>
+    <div
+      v-else-if="data"
       class="w-full h-full grid grid-rows-[1fr_44px_1fr]"
     >
       <div

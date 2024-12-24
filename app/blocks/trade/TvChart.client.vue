@@ -24,23 +24,15 @@ const tooltipData = ref<{
   time: number;
   value: number;
 } | undefined>();
-
+const { updateChartData, chartData: newData } = useOrderBook();
 const { counter } = useInterval(3000, { controls: true });
 
-const { data: newData } = useAsyncData(
-  `trade-statistic-${props.range}${currentPair.value?.value}`,
-  () => {
-    return $api.blockchainTradeStatistic({
-      pair: currentPair.value?.value,
-      type: rangeType(props.range),
-      ...rangeParams(props.range),
-    });
-  },
-  {
-    server: false,
-    watch: [counter],
-  },
-);
+watch(counter, () => {
+  updateChartData({
+    ...rangeParams(props.range),
+    type: rangeType(props.range),
+  });
+});
 
 const maxVisibleBars = 120;
 let fetchOldData = false;

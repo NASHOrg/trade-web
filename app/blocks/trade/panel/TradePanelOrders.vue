@@ -1,30 +1,9 @@
 <script setup lang="ts">
 const { currentPair } = useNetworkConfig();
-const { $api } = useNuxtApp();
-const appConfig = useAppConfig();
-const { counter } = useInterval(appConfig.fetch.fast, { controls: true });
 const { isMD } = useDevice();
 const selectedPrice = useState('selected-price');
 
-const queryParams = ref({
-  pageNo: 1,
-  pageSize: 100,
-});
-const { data } = useAsyncData(
-  `trade-orders-${currentPair.value.value}`,
-  () => {
-    return $api.blockchainTradeHistory({
-      ...queryParams.value,
-      pair: currentPair.value?.value,
-    });
-  },
-  {
-    watch: [queryParams, () => currentPair.value.value, counter],
-    immediate: true,
-    deep: true,
-    server: false,
-  },
-);
+const { orders: data, status } = useOrderBook();
 
 const columns = computed(() => {
   const token0 = currentPair.value?.tokens[0];
@@ -61,10 +40,18 @@ const columns = computed(() => {
         {{ column.label }}
       </div>
     </div>
-
+    <div
+      v-if="status !== 'OPEN'"
+      class="h-full w-full flex justify-center"
+    >
+      <UIcon
+        class="animate-spin text-primary-500 my-auto w-6 h-6"
+        name="quill:loading-spin"
+      />
+    </div>
     <div class="w-full grow xl:space-y-2.5 space-y-1 overflow-y-auto scrollbar">
       <div
-        v-for="(item, i) in data?.items ?? []"
+        v-for="(item, i) in data ?? []"
         :key="i"
         class="grid md:px-4 px-2 md:py-2.5 py-1 md:grid-cols-3 grid-cols-2 md:text-[14px] text-xs text-start cursor-pointer hover:bg-gray-50/10"
         @click="selectedPrice = item.price"

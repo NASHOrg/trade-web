@@ -2,6 +2,7 @@ import { useStorage } from '@vueuse/core';
 import type { Order } from '~/types/common';
 
 type SavedOrder = Order & { verified?: boolean };
+
 export function useOrders() {
   const { address } = useWallet();
   const _orders = useStorage<{ [key: string]: SavedOrder[] }>('xbit-orders', {});
