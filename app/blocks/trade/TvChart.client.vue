@@ -34,7 +34,7 @@ watch(counter, () => {
   });
 });
 
-const maxVisibleBars = 120;
+const maxVisibleBars = 80;
 let fetchOldData = false;
 async function changeChartRange() {
   const visibleLogicalRange = mainChart!.timeScale()
