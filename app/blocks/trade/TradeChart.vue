@@ -7,7 +7,7 @@ const showChart = useStorage<boolean>('xbit-show-shart', false);
 const { currentPair } = useNetworkConfig();
 const { $api } = useNuxtApp();
 const { isMD } = useDevice();
-const range = ref<ChartRange>('15min');
+const range = ref<ChartRange>('minute');
 
 const { data: tradeData } = useNuxtData('trade-statistic-hour-' + currentPair.value.value);
 
