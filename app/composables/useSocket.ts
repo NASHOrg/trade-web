@@ -288,7 +288,6 @@ export function useSocket<Data = any>(
         if (e.data === toValue(responseMessage))
           return;
       }
-      console.log('onmessage');
       data.value = e.data;
       onMessage?.(wsRef.value!, e);
     };

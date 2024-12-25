@@ -12,7 +12,7 @@ export function useOrderBook() {
 
   const { data, status, send } = useSocket(() => `wss://testnet.xbit.finance/backend/xbit-socket-server/ws/order/${currentPair.value.label}`, {
     autoReconnect: {
-      retries: 3,
+      retries: 100,
     },
   });
 
@@ -36,7 +36,6 @@ export function useOrderBook() {
       return;
     });
     const result = JSON.parse(decodedData as string);
-    console.log(result);
     if (result.dataIndexs.includes(0)) {
       orderbook.value = result.book;
     }
