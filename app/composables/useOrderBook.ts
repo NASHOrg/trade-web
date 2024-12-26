@@ -36,6 +36,7 @@ export function useOrderBook() {
       return;
     });
     const result = JSON.parse(decodedData as string);
+    console.log(result)
     if (result.dataIndexs.includes(0)) {
       orderbook.value = result.book;
     }
