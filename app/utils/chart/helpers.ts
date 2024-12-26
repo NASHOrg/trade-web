@@ -131,11 +131,16 @@ export const defaultTradingViewConfig = {
   autosize: true, // Enable auto-sizing
   disabled_features: [
     'symbol_search_hot_key',
+    'header_quick_search',
     'header_symbol_search',
     'header_compare',
     'header_undo_redo',
     'header_screenshot',
     'items_favoriting',
+    'symbol_search_hot_key',
+    'symbol_info',
+    'edit_buttons_in_legend',
+    'delete_button_in_legend',
   ],
   library_path: '/charting_library/',
   toolbar_bg: '#121212',
