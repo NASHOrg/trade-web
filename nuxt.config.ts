@@ -52,16 +52,10 @@ export default defineNuxtConfig({
         file: 'en.json',
         name: 'English',
       },
-      {
-        code: 'zh',
-        iso: 'zh-CN',
-        file: 'zh.json',
-        name: '中文',
-      },
     ],
   },
 
-  plugins: ['~/plugins/api', '~/plugins/chart.ts'],
+  plugins: ['~/plugins/api'],
 
   modules: [
     '@pinia/nuxt',
@@ -73,6 +67,7 @@ export default defineNuxtConfig({
     'nuxt-svgo',
     '@nuxt/image',
     '@nuxtjs/i18n',
+    '@nuxt/scripts',
     '@nuxt/ui',
   ],
 

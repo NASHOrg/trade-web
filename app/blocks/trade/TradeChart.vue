@@ -2,12 +2,17 @@
 import BN from 'bignumber.js';
 import { useStorage } from '@vueuse/core';
 import { TokensSlideover } from '#components';
+import { datafeed } from '~/utils/chart/datafeed';
+import { defaultTradingViewConfig } from '~/utils/chart/helpers';
+
+const { onLoaded } = useScript('/charting_library/charting_library.js');
 
 const showChart = useStorage<boolean>('xbit-show-shart', false);
 const { currentPair } = useNetworkConfig();
+const { ws } = useOrderBook();
 const { $api } = useNuxtApp();
 const { isMD } = useDevice();
-const range = ref<ChartRange>('minute');
+// const range = ref<ChartRange>('minute');
 
 const { data: tradeData } = useNuxtData('trade-statistic-hour-' + currentPair.value.value);
 
@@ -69,25 +74,43 @@ const priceChange = computed(() => {
   return Number(price);
 });
 
-const timeSpecifiedTrade = [
-  { id: 'minute', label: '1m' },
-  { id: '15min', label: '15m' },
-  { id: 'hour', label: '1H' },
-  { id: 'day', label: '1D' },
-  { id: 'month', label: '1M' },
-] as const;
-
 const slideover = useSlideover();
 function openTokens() {
   slideover.open(TokensSlideover);
 }
+
+onMounted(() => {
+  onLoaded(() => {
+  // @ts-expect-error type error
+    window.tvWidget = new TradingView.widget({
+      ...defaultTradingViewConfig,
+      symbol: `XBIT:${currentPair.value.label}`,
+      // @ts-expect-error type error
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      datafeed: datafeed(ws.value),
+    });
+  });
+});
+
+watch(() => currentPair.value, () => {
+  if (window.tvWidget) {
+    window.tvWidget.chart().setSymbol(`XBIT:${currentPair.value.label}`);
+    // window.tvWidget = new TradingView.widget({
+    //   ...defaultTradingViewConfig,
+    //   symbol: `XBIT:${currentPair.value.label}`,
+    //   // @ts-expect-error type error
+    //   timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    //   datafeed: datafeed(ws.value),
+    // });
+  }
+});
 </script>
 
 <template>
   <div class="w-full h-full flex flex-col">
     <div class="flex items-center">
       <div
-        class="w-full md:h-9 md:px-5 px-2.5 my-2 flex flex-col md:flex-row md:items-center items-start md:space-x-6"
+        class="w-full md:px-5 px-2.5 py-2 border-b-[2px] border-[#2E2E2E] flex flex-col md:flex-row md:items-center items-start md:space-x-6"
       >
         <div
           class="h-full flex items-center md:space-x-2.5 space-x-1.5"
@@ -130,36 +153,40 @@ function openTokens() {
       </div>
     </div>
 
-    <div
-      v-if="isMD || showChart"
-      :class="
-        [
-          'w-full md:px-5 px-2.5 md:py-2.5 py-1.5 border-y-[1px] border-[#2E2E2E] md:text-sm text-xs font-normal leading-4 text-[#999999]',
-          'flex space-x-5',
-        ].join(' ')
-      "
-    >
-      <span class="text-white">Time</span>
-      <div
-        v-for="item in timeSpecifiedTrade"
-        :key="item.id"
-        class="cursor-pointer"
-        :class="{ ' text-white': range === item.id }"
-        @click="range = item.id"
-      >
-        <span>{{ item.label }}</span>
-      </div>
-    </div>
+    <!-- <div -->
+    <!--   v-if="isMD || showChart" -->
+    <!--   :class=" -->
+    <!--     [ -->
+    <!--       'w-full md:px-5 px-2.5 md:py-2.5 py-1.5 border-y-[1px] border-[#2E2E2E] md:text-sm text-xs font-normal leading-4 text-[#999999]', -->
+    <!--       'flex space-x-5', -->
+    <!--     ].join(' ') -->
+    <!--   " -->
+    <!-- > -->
+    <!--   <span class="text-white">Time</span> -->
+    <!--   <div -->
+    <!--     v-for="item in timeSpecifiedTrade" -->
+    <!--     :key="item.id" -->
+    <!--     class="cursor-pointer" -->
+    <!--     :class="{ ' text-white': range === item.id }" -->
+    <!--     @click="range = item.id" -->
+    <!--   > -->
+    <!--     <span>{{ item.label }}</span> -->
+    <!--   </div> -->
+    <!-- </div> -->
 
     <div
       v-if="isMD || showChart"
       class="grow md:h-auto h-[300px] relative"
     >
-      <TvChart
-        :key="`${currentPair.value}-${range}`"
-        :range="range"
-        class="ms-[10px] md:ms-0"
+      <div
+        id="tv-chart-container"
+        class="w-full h-full"
       />
+      <!-- <TvChart -->
+      <!--   :key="`${currentPair.value}-${range}`" -->
+      <!--   :range="range" -->
+      <!--   class="ms-[10px] md:ms-0" -->
+      <!-- /> -->
     </div>
   </div>
 </template>

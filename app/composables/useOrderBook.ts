@@ -10,7 +10,7 @@ export function useOrderBook() {
   const orders = ref<BlockchainTradeHistory['items'] | null>(null);
   const chartData = ref<BlockchainTradeStatistic | null>(null);
 
-  const { data, status, send } = useSocket(() => `wss://testnet.xbit.finance/backend/xbit-socket-server/ws/order/${currentPair.value.label}`, {
+  const { data, status, send, ws } = useSocket(() => `wss://testnet.xbit.finance/backend/xbit-socket-server/ws/order/${currentPair.value.label}`, {
     autoReconnect: {
       retries: 100,
     },
@@ -53,6 +53,7 @@ export function useOrderBook() {
     orders,
     chartData,
     status,
+    ws,
     updateChartData,
   };
 }
