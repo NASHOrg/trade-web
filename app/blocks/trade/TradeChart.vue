@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import BN from 'bignumber.js';
 import { useStorage } from '@vueuse/core';
+import { gunzip } from 'fflate';
 import { TokensSlideover } from '#components';
 import { datafeed } from '~/utils/chart/datafeed';
 import { defaultTradingViewConfig } from '~/utils/chart/helpers';
@@ -87,7 +88,7 @@ onMounted(() => {
       symbol: `XBIT:${currentPair.value.label}`,
       // @ts-expect-error type error
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      datafeed: datafeed(ws.value),
+      datafeed: datafeed(ws.value, gunzip),
     });
   });
 });

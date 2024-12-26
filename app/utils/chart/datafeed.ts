@@ -42,7 +42,7 @@ const configurationData = {
 
 const lastBarsCache = new Map();
 
-export const datafeed = (socket: WebSocket): IBasicDataFeed => ({
+export const datafeed = (socket: WebSocket, gunzip: any): IBasicDataFeed => ({
   onReady: (callback: OnReadyCallback) => {
     console.log('tv: [onReady]: Method call');
     callback(configurationData);
@@ -184,7 +184,7 @@ export const datafeed = (socket: WebSocket): IBasicDataFeed => ({
     onResetCacheNeededCallback: () => void,
   ) => {
     console.log('tv: [subscribeBars]: Method call with listenerGuid:', listenerGuid);
-    new WebSocketClient(socket).subscribeOnStream(
+    new WebSocketClient(socket, gunzip).subscribeOnStream(
       symbolInfo,
       resolution,
       onTick,
