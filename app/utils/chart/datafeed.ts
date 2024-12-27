@@ -100,7 +100,7 @@ export const datafeed = (socket: WebSocket, gunzip: any): IBasicDataFeed => ({
       listed_exchange: 'XBIT',
       timezone: 'Etc/UTC',
       format: 'price',
-      pricescale: 100,
+      pricescale: 100000,
       minmov: 4,
       has_weekly_and_monthly: true,
       supported_resolutions:

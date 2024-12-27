@@ -96,13 +96,6 @@ onMounted(() => {
 watch(() => currentPair.value, () => {
   if (window.tvWidget) {
     window.tvWidget.chart().setSymbol(`XBIT:${currentPair.value.label}`);
-    // window.tvWidget = new TradingView.widget({
-    //   ...defaultTradingViewConfig,
-    //   symbol: `XBIT:${currentPair.value.label}`,
-    //   // @ts-expect-error type error
-    //   timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    //   datafeed: datafeed(ws.value),
-    // });
   }
 });
 </script>
@@ -177,7 +170,7 @@ watch(() => currentPair.value, () => {
 
     <div
       v-if="isMD || showChart"
-      class="grow md:h-auto h-[300px] relative"
+      class="grow md:h-auto h-[400px] relative"
     >
       <div
         id="tv-chart-container"

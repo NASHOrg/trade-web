@@ -129,11 +129,13 @@ export const defaultTradingViewConfig = {
   interval: '1' as ResolutionString, // Default interval
   container: 'tv-chart-container', // Reference to an attribute of the DOM element
   autosize: true, // Enable auto-sizing
+  loading_screen: { backgroundColor: '#121212', foregroundColor: '#f65611' },
   disabled_features: [
     'symbol_search_hot_key',
     'header_quick_search',
     'header_symbol_search',
     'header_compare',
+    'header_settings',
     'header_undo_redo',
     'header_screenshot',
     'items_favoriting',
@@ -141,6 +143,7 @@ export const defaultTradingViewConfig = {
     'symbol_info',
     'edit_buttons_in_legend',
     'delete_button_in_legend',
+    'use_localstorage_for_settings',
   ],
   library_path: '/charting_library/',
   toolbar_bg: '#121212',
@@ -148,20 +151,24 @@ export const defaultTradingViewConfig = {
   overrides: {
     // Main chart background
     'chart.bg': '#2e2e2e',
-    'paneProperties.background': '#121212',
     'scalesProperties.background': '#121212',
     'tradingProperties.background': '#121212',
     'tradingProperties.backgroundType': 'solid',
+
+    'paneProperties.background': '#121212',
     'paneProperties.backgroundType': 'solid',
-    'paneProperties.gridProperties.color': '#363636',
-    'paneProperties.horzGridProperties.style': '1',
-    'paneProperties.separatorColor': '#9598a1',
-    'paneProperties.legendProperties.showBackground': false,
+    'paneProperties.separatorColor': '#2e2e2e',
+
+    'paneProperties.vertGridProperties.color': '#2e2e2e',
+    'paneProperties.horztGridProperties.color': '#2e2e2e',
+
+    'paneProperties.crossHairProperties.color': '#2e2e2e',
+
+    'paneProperties.legendProperties.showBackground': true,
+
     'scalesProperties.textColor': '#fff',
+    'scalesProperties.lineColor': '#2e2e2e',
 
-    'loading-screen.background.color': '#121212',
-
-    'crossHairProperties.color': '#758696',
     'mainSeriesProperties.candleStyle.upColor': '#0AC49E',
     'mainSeriesProperties.candleStyle.downColor': '#e24444',
     'mainSeriesProperties.candleStyle.wickUpColor': '#0AC49E',
