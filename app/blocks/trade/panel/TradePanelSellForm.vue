@@ -16,6 +16,7 @@ const { t } = useI18n();
 const { currentPair } = useNetworkConfig();
 const { network, tradeApi } = useNetworkConfig();
 const selectedPrice = useState<string>('selected-price');
+const { orderbook } = useOrderBook();
 
 const { data } = useNuxtData('order-book');
 
@@ -149,6 +150,12 @@ async function onSell() {
   try {
     if (!address.value) {
       return open();
+    }
+    if (orderbook.value.latestPrice) {
+      if (Math.abs(Number(state.price) - orderbook.value.latestPrice) / orderbook.value.latestPrice > 0.8) {
+        toast.error('Order price cannot be more than 80% away from the latest price');
+        return;
+      }
     }
     isSelling.value = true;
     const provider = useWallet().provider();
