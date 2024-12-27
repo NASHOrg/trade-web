@@ -11,10 +11,6 @@ export function useNetworkConfig() {
   const boolNetwork = config.public.network === 'beta_mainnet' ? betaMainnet : ultraLiquidTestnet;
   const bridgeNetworks = [config.public.network === 'beta_mainnet' ? ethereum : sepolia];
 
-  const tokens = computed<{ [key: string]: Token }>(() => {
-    return boolNetwork.tokens;
-  });
-
   // const payToken = config.public.network === 'beta_mainnet' ? tokens.value.usdt! : tokens.value.usdc!;
   // const tokenPairs = [[tokens.value.bool!, payToken]];
   const pairs = pairList.value.map(pair =>
@@ -42,6 +38,12 @@ export function useNetworkConfig() {
       ],
     }),
   );
+
+  const tokens = computed<{ [key: string]: Token }>(() => {
+    const _tokens = pairs.map(pair => pair.tokens).flat();
+    const addresses = Array.from(new Set(_tokens.map(token => token.address)));
+    return addresses.map(a => _tokens.find(t => t.address === a));
+  });
 
   const currentPair = computed(() => {
     const value = currentRoute.value.query?.pair as string | undefined;

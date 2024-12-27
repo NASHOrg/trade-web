@@ -62,7 +62,10 @@ function onWithdraw(token: Token) {
           }"
         />
       </div>
-      <div class="flex flex-col justify-end items-end space-y-2.5">
+      <div
+        v-if="item.symbol === 'USDC'"
+        class="flex flex-col justify-end items-end space-y-2.5"
+      >
         <UButton
           v-if="item.address"
           color="black"
