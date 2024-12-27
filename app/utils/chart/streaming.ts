@@ -14,6 +14,7 @@ export class WebSocketClient {
 
   socket: WebSocket;
   gunzip: any;
+  handler?: { id: string; callback: SubscribeBarsCallback };
 
   channelToSubscription: any = new Map();
 
@@ -46,13 +47,11 @@ export class WebSocketClient {
       if (!result.dataIndexs.includes(2)) {
         return;
       }
-      const data = result.statistic[0];
-      console.log('tv: [socket] Message:', data);
-      const channelString = `0~XBIT~TBOL/USDC`;
-      const subscriptionItem = this.channelToSubscription.get(channelString);
-      if (subscriptionItem === undefined) {
+      const data = result.statistic?.[0];
+      if (!data) {
         return;
       }
+      console.log('tv: [socket] Message:', data);
       const bar = {
         time: Number(data.time),
         open: Number(data.openPrice),
@@ -60,9 +59,8 @@ export class WebSocketClient {
         low: Number(data.lowPrice),
         close: Number(data.closePrice),
       };
-      console.log('tv: [socket] Generate new bar', bar);
       // send data to every subscriber of that symbol
-      subscriptionItem.handlers.forEach((handler: any) => handler.callback(bar));
+      this.handler?.callback(bar);
     });
   }
 
@@ -71,66 +69,27 @@ export class WebSocketClient {
     resolution: ResolutionString,
     onRealtimeCallback: SubscribeBarsCallback,
     subscriberUID: string,
-    onResetCacheNeededCallback: () => void,
-    lastDailyBar: any,
   ) {
     console.log('tv: [subscribeOnStream]: Method call with subscriberUID:', { symbolInfo });
-    const channelString = `0~${symbolInfo?.exchange}~${symbolInfo.name}`;
-    const handler = {
+    this.handler = {
       id: subscriberUID,
       callback: onRealtimeCallback,
     };
-    let subscriptionItem = this.channelToSubscription.get(channelString);
-    if (subscriptionItem) {
-    // already subscribed to the channel, use the existing subscription
-      subscriptionItem.handlers.push(handler);
-      return;
-    }
-    subscriptionItem = {
-      subscriberUID,
-      resolution,
-      lastDailyBar,
-      handlers: [handler],
-    };
-    this.channelToSubscription.set(channelString, subscriptionItem);
-    setInterval(
+    const timer = setInterval(
       () => {
-        const subRequest = {
-          ...rangeParams(resolution),
-          type: resolutionType(resolution),
-        };
-        console.log('[subscribeBars]: Subscribe to streaming. Channel:', channelString);
-        console.log('tv: [subscribeOnStream]: Send subscription request', subRequest);
-        this.socket.send(JSON.stringify(subRequest));
-      }, 2000,
-    );
-  }
-
-  unsubscribeFromStream(subscriberUID: string) {
-  // find a subscription with id === subscriberUID
-
-    for (const channelString of this.channelToSubscription.keys()) {
-      const subscriptionItem = this.channelToSubscription.get(channelString);
-      const handlerIndex = subscriptionItem.handlers.findIndex(
-        (handler: any) => handler.id === subscriberUID,
-      );
-
-      if (handlerIndex !== -1) {
-      // remove from handlers
-        subscriptionItem.handlers.splice(handlerIndex, 1);
-
-        if (subscriptionItem.handlers.length === 0) {
-        // unsubscribe from the channel, if it was the last handler
-          console.log('[unsubscribeBars]: Unsubscribe from streaming. Channel:', channelString);
+        console.log('tv: [subscribeOnStream]', this.socket.readyState);
+        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
           const subRequest = {
-            action: 'SubRemove',
-            subs: [channelString],
+            ...rangeParams(resolution),
+            type: resolutionType(resolution),
           };
+          console.log('tv: [subscribeOnStream]: Send subscription request', subRequest);
           this.socket.send(JSON.stringify(subRequest));
-          this.channelToSubscription.delete(channelString);
-          break;
         }
-      }
-    }
+        else {
+          window.clearInterval(timer);
+        }
+      }, 1000,
+    );
   }
 }

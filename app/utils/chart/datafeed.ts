@@ -86,9 +86,6 @@ export const datafeed = (socket: WebSocket, gunzip: any): IBasicDataFeed => ({
       return;
     }
 
-    console.log('tv: symbolItem ', symbolItem);
-    console.log('tv: symbolName ', Intl.DateTimeFormat().resolvedOptions().timeZone);
-
     const symbolInfo: LibrarySymbolInfo = {
       name: symbolItem.symbol,
       ticker: symbolItem.ticker,
@@ -105,12 +102,11 @@ export const datafeed = (socket: WebSocket, gunzip: any): IBasicDataFeed => ({
       has_weekly_and_monthly: true,
       supported_resolutions:
         configurationData.supported_resolutions as ResolutionString[],
-      volume_precision: 4,
+      volume_precision: 2,
       data_status: 'streaming',
       has_ticks: true,
     };
 
-    // console.log("tv: [resolveSymbol]: Symbol resolved", { symbolName });
     onResolve(symbolInfo);
   },
 
@@ -181,7 +177,7 @@ export const datafeed = (socket: WebSocket, gunzip: any): IBasicDataFeed => ({
     resolution: ResolutionString,
     onTick: SubscribeBarsCallback,
     listenerGuid: string,
-    onResetCacheNeededCallback: () => void,
+    // onResetCacheNeededCallback: () => void,
   ) => {
     console.log('tv: [subscribeBars]: Method call with listenerGuid:', listenerGuid);
     new WebSocketClient(socket, gunzip).subscribeOnStream(
@@ -189,11 +185,12 @@ export const datafeed = (socket: WebSocket, gunzip: any): IBasicDataFeed => ({
       resolution,
       onTick,
       listenerGuid,
-      onResetCacheNeededCallback,
-      lastBarsCache.get(symbolInfo.name),
+      // onResetCacheNeededCallback,
+      // lastBarsCache.get(symbolInfo.name),
     );
   },
 
+  // handle unsubscribe in useOrderBook.ts
   unsubscribeBars: (subscriberUID: string) => {
     console.log('tv: [unsubscribeBars]: Method call with subscriberUID:', subscriberUID);
     // new WebSocketClient().unsubscribeFromStream(subscriberUID);

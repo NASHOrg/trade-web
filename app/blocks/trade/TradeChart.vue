@@ -95,7 +95,14 @@ onMounted(() => {
 
 watch(() => currentPair.value, () => {
   if (window.tvWidget) {
-    window.tvWidget.chart().setSymbol(`XBIT:${currentPair.value.label}`);
+  // @ts-expect-error type error
+    window.tvWidget = new TradingView.widget({
+      ...defaultTradingViewConfig,
+      symbol: `XBIT:${currentPair.value.label}`,
+      // @ts-expect-error type error
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      datafeed: datafeed(ws.value, gunzip),
+    });
   }
 });
 </script>
