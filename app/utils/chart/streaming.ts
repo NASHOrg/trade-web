@@ -58,6 +58,7 @@ export class WebSocketClient {
         high: Number(data.highPrice),
         low: Number(data.lowPrice),
         close: Number(data.closePrice),
+        volume: Number(data.tradeAmount), // pass to show volume bars
       };
       // send data to every subscriber of that symbol
       this.handler?.callback(bar);
