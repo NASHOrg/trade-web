@@ -79,7 +79,7 @@ export class WebSocketClient {
     const timer = setInterval(
       () => {
         console.log('tv: [subscribeOnStream]', this.socket.readyState);
-        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+        if (this.socket.readyState === WebSocket.OPEN) {
           const subRequest = {
             ...rangeParams(resolution),
             type: resolutionType(resolution),
@@ -87,7 +87,7 @@ export class WebSocketClient {
           console.log('tv: [subscribeOnStream]: Send subscription request', subRequest);
           this.socket.send(JSON.stringify(subRequest));
         }
-        else {
+        else if (this.socket.readyState === WebSocket.CLOSED) {
           window.clearInterval(timer);
         }
       }, 1000,
