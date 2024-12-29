@@ -111,7 +111,7 @@ watch(() => currentPair.value, () => {
   <div class="w-full h-full flex flex-col">
     <div class="flex items-center">
       <div
-        class="w-full md:px-5 px-2.5 py-2 border-b-[2px] border-[#2E2E2E] flex flex-col md:flex-row md:items-center items-start md:space-x-6"
+        class="w-full md:px-5 px-2.5 py-2 border-0 md:border-b-[2px] border-[#2E2E2E] flex flex-col md:flex-row md:items-center items-start md:space-x-6"
       >
         <div
           class="h-full flex items-center md:space-x-2.5 space-x-1.5"
@@ -176,7 +176,7 @@ watch(() => currentPair.value, () => {
     <!-- </div> -->
 
     <div
-      v-if="isMD || showChart"
+      v-show="isMD || showChart"
       class="grow md:h-auto h-[400px] relative"
     >
       <div
