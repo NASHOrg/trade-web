@@ -126,7 +126,6 @@ export const rangeParams = (range: string) => {
 export const defaultTradingViewConfig = {
   locale: 'en',
   theme: 'dark',
-  interval: '1' as ResolutionString, // Default interval
   container: 'tv-chart-container', // Reference to an attribute of the DOM element
   autosize: true, // Enable auto-sizing
   loading_screen: { backgroundColor: '#121212', foregroundColor: '#f65611' },
@@ -138,6 +137,7 @@ export const defaultTradingViewConfig = {
     'header_settings',
     'header_undo_redo',
     'header_screenshot',
+    'header_saveload',
     'items_favoriting',
     'symbol_search_hot_key',
     'symbol_info',
@@ -145,6 +145,12 @@ export const defaultTradingViewConfig = {
     'delete_button_in_legend',
     'use_localstorage_for_settings',
   ],
+  enabled_features: ['show_interval_dialog_on_key_press', 'items_favoriting'],
+  interval: '1' as ResolutionString, // Default interval
+  favorites: {
+    intervals: ['1', '15', '1D'],
+  },
+  allow_symbol_change: false,
   library_path: '/charting_library/',
   toolbar_bg: '#121212',
   custom_css_url: '/tv.css',
