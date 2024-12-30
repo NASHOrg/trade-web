@@ -136,7 +136,6 @@ export const defaultTradingViewConfig = {
     'header_compare',
     'header_settings',
     'header_undo_redo',
-    'header_screenshot',
     'header_saveload',
     'items_favoriting',
     'symbol_search_hot_key',
@@ -144,6 +143,7 @@ export const defaultTradingViewConfig = {
     'edit_buttons_in_legend',
     'delete_button_in_legend',
     'use_localstorage_for_settings',
+    'create_volume_indicator_by_default',
   ],
   enabled_features: ['show_interval_dialog_on_key_press', 'items_favoriting'],
   interval: '1' as ResolutionString, // Default interval

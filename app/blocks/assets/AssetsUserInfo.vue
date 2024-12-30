@@ -7,7 +7,7 @@ import PendingTransactionAmount from '~/components/PendingTransactionAmount.vue'
 const { address } = useWallet();
 const { isMD } = useDevice();
 const { network, currentPair } = useNetworkConfig();
-const { $api } = useNuxtApp();
+const { $authApi } = useNuxtApp();
 const { t } = useI18n();
 const api = new BaseEvmApi(network.rpc);
 
@@ -27,7 +27,7 @@ const { data: user } = useAsyncData(
   'user',
   async () => {
     if (!userToken.value) return Promise.resolve(null);
-    return $api.userUser({}, userToken.value);
+    return $authApi.userUser({}, userToken.value);
   },
   {
     lazy: false,

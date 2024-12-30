@@ -90,6 +90,10 @@ onMounted(() => {
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       datafeed: datafeed(ws.value, gunzip),
     });
+    window.tvWidget.onChartReady(() => {
+      console.log('chart ready');
+      window.tvWidget!.activeChart().createStudy('Volume', false);
+    });
   });
 });
 
@@ -102,6 +106,10 @@ watch(() => currentPair.value, () => {
       // @ts-expect-error type error
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       datafeed: datafeed(ws.value, gunzip),
+    });
+    window.tvWidget.onChartReady(() => {
+      console.log('chart ready');
+      window.tvWidget!.activeChart().createStudy('Volume', false);
     });
   }
 });
@@ -153,28 +161,6 @@ watch(() => currentPair.value, () => {
         <IconChart class="text-[#2e2e2e] dark:text-white size-[24px]" />
       </div>
     </div>
-
-    <!-- <div -->
-    <!--   v-if="isMD || showChart" -->
-    <!--   :class=" -->
-    <!--     [ -->
-    <!--       'w-full md:px-5 px-2.5 md:py-2.5 py-1.5 border-y-[1px] border-[#2E2E2E] md:text-sm text-xs font-normal leading-4 text-[#999999]', -->
-    <!--       'flex space-x-5', -->
-    <!--     ].join(' ') -->
-    <!--   " -->
-    <!-- > -->
-    <!--   <span class="text-white">Time</span> -->
-    <!--   <div -->
-    <!--     v-for="item in timeSpecifiedTrade" -->
-    <!--     :key="item.id" -->
-    <!--     class="cursor-pointer" -->
-    <!--     :class="{ ' text-white': range === item.id }" -->
-    <!--     @click="range = item.id" -->
-    <!--   > -->
-    <!--     <span>{{ item.label }}</span> -->
-    <!--   </div> -->
-    <!-- </div> -->
-
     <div
       v-show="isMD || showChart"
       class="grow md:h-auto h-[400px] relative"
@@ -183,11 +169,6 @@ watch(() => currentPair.value, () => {
         id="tv-chart-container"
         class="w-full h-full"
       />
-      <!-- <TvChart -->
-      <!--   :key="`${currentPair.value}-${range}`" -->
-      <!--   :range="range" -->
-      <!--   class="ms-[10px] md:ms-0" -->
-      <!-- /> -->
     </div>
   </div>
 </template>

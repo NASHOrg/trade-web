@@ -60,7 +60,7 @@ const api = defineNuxtPlugin((nuxtApp) => {
       parseResponse: (data) => {
         const response = JSON.parse(data);
         if (response.code !== '000') {
-          if (response.code === '108.bool-dhc-node-sale.UNAUTHENTICATED') {
+          if (response.code === '108.bool-basic-backend.UNAUTHENTICATED') {
             setToken();
           }
           else {

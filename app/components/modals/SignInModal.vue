@@ -2,7 +2,7 @@
 import { toast } from 'vue-sonner';
 
 const isLoading = ref(false);
-const { $api } = useNuxtApp();
+const { $authApi } = useNuxtApp();
 const { signMessage, address, disconnect, open: openWalletModal } = useWallet();
 const route = useRoute();
 const modal = useModal();
@@ -13,7 +13,7 @@ const input = ref(referral);
 const { data } = useAsyncData(
   async () => {
     if (!address.value) return Promise.resolve(undefined);
-    return $api.userCheck({ address: address.value });
+    return $authApi.userCheck({ address: address.value });
   },
   {
     watch: [address],
@@ -29,10 +29,10 @@ async function signIn() {
   try {
     isLoading.value = true;
     const { setToken } = useToken();
-    const message = await $api.userMsgToLogin({});
+    const message = await $authApi.userMsgToLogin({});
     const signature = await signMessage(message);
     if (!data.value && input.value) {
-      const response = await $api.userUserLoginPost({
+      const response = await $authApi.userUserLoginPost({
         address: address.value!,
         message,
         signature: signature!,
@@ -44,7 +44,7 @@ async function signIn() {
       modal.close();
       return;
     }
-    const response = await $api.userUserLoginPost({
+    const response = await $authApi.userUserLoginPost({
       address: address.value!,
       signature: signature!,
       message,
