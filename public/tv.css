@@ -1,10 +1,35 @@
 .theme-dark:root {
+    --primary-color: #ef5a11;
     --tv-color-platform-background: #121212;
     --tv-color-pane-background: #121212;
     --tv-color-popup-background: #2e2e2e;
     --tv-color-toolbar-button-background-hover: #2e2e2e;
-    --tv-color-toolbar-button-text-active: #ef5a11;
-    --tv-color-item-active-text: #ef5a11;
-    --tv-color-toolbar-button-text-active-hover: #ef5a11;
-    --tv-color-popup-element-background-active: #ef5a11;
+    --tv-color-toolbar-button-text-active: var(--primary-color);
+    --tv-color-item-active-text: var(--primary-color);
+    --tv-color-toolbar-button-text-active-hover: var(--primary-color);
+    --tv-color-popup-element-background-active: var(--primary-color);
+    --tv-color-popup-element-background-hover: #444;
+    --themed-color-btn-brand-primary-default-bg: var(--primary-color);
+    --themed-color-selection-bg: var(--primary-color);
+    --themed-color-btn-brand-secondary-default-border: var(--primary-color);
+    --themed-color-btn-brand-primary-default-border: var(--primary-color);
+    --themed-color-btn-brand-secondary-default-content: var(--primary-color);
+    --themed-color-btn-brand-secondary-hover-border: var(--primary-color);
+    --themed-color-checkbox-focused: var(--primary-color);
+    --themed-color-btn-brand-secondary-hover-bg: var(--primary-color); 
+    --themed-color-btn-brand-primary-hover-border: var(--primary-color);
+    --themed-color-btn-brand-secondary-active-border: var(--primary-color);
+    --themed-color-btn-brand-secondary-active-bg: var(--primary-color);
+    --themed-color-btn-brand-primary-hover-bg: var(--primary-color);
+    --themed-color-checkbox-checked: var(--primary-color);
+    --themed-color-checkbox-focused: var(--primary-color);
+    --themed-color-control-intent-primary: var(--primary-color);
+    --themed-color-control-highlight-intent-primary: var(--primary-color);
+    --themed-color-shadow-primary-neutral-extra-heavy: #2e2e2e;
+    --themed-color-bg-primary: #2e2e2e;
+    --themed-color-properties-dialog-tab-bg: #444;
+}
+
+.theme-dark:root ::selection {
+    --themed-color-selection-bg: #ef5a11;
 }
