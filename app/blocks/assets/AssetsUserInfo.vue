@@ -30,7 +30,6 @@ const { data: user } = useAsyncData(
     return $authApi.userUser({}, userToken.value);
   },
   {
-    lazy: false,
     watch: [userToken],
     server: false,
   },
@@ -71,6 +70,7 @@ const buttons = [
 ];
 
 const inviteLink = computed(() => {
+  if (import.meta.server) return '';
   const url = window.location.protocol + '//' + window.location.host;
   return `${url}?ref=${user.value?.userInvitationCode}`;
 });
