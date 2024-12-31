@@ -3,39 +3,33 @@ import type {
   ResolutionString,
   SubscribeBarsCallback,
 } from 'public/charting_library';
+import { gunzip } from 'fflate';
 import { rangeParams, resolutionType } from './helpers';
 
 export class WebSocketClient {
-  constructor(socket: WebSocket, gunzip: any) {
-    this.socket = socket;
-    this.gunzip = gunzip;
-    this.init();
-  }
-
-  socket: WebSocket;
-  gunzip: any;
+  socket = () => window.ws;
   handler?: { id: string; callback: SubscribeBarsCallback };
 
-  channelToSubscription: any = new Map();
+  timer: NodeJS.Timeout | undefined;
+  subscriberId: string | undefined;
 
   init() {
-    this.socket.addEventListener('open', () => {
+    this.socket().addEventListener('open', () => {
       console.log('tv: [socket] Connected');
     });
 
-    this.socket.addEventListener('close', (reason) => {
+    this.socket().addEventListener('close', (reason) => {
       console.log('tv: [socket] Disconnected:', reason);
     });
 
-    this.socket.addEventListener('error', (error) => {
+    this.socket().addEventListener('error', (error) => {
       console.log('tv: [socket] Error:', error);
     });
 
-    this.socket.addEventListener('message', async (event) => {
+    this.socket().addEventListener('message', async (event) => {
       const arrayBuffer = await event.data.arrayBuffer();
       // Decompress gzipped data
-      // @ts-expect-error ignore type error
-      const decodedData = await new Promise((resolve, reject) => this.gunzip(new Uint8Array(arrayBuffer), (err, decompressed) => {
+      const decodedData = await new Promise((resolve, reject) => gunzip(new Uint8Array(arrayBuffer), (err, decompressed) => {
         if (err) reject(err);
         const decoder = new TextDecoder('utf-8');
         resolve(decoder.decode(decompressed));
@@ -76,21 +70,23 @@ export class WebSocketClient {
       id: subscriberUID,
       callback: onRealtimeCallback,
     };
-    const timer = setInterval(
+    this.init();
+    this.timer = setInterval(
       () => {
-        console.log('tv: [subscribeOnStream]', this.socket.readyState);
-        if (this.socket.readyState === WebSocket.OPEN) {
+        console.log('tv: [subscribeOnStream] status', this.socket().readyState);
+        if (this.socket().readyState === WebSocket.OPEN) {
           const subRequest = {
             ...rangeParams(resolution),
             type: resolutionType(resolution),
           };
           console.log('tv: [subscribeOnStream]: Send subscription request', subRequest);
-          this.socket.send(JSON.stringify(subRequest));
-        }
-        else if (this.socket.readyState === WebSocket.CLOSED) {
-          window.clearInterval(timer);
+          this.socket().send(JSON.stringify(subRequest));
         }
       }, 1000,
     );
+  }
+
+  close() {
+    // window.clearInterval(this.timer);
   }
 }

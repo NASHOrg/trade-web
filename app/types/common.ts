@@ -1,4 +1,5 @@
 import type { BlockchainUserOrders } from './swagger';
+import type { IChartingLibraryWidget } from '~~/public/charting_library/charting_library';
 
 export type AccountInfo = {
   myRewards: string;
@@ -44,3 +45,10 @@ export type BridgeHistory = {
   swapRecordDstTokenName?: string;
   swapRecordSrcUserAddress?: string;
 };
+
+declare global {
+  interface Window {
+    ws: WebSocket;
+    tvWidget: IChartingLibraryWidget;
+  }
+}

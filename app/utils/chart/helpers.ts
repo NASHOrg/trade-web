@@ -144,6 +144,7 @@ export const defaultTradingViewConfig = {
     'delete_button_in_legend',
     'use_localstorage_for_settings',
     'create_volume_indicator_by_default',
+    'popup_hints',
   ],
   enabled_features: ['show_interval_dialog_on_key_press', 'items_favoriting'],
   interval: '1' as ResolutionString, // Default interval
@@ -169,8 +170,6 @@ export const defaultTradingViewConfig = {
     'paneProperties.horztGridProperties.color': '#2e2e2e',
 
     'paneProperties.crossHairProperties.color': '#2e2e2e',
-
-    'paneProperties.legendProperties.showBackground': true,
 
     'scalesProperties.textColor': '#fff',
     'scalesProperties.lineColor': '#2e2e2e',

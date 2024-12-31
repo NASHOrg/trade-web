@@ -42,157 +42,161 @@ const configurationData = {
 
 const lastBarsCache = new Map();
 
-export const datafeed = (socket: WebSocket, gunzip: any): IBasicDataFeed => ({
-  onReady: (callback: OnReadyCallback) => {
-    console.log('tv: [onReady]: Method call');
-    callback(configurationData);
-  },
+export const datafeed = (): IBasicDataFeed => {
+  const websocket = new WebSocketClient();
+  return {
+    onReady: (callback: OnReadyCallback) => {
+      console.log('tv: [onReady]: Method call');
+      callback(configurationData);
+    },
 
-  searchSymbols: async (
-    userInput: string,
-    exchange: string,
-    symbolType: string,
-    onResult: SearchSymbolsCallback,
-  ) => {
-    console.log('tv: [searchSymbols]: Method call', symbolType);
-    const symbols = await getAllSymbols();
+    searchSymbols: async (
+      userInput: string,
+      exchange: string,
+      symbolType: string,
+      onResult: SearchSymbolsCallback,
+    ) => {
+      console.log('tv: [searchSymbols]: Method call', symbolType);
+      const symbols = await getAllSymbols();
 
-    const newSymbols: SearchSymbolResultItem[] = symbols.filter((symbol: any) => {
-      const isExchangeValid = exchange === '' || symbol.exchange === exchange;
-      const isFullSymbolContainsInput
+      const newSymbols: SearchSymbolResultItem[] = symbols.filter((symbol: any) => {
+        const isExchangeValid = exchange === '' || symbol.exchange === exchange;
+        const isFullSymbolContainsInput
         = symbol.full_name.toLowerCase().indexOf(userInput.toLowerCase()) !== -1;
-      return isExchangeValid && isFullSymbolContainsInput;
-    });
+        return isExchangeValid && isFullSymbolContainsInput;
+      });
 
-    onResult(newSymbols);
-  },
+      onResult(newSymbols);
+    },
 
-  resolveSymbol: async (
-    symbolName: string,
-    onResolve: ResolveCallback,
-    onError: DatafeedErrorCallback,
-    extension?: SymbolResolveExtension,
-  ) => {
-    console.log('tv: [resolveSymbol]: Method call', { symbolName, extension });
-    const symbols = await getAllSymbols();
-    const symbolItem = symbols.find(
-      (symbol: any) => symbol.full_name === symbolName,
-    );
-    if (!symbolItem) {
-      // console.log("tv: [resolveSymbol]: Cannot resolve symbol", { symbolName });
-      onError(
-        'tv: [resolveSymbol]: err Cannot resolve symbol',
+    resolveSymbol: async (
+      symbolName: string,
+      onResolve: ResolveCallback,
+      onError: DatafeedErrorCallback,
+      extension?: SymbolResolveExtension,
+    ) => {
+      console.log('tv: [resolveSymbol]: Method call', { symbolName, extension });
+      const symbols = await getAllSymbols();
+      const symbolItem = symbols.find(
+        (symbol: any) => symbol.full_name === symbolName,
       );
-      return;
-    }
-
-    const symbolInfo: LibrarySymbolInfo = {
-      name: symbolItem.symbol,
-      ticker: symbolItem.ticker,
-      description: symbolItem.description,
-      type: symbolItem.type,
-      session: '24x7',
-      has_intraday: true,
-      exchange: symbolItem.exchange,
-      listed_exchange: 'XBIT',
-      timezone: 'Etc/UTC',
-      format: 'price',
-      pricescale: 100000,
-      minmov: 4,
-      has_weekly_and_monthly: true,
-      supported_resolutions:
-        configurationData.supported_resolutions as ResolutionString[],
-      volume_precision: 2,
-      data_status: 'streaming',
-      has_ticks: true,
-    };
-
-    onResolve(symbolInfo);
-  },
-
-  getBars: async (
-    symbolInfo: LibrarySymbolInfo,
-    resolution: ResolutionString,
-    periodParams: PeriodParams,
-    onResult: HistoryCallback,
-    onError: DatafeedErrorCallback,
-  ) => {
-    const { from, to, firstDataRequest } = periodParams;
-
-    console.log('tv: [getBars]: Method call', symbolInfo, resolution, { from, to });
-
-    const urlParameters = {
-      pair: symbolInfo.name,
-      start: from * 1000,
-      end: to * 1000,
-      type: resolutionType(resolution),
-    };
-    const query = Object.keys(urlParameters)
-      // @ts-expect-error ignore type error
-      .map(name => `${name}=${encodeURIComponent(urlParameters[name])}`)
-      .join('&');
-
-    try {
-      const data = await makeApiRequest(`bool-stake-reward/blockchain/trade-statistic?${query}`);
-      if (
-        (data.msg && data.msg === 'Error')
-        || (data.data?.length ?? 0) === 0
-      ) {
-        // "noData" should be set if there is no data in the requested period.
-        onResult([], {
-          noData: true,
-        });
+      if (!symbolItem) {
+      // console.log("tv: [resolveSymbol]: Cannot resolve symbol", { symbolName });
+        onError(
+          'tv: [resolveSymbol]: err Cannot resolve symbol',
+        );
         return;
       }
 
-      const bars: Bar[] = data.data.reverse().map((bar: any) => ({
-        time: Number(bar.time),
-        low: Number(bar.lowPrice),
-        high: Number(bar.highPrice),
-        open: Number(bar.openPrice),
-        close: Number(bar.closePrice),
-        volume: Number(bar.tradeAmount), // pass to show volume bars
-      }));
-      console.log('tv: [getBars]: bar data', { bars });
+      const symbolInfo: LibrarySymbolInfo = {
+        name: symbolItem.symbol,
+        ticker: symbolItem.ticker,
+        description: symbolItem.description,
+        type: symbolItem.type,
+        session: '24x7',
+        has_intraday: true,
+        exchange: symbolItem.exchange,
+        listed_exchange: 'XBIT',
+        timezone: 'Etc/UTC',
+        format: 'price',
+        pricescale: 100000,
+        minmov: 4,
+        has_weekly_and_monthly: true,
+        supported_resolutions:
+        configurationData.supported_resolutions as ResolutionString[],
+        volume_precision: 2,
+        data_status: 'streaming',
+        has_ticks: true,
+      };
 
-      if (firstDataRequest) {
-        lastBarsCache.set(symbolInfo.name, {
-          ...bars[bars.length - 1],
+      onResolve(symbolInfo);
+    },
+
+    getBars: async (
+      symbolInfo: LibrarySymbolInfo,
+      resolution: ResolutionString,
+      periodParams: PeriodParams,
+      onResult: HistoryCallback,
+      onError: DatafeedErrorCallback,
+    ) => {
+      const { from, to, firstDataRequest } = periodParams;
+
+      console.log('tv: [getBars]: Method call', symbolInfo, resolution, { from, to });
+
+      const urlParameters = {
+        pair: symbolInfo.name,
+        start: from * 1000,
+        end: to * 1000,
+        type: resolutionType(resolution),
+      };
+      const query = Object.keys(urlParameters)
+      // @ts-expect-error ignore type error
+        .map(name => `${name}=${encodeURIComponent(urlParameters[name])}`)
+        .join('&');
+
+      try {
+        const data = await makeApiRequest(`bool-stake-reward/blockchain/trade-statistic?${query}`);
+        if (
+          (data.msg && data.msg === 'Error')
+          || (data.data?.length ?? 0) === 0
+        ) {
+        // "noData" should be set if there is no data in the requested period.
+          onResult([], {
+            noData: true,
+          });
+          return;
+        }
+
+        const bars: Bar[] = data.data.reverse().map((bar: any) => ({
+          time: Number(bar.time),
+          low: Number(bar.lowPrice),
+          high: Number(bar.highPrice),
+          open: Number(bar.openPrice),
+          close: Number(bar.closePrice),
+          volume: Number(bar.tradeAmount), // pass to show volume bars
+        }));
+        console.log('tv: [getBars]: bar data', { bars });
+
+        if (firstDataRequest) {
+          lastBarsCache.set(symbolInfo.name, {
+            ...bars[bars.length - 1],
+          });
+        }
+        console.log(`tv: [getBars]: returned ${bars.length} bar(s)`);
+
+        onResult(bars, {
+          noData: false,
         });
       }
-      console.log(`tv: [getBars]: returned ${bars.length} bar(s)`);
+      catch (error: any) {
+        console.log('tv: [getBars]: Get error', error);
+        onError('tv: [getBars]: Get error');
+      }
+    },
 
-      onResult(bars, {
-        noData: false,
-      });
-    }
-    catch (error: any) {
-      console.log('tv: [getBars]: Get error', error);
-      onError('tv: [getBars]: Get error');
-    }
-  },
-
-  subscribeBars: (
-    symbolInfo: LibrarySymbolInfo,
-    resolution: ResolutionString,
-    onTick: SubscribeBarsCallback,
-    listenerGuid: string,
+    subscribeBars: (
+      symbolInfo: LibrarySymbolInfo,
+      resolution: ResolutionString,
+      onTick: SubscribeBarsCallback,
+      listenerGuid: string,
     // onResetCacheNeededCallback: () => void,
-  ) => {
-    console.log('tv: [subscribeBars]: Method call with listenerGuid:', listenerGuid);
-    new WebSocketClient(socket, gunzip).subscribeOnStream(
-      symbolInfo,
-      resolution,
-      onTick,
-      listenerGuid,
+    ) => {
+      console.log('tv: [subscribeBars]: Method call with listenerGuid:', listenerGuid);
+      websocket.subscribeOnStream(
+        symbolInfo,
+        resolution,
+        onTick,
+        listenerGuid,
       // onResetCacheNeededCallback,
       // lastBarsCache.get(symbolInfo.name),
-    );
-  },
+      );
+    },
 
-  // handle unsubscribe in useOrderBook.ts
-  unsubscribeBars: (subscriberUID: string) => {
-    console.log('tv: [unsubscribeBars]: Method call with subscriberUID:', subscriberUID);
-    // new WebSocketClient().unsubscribeFromStream(subscriberUID);
-  },
-});
+    // handle unsubscribe in useOrderBook.ts
+    unsubscribeBars: (subscriberUID: string) => {
+      console.log('tv: [unsubscribeBars]: Method call with subscriberUID:', subscriberUID);
+      // new WebSocketClient().unsubscribeFromStream(subscriberUID);
+      websocket.close();
+    },
+  };
+};

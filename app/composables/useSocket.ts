@@ -242,7 +242,7 @@ export function useSocket<Data = any>(
     data.value = null;
     status.value = 'CONNECTING';
     wsRef.value = new WebSocket(urlRef.value, protocols);
-
+    window.ws = wsRef.value;
     wsRef.value.onopen = () => {
       status.value = 'OPEN';
       retried = 0;

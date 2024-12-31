@@ -1,16 +1,15 @@
 <script lang="ts" setup>
 import BN from 'bignumber.js';
 import { useStorage } from '@vueuse/core';
-import { gunzip } from 'fflate';
 import { TokensSlideover } from '#components';
 import { datafeed } from '~/utils/chart/datafeed';
 import { defaultTradingViewConfig } from '~/utils/chart/helpers';
+import type { ResolutionString } from '~~/public/charting_library/datafeed-api';
 
 const { onLoaded } = useScript('/charting_library/charting_library.js');
 
 const showChart = useStorage<boolean>('xbit-show-shart', false);
 const { currentPair } = useNetworkConfig();
-const { ws } = useOrderBook();
 const { $api } = useNuxtApp();
 const { isMD } = useDevice();
 // const range = ref<ChartRange>('minute');
@@ -88,7 +87,7 @@ onMounted(() => {
       symbol: `XBIT:${currentPair.value.label}`,
       // @ts-expect-error type error
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      datafeed: datafeed(ws.value, gunzip),
+      datafeed: datafeed(),
     });
     window.tvWidget.onChartReady(() => {
       console.log('chart ready');
@@ -99,18 +98,7 @@ onMounted(() => {
 
 watch(() => currentPair.value, () => {
   if (window.tvWidget) {
-  // @ts-expect-error type error
-    window.tvWidget = new TradingView.widget({
-      ...defaultTradingViewConfig,
-      symbol: `XBIT:${currentPair.value.label}`,
-      // @ts-expect-error type error
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      datafeed: datafeed(ws.value, gunzip),
-    });
-    window.tvWidget.onChartReady(() => {
-      console.log('chart ready');
-      window.tvWidget!.activeChart().createStudy('Volume', false);
-    });
+    window.tvWidget!.setSymbol(`XBIT:${currentPair.value.label}`, '1' as ResolutionString, () => {});
   }
 });
 </script>
