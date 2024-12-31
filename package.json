@@ -64,7 +64,8 @@
     "ts-morph": "^23.0.0",
     "typescript": "^5.4.5",
     "unenv": "^1.9.0",
-    "vite-plugin-node-polyfills": "^0.22.0"
+    "vite-plugin-node-polyfills": "^0.22.0",
+    "vitest": "^2.1.8"
   },
   "optionalDependencies": {
     "react": ">=17",

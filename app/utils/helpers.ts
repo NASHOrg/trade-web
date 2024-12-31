@@ -105,22 +105,18 @@ export function formatAmount(
     trillion: new BigNumber('1000000000000'),
   };
 
-  const minimum = BigNumber(1).div(BigNumber(10).pow(decimal));
-
-  if (amount.isLessThan(minimum)) {
-    BigNumber.config({ EXPONENTIAL_AT: 100 });
-    /// return with 0.{decimal}f format
-    return amount.toString().replace(/0\.(0+)([1-9][0-9]*)/, (match, zeros, rest) => {
-      return `0.${zeros}${rest.slice(0, decimal)}`;
-    });
-  }
-
   const formatMinimum = BigNumber(1).div(BigNumber(10).pow(5));
   if (amount.isLessThan(formatMinimum)) {
     BigNumber.config({ EXPONENTIAL_AT: 100 });
     /// return with 0.{decimal}f format
     return amount.toString().replace(/0\.(0+)([1-9][0-9]*)/, (match, zeros, rest) => {
-      return `0.{${zeros.length}}${rest.slice(0, decimal)}`;
+      // Convert number to subscript
+      const subscriptNumber = zeros.length.toString().split('').map((num: string) => {
+        const subscripts = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
+        return subscripts[parseInt(num)];
+      }).join('');
+
+      return `0.0${subscriptNumber}${rest.slice(0, decimal)}`;
     });
   }
 
