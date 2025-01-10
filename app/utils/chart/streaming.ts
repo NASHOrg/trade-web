@@ -73,13 +73,11 @@ export class WebSocketClient {
     this.init();
     this.timer = setInterval(
       () => {
-        console.log('tv: [subscribeOnStream] status', this.socket().readyState);
         if (this.socket().readyState === WebSocket.OPEN) {
           const subRequest = {
             ...rangeParams(resolution),
             type: resolutionType(resolution),
           };
-          console.log('tv: [subscribeOnStream]: Send subscription request', subRequest);
           this.socket().send(JSON.stringify(subRequest));
         }
       }, 500,
