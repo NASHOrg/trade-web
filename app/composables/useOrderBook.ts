@@ -5,12 +5,12 @@ export function useOrderBook() {
   // Don't run on server
   if (import.meta.server) return;
 
-  const { currentPair } = useNetworkConfig();
+  const { currentPair, network } = useNetworkConfig();
   const orderbook = ref<BlockchainOrderBooks | null>(null);
   const orders = ref<BlockchainTradeHistory['items'] | null>(null);
   const chartData = ref<BlockchainTradeStatistic | null>(null);
 
-  const { data, status, send, ws } = useSocket(() => `wss://testnet.xbit.finance/backend/xbit-socket-server/ws/order/${currentPair.value.label}`, {
+  const { data, status, send, ws } = useSocket(() => `${network.ws}/order/${currentPair.value.label}`, {
     autoReconnect: {
       retries: 100,
     },

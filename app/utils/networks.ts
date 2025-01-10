@@ -5,6 +5,7 @@ export const betaTestnet = {
   name: 'Bool Beta Testnet',
   value: 'beta_testnet',
   explorer: 'https://beta-testnet.boolscan.com',
+  ws: '',
   icon: 'https://bool.network/bool-network-orange.png',
   contracts: {
     trade: '0x52295088d335EF9BEDc5837b59cA144c1Fd48983',
@@ -35,6 +36,7 @@ export const ultraLiquidTestnet = {
   name: 'Ultra Liquid Testnet',
   value: 'ultra_liquid_testnet',
   explorer: 'https://ultra-test-explorer.bool.network',
+  ws: 'wss://testnet.xbit.finance/backend/xbit-socket-server/ws',
   icon: 'https://bool.network/bool-network-orange.png',
   contracts: {
     trade: '0x52295088d335EF9BEDc5837b59cA144c1Fd48983',
@@ -90,6 +92,7 @@ export const betaMainnet = {
   feeRate: 3000,
   explorer: 'https://beta-mainnet.boolscan.com',
   icon: 'https://bool.network/bool-network-orange.png',
+  ws: 'wss://',
   contracts: {
     trade: '0x',
     consumer: '0x',

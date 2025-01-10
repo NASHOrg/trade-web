@@ -45,7 +45,6 @@ export class WebSocketClient {
       if (!data) {
         return;
       }
-      console.log('tv: [socket] Message:', data);
       const bar = {
         time: Number(data.time),
         open: Number(data.openPrice),
