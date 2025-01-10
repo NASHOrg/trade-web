@@ -82,7 +82,7 @@ export class WebSocketClient {
           console.log('tv: [subscribeOnStream]: Send subscription request', subRequest);
           this.socket().send(JSON.stringify(subRequest));
         }
-      }, 1000,
+      }, 500,
     );
   }
 
