@@ -18,7 +18,9 @@ const modal = useModal();
 const amount = ref('');
 const confirming = ref(false);
 
-const selectedNetwork = ref(bridgeNetworks[0]!);
+const selectedNetwork = ref(
+  bridgeNetworks.find(item => Object.values(item.tokens).some(token => token.symbol.toLowerCase() === props.token.symbol.toLowerCase()))!,
+);
 
 const tokenInTarget = computed(() => {
   return Object.values(selectedNetwork.value.tokens).find(
@@ -27,7 +29,7 @@ const tokenInTarget = computed(() => {
 });
 
 const networkOptions = computed(() => {
-  return bridgeNetworks.map((item) => {
+  return bridgeNetworks.filter(item => Object.values(item.tokens).some(token => token.symbol.toLowerCase() === props.token.symbol.toLowerCase())).map((item) => {
     return [
       {
         label: item.name,

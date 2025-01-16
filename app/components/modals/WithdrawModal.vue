@@ -18,24 +18,25 @@ const amount = ref('');
 const confirming = ref(false);
 const { add } = useBridgeHistory();
 
-const selectedNetwork = ref(bridgeNetworks[0]!);
+const selectedNetwork = ref(
+  bridgeNetworks.find(item => Object.values(item.tokens).some(token => token.symbol.toLowerCase() === props.token.symbol.toLowerCase()))!,
+);
 
 const networkOptions = computed(() => {
-  return bridgeNetworks
-    .map((item) => {
-      return [
-        {
-          label: item.name,
-          avatar: {
-            src: item.icon,
-          },
-          disabled: item.chainId === selectedNetwork.value.chainId,
-          click: () => {
-            selectedNetwork.value = item;
-          },
+  return bridgeNetworks.filter(item => Object.values(item.tokens).some(token => token.symbol.toLowerCase() === props.token.symbol.toLowerCase())).map((item) => {
+    return [
+      {
+        label: item.name,
+        avatar: {
+          src: item.icon,
         },
-      ];
-    });
+        disabled: item.chainId === selectedNetwork.value.chainId,
+        click: () => {
+          selectedNetwork.value = item;
+        },
+      },
+    ];
+  });
 });
 
 const tokenInTarget = computed(() => {
@@ -174,6 +175,7 @@ async function onSubmit() {
       amount: amountParse,
       dstRecipient: address.value!,
       customData: '0x',
+      isNative: !props.token.address,
     });
 
     const params: BridgeHistory = {

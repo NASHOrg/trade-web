@@ -2,6 +2,50 @@ export const BridgeABI = [
   {
     inputs: [
       {
+        internalType: 'uint32',
+        name: 'poolId',
+        type: 'uint32',
+      },
+      {
+        internalType: 'uint32',
+        name: 'dstChainId',
+        type: 'uint32',
+      },
+      {
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'recipient',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'address payable',
+        name: 'refundAddress',
+        type: 'address',
+      },
+      {
+        internalType: 'bytes',
+        name: 'consumerData',
+        type: 'bytes',
+      },
+    ],
+    name: 'swap',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: 'crossId',
+        type: 'bytes32',
+      },
+    ],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
         internalType: 'bool',
         name: 'isNativeToken_',
         type: 'bool',

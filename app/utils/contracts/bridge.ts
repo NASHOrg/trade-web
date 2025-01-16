@@ -36,6 +36,7 @@ export class BridgeApi extends BaseEvmApi {
       amount: bigint;
       dstRecipient: string;
       customData?: string;
+      isNative?: boolean;
     },
   ) {
     const txData = await this.contractProvider
@@ -47,7 +48,10 @@ export class BridgeApi extends BaseEvmApi {
         params.customData ?? '0x',
       );
     const signer = await provider.getSigner();
-    await this.provider.estimateGas({ ...txData, from: signer.address });
-    return signer.sendTransaction(txData);
+    console.log(params, {
+      ...txData, from: signer.address, value: params.isNative ? params.amount : 0,
+    });
+    // await this.provider.estimateGas({ ...txData, from: signer.address, value: params.isNative ? params.amount : 0 });
+    return signer.sendTransaction({ ...txData, value: params.isNative ? params.amount : 0 });
   }
 }

@@ -63,11 +63,10 @@ function onWithdraw(token: Token) {
         />
       </div>
       <div
-        v-if="item.symbol === 'USDC'"
+        v-if="item.symbol === 'USDC' || item.symbol === 'TBOL'"
         class="flex flex-col justify-end items-end space-y-2.5"
       >
         <UButton
-          v-if="item.address"
           color="black"
           variant="outline"
           class="w-[95px] h-[30px] items-center justify-center text-xs font-normal leading-[14px]"
@@ -77,7 +76,6 @@ function onWithdraw(token: Token) {
           {{ t("withdraw") }}
         </UButton>
         <UButton
-          v-if="item.address"
           color="primary"
           variant="outline"
           class="w-[95px] h-[30px] items-center justify-center text-xs font-normal leading-[14px]"

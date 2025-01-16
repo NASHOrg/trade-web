@@ -9,7 +9,7 @@ export const betaTestnet = {
   icon: 'https://bool.network/bool-network-orange.png',
   contracts: {
     trade: '0x52295088d335EF9BEDc5837b59cA144c1Fd48983',
-    consumer: '0x97668c00FdD830cFF4578bD66283E512FE2b9C71',
+    consumer: '0x6E73a59c3760EfB8aCB179994192F4A7f4b73d8f',
   },
   tokens: {
     bool: {
@@ -17,6 +17,8 @@ export const betaTestnet = {
       symbol: 'tBOL',
       decimals: 18,
       icon: 'https://bool.network/bool-orange.png',
+      pool: '0x51C838f58babEd23CCaBEDFCA64a05EBa1Df0a34',
+      poolId: '1',
       address: '',
     },
     usdc: {
@@ -40,7 +42,7 @@ export const ultraLiquidTestnet = {
   icon: 'https://bool.network/bool-network-orange.png',
   contracts: {
     trade: '0x52295088d335EF9BEDc5837b59cA144c1Fd48983',
-    consumer: '0x97668c00FdD830cFF4578bD66283E512FE2b9C71',
+    consumer: '0xf4B758516ad8C45968e886869a4679Da95180172',
   },
   tokens: {
     bool: {
@@ -48,11 +50,13 @@ export const ultraLiquidTestnet = {
       symbol: 'tBOL',
       decimals: 18,
       icon: 'https://bool.network/bool-orange.png',
+      pool: '0x096441Dfb1d5B3099EAb240b6464087a15F6a503',
+      poolId: '1',
       address: '',
     },
     usdc: {
       name: 'USDC',
-      address: '0xf9007019014c8CdFA78f21e97995F6a4D3493729',
+      address: '0xaba94d6c512f9a37a3b12ae5d3ed171c5d0b475a',
       icon: '/images/usdc.png',
       symbol: 'USDC',
       decimals: 6,

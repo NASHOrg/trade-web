@@ -9,7 +9,7 @@ export function useNetworkConfig() {
   const pairList = useState<NonNullable<BlockchainPairs>>('paris', () => []);
   const config = useRuntimeConfig();
   const boolNetwork = config.public.network === 'beta_mainnet' ? betaMainnet : ultraLiquidTestnet;
-  const bridgeNetworks = [config.public.network === 'beta_mainnet' ? ethereum : sepolia];
+  const bridgeNetworks = config.public.network === 'beta_mainnet' ? [ethereum, betaMainnet] : [sepolia, betaTestnet];
 
   // const payToken = config.public.network === 'beta_mainnet' ? tokens.value.usdt! : tokens.value.usdc!;
   // const tokenPairs = [[tokens.value.bool!, payToken]];

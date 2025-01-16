@@ -107,6 +107,7 @@ export class BaseEvmApi {
   }): Promise<boolean> {
     try {
       const _address = param.address;
+      if (!param.contract) return true;
       const erc20Contract = this.getContractProvider('ERC20', param.contract);
       const approved = await erc20Contract.allowance?.(
         _address,
