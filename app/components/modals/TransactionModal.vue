@@ -80,4 +80,4 @@ function onApprove() {
   </UModal>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped></style>

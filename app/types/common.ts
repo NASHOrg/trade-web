@@ -16,6 +16,8 @@ export interface Token {
   symbol: string;
   decimals: number;
   name: string;
+  pool?: string;
+  poolId?: number;
 }
 
 export type Order = BlockchainUserOrders['items'][0];

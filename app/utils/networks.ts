@@ -18,7 +18,7 @@ export const betaTestnet = {
       decimals: 18,
       icon: 'https://bool.network/bool-orange.png',
       pool: '0x51C838f58babEd23CCaBEDFCA64a05EBa1Df0a34',
-      poolId: '1',
+      poolId: 4,
       address: '',
     },
     usdc: {
@@ -51,7 +51,7 @@ export const ultraLiquidTestnet = {
       decimals: 18,
       icon: 'https://bool.network/bool-orange.png',
       pool: '0x096441Dfb1d5B3099EAb240b6464087a15F6a503',
-      poolId: '1',
+      poolId: 1,
       address: '',
     },
     usdc: {

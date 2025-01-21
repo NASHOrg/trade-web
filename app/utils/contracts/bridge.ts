@@ -29,6 +29,7 @@ export class BridgeApi extends BaseEvmApi {
     );
   }
 
+  // For burn&mint bridge
   async bridgeOut(
     provider: BrowserProvider,
     params: {

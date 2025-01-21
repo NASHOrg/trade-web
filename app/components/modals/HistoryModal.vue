@@ -9,7 +9,7 @@ const { address } = useWallet();
 const queryparams = ref({
   pageNo: 1,
   pageSize: 5,
-  bridgeNo: '32',
+  bridgeNo: '32,33',
 });
 
 const { counter } = useInterval(10000, { controls: true });

@@ -1,9 +1,11 @@
 <script lang="ts" setup>
+import BN from 'bignumber.js';
 import { ethers, formatEther, MaxUint256 } from 'ethers';
 import { toast } from 'vue-sonner';
 import type { BridgeHistory, Token } from '~/types/common';
 import { BaseEvmApi } from '~/utils/contracts/api';
 import { BridgeApi } from '~/utils/contracts/bridge';
+import { SwapApi } from '~/utils/contracts/swap';
 
 const props = defineProps<{
   token: Token;
@@ -39,9 +41,15 @@ const networkOptions = computed(() => {
   });
 });
 
-const tokenInTarget = computed(() => {
+const tokenInTarget: ComputedRef<Token> = computed(() => {
   return Object.values(selectedNetwork.value.tokens).find(
-    (item: Token) => item.symbol === props.token.symbol,
+    (item: Token) => item.symbol.toLowerCase() === props.token.symbol.toLowerCase(),
+  )!;
+});
+
+const tokenInSource: ComputedRef<Token> = computed(() => {
+  return Object.values(network.tokens).find(
+    (item: Token) => item.symbol.toLowerCase() === props.token.symbol.toLowerCase(),
   )!;
 });
 
@@ -64,17 +72,29 @@ const { data: balanceInBool } = useAsyncData(
 
 const { data: bridgeFee } = useAsyncData(
   `withdraw-fee-${props.token.symbol}`,
-  () => {
+  async () => {
     if (!address.value) {
-      return Promise.resolve(BigInt(0));
+      return Promise.resolve({ fee: BigInt(0), feeRatio: 0 });
     }
     const consumer = network.contracts.consumer;
-    const bridgeApi = new BridgeApi(network.rpc, consumer);
-    return bridgeApi.getBridgeFee({
-      dstChainId: selectedNetwork.value.chainId,
-      amount: 0n,
-      dstRecipient: '0xbbbB4350Ea18a153e9077c1067Fa8Ff3654123F6',
-    });
+    let fee: bigint | undefined;
+    let feeRatio: number | undefined;
+    if (tokenInTarget.value.pool) {
+      const toNetworkApi = new SwapApi(selectedNetwork.value.rpc, selectedNetwork.value.contracts.consumer);
+      feeRatio = await toNetworkApi.swapFeeRatio(tokenInTarget.value);
+    }
+    else {
+      const bridgeApi = new BridgeApi(network.rpc, consumer);
+      fee = await bridgeApi.getBridgeFee({
+        dstChainId: selectedNetwork.value.chainId,
+        amount: 0n,
+        dstRecipient: '0xB4350Ea18a153e9077c1067Fa8Ff3654123F6',
+      });
+    }
+    return {
+      fee,
+      feeRatio,
+    };
   },
   {
     server: false,
@@ -87,16 +107,22 @@ const items = computed(() => {
     balanceInBool.value ?? '0',
     props.token.decimals,
   );
+  let fee;
+  if (tokenInTarget.value.pool) {
+    fee = `${BN(amount.value || '0').times(bridgeFee.value?.feeRatio ?? 0).toString()} ${tokenInTarget.value?.symbol}`;
+  }
+  else {
+    fee = `${formatEther(bridgeFee.value?.fee ?? 0n)} ${network.symbol}`;
+  }
   return [
     {
       label: 'Balance ',
       value: `${formatAmount(
         balanceInBoolFormat,
-        props.token.decimals,
+        5,
       )} ${props.token.symbol}`,
     },
-    { label: 'Fee', value:
-      `${formatEther(bridgeFee.value ?? 0n)} ${network.symbol}`,
+    { label: 'Fee', value: fee,
     },
   ];
 });
@@ -142,17 +168,18 @@ async function onSubmit() {
       amount: amountParse,
     };
 
-    const isApproved = await bridgeApi.isApprove(approveParam);
+    const evmApi = new BaseEvmApi(network.rpc);
+    const isApproved = await evmApi.isApprove(approveParam);
 
     if (!isApproved) {
-      const approveTx = await bridgeApi.approve(provider(), {
+      const approveTx = await evmApi.approve(provider(), {
         ...approveParam,
         amount: MaxUint256,
       });
       await new Promise((resolve, reject) => {
-        toast.promise(bridgeApi.checkTransaction(approveTx.hash), {
+        toast.promise(evmApi.checkTransaction(approveTx.hash), {
           loading: t('sendTransaction'),
-          description: t('approve') + ' ' + props.token.symbol,
+          description: t('approve') + ' ' + tokenInTarget.value.symbol,
           success: () => {
             resolve(true);
             return t('transactionSuccess');
@@ -163,20 +190,43 @@ async function onSubmit() {
           action: {
             label: t('viewTx'),
             onClick: () => {
-              window.open(`${network.explorer}/tx/${approveTx.hash}`, '_blank');
+              window.open(`${selectedNetwork.value.explorer}/tx/${approveTx.hash}`, '_blank');
             },
           },
         });
       });
     }
 
-    const tx = await bridgeApi.bridgeOut(provider(), {
-      dstChainId: selectedNetwork.value.chainId,
-      amount: amountParse,
-      dstRecipient: address.value!,
-      customData: '0x',
-      isNative: !props.token.address,
-    });
+    let tx;
+
+    if (tokenInSource.value.pool) {
+      const swapApi = new SwapApi(
+        network.rpc,
+        network.contracts.consumer,
+      );
+      tx = await swapApi.swap(provider(), {
+        poolId: tokenInSource.value.poolId!,
+        dstChainId: selectedNetwork.value.chainId,
+        amount: amountParse,
+        refundAddress: address.value!,
+        dstRecipient: address.value!,
+        customData: '0x',
+        isNative: !props.token.address,
+      });
+    }
+    else {
+      const bridgeApi = new BridgeApi(
+        selectedNetwork.value.rpc,
+        selectedNetwork.value.contracts.consumer,
+      );
+      tx = await bridgeApi.bridgeOut(provider(), {
+        dstChainId: selectedNetwork.value.chainId,
+        amount: amountParse,
+        dstRecipient: address.value!,
+        customData: '0x',
+        isNative: !props.token.address,
+      });
+    }
 
     const params: BridgeHistory = {
       swapRecordSrcTokenAmount: amount.value,

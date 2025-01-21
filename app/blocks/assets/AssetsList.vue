@@ -63,7 +63,7 @@ function onWithdraw(token: Token) {
         />
       </div>
       <div
-        v-if="item.symbol === 'USDC' || item.symbol === 'TBOL'"
+        v-if="item.symbol === 'TBOL'"
         class="flex flex-col justify-end items-end space-y-2.5"
       >
         <UButton

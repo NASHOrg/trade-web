@@ -4,6 +4,7 @@ import { toast } from 'vue-sonner';
 import type { BridgeHistory, Token } from '~/types/common';
 import { BaseEvmApi } from '~/utils/contracts/api';
 import { BridgeApi } from '~/utils/contracts/bridge';
+import { SwapApi } from '~/utils/contracts/swap';
 
 const props = defineProps<{
   token: Token;
@@ -22,9 +23,15 @@ const selectedNetwork = ref(
   bridgeNetworks.find(item => Object.values(item.tokens).some(token => token.symbol.toLowerCase() === props.token.symbol.toLowerCase()))!,
 );
 
-const tokenInTarget = computed(() => {
+const tokenInSource: ComputedRef<Token> = computed(() => {
   return Object.values(selectedNetwork.value.tokens).find(
-    (item: Token) => item.symbol === props.token.symbol,
+    (item: Token) => item.symbol.toLowerCase() === props.token.symbol.toLowerCase(),
+  )!;
+});
+
+const tokenInTarget: ComputedRef<Token> = computed(() => {
+  return Object.values(network.tokens).find(
+    (item: Token) => item.symbol.toLowerCase() === props.token.symbol.toLowerCase(),
   )!;
 });
 
@@ -84,7 +91,7 @@ const { data: balanceInTarget } = useAsyncData(
 const items = computed(() => {
   const balanceInBoolFormat = ethers.formatUnits(
     balanceInBool.value ?? '0',
-    props.token.decimals,
+    props.token?.decimals,
   );
   const balanceInTargetFormat = ethers.formatUnits(
     balanceInTarget.value ?? '0',
@@ -95,15 +102,15 @@ const items = computed(() => {
       label: 'Balance in your wallet',
       value: `${formatAmount(
         balanceInTargetFormat,
-        props.token.decimals,
+        5,
       )} ${props.token.symbol}`,
     },
     {
       label: 'Balance in Bool Chain',
       value: `${formatAmount(
         balanceInBoolFormat,
-        tokenInTarget.value.decimals,
-      )} ${tokenInTarget.value.symbol}`,
+        5,
+      )} ${tokenInTarget.value?.symbol}`,
     },
   ];
 });
@@ -133,33 +140,28 @@ async function onSubmit() {
       const result = await switchNetwork(selectedNetwork.value.chainId);
       if (!result) return;
     }
-
-    const bridgeApi = new BridgeApi(
-      selectedNetwork.value.rpc,
-      selectedNetwork.value.contracts.consumer,
-    );
-
     const amountParse = ethers.parseUnits(
       amount.value,
       tokenInTarget.value.decimals,
     );
 
     const approveParam = {
-      contract: tokenInTarget.value.address,
-      approvedAddress: selectedNetwork.value.contracts.consumer,
+      contract: tokenInTarget.value.address!,
+      approvedAddress: selectedNetwork.value.contracts.consumer!,
       address: address.value,
       amount: amountParse,
     };
 
-    const isApproved = await bridgeApi.isApprove(approveParam);
+    const evmApi = new BaseEvmApi(network.rpc);
+    const isApproved = await evmApi.isApprove(approveParam);
 
     if (!isApproved) {
-      const approveTx = await bridgeApi.approve(provider(), {
+      const approveTx = await evmApi.approve(provider(), {
         ...approveParam,
         amount: MaxUint256,
       });
       await new Promise((resolve, reject) => {
-        toast.promise(bridgeApi.checkTransaction(approveTx.hash), {
+        toast.promise(evmApi.checkTransaction(approveTx.hash), {
           loading: t('sendTransaction'),
           description: t('approve') + ' ' + tokenInTarget.value.symbol,
           success: () => {
@@ -179,12 +181,36 @@ async function onSubmit() {
       });
     }
 
-    const tx = await bridgeApi.bridgeOut(provider(), {
-      dstChainId: network.chainId,
-      amount: amountParse,
-      dstRecipient: address.value!,
-      customData: '0x',
-    });
+    let tx;
+
+    if (tokenInTarget.value.pool) {
+      const swapApi = new SwapApi(
+        selectedNetwork.value.rpc,
+        selectedNetwork.value.contracts.consumer,
+      );
+      tx = await swapApi.swap(provider(), {
+        poolId: tokenInSource.value.poolId!,
+        dstChainId: network.chainId,
+        amount: amountParse,
+        refundAddress: address.value!,
+        dstRecipient: address.value!,
+        customData: '0x',
+        isNative: !props.token.address,
+      });
+    }
+    else {
+      const bridgeApi = new BridgeApi(
+        selectedNetwork.value.rpc,
+        selectedNetwork.value.contracts.consumer,
+      );
+      tx = await bridgeApi.bridgeOut(provider(), {
+        dstChainId: network.chainId,
+        amount: amountParse,
+        dstRecipient: address.value!,
+        customData: '0x',
+        isNative: !props.token.address,
+      });
+    }
 
     const params: BridgeHistory = {
       swapRecordSrcTokenAmount: amount.value,
@@ -202,7 +228,7 @@ async function onSubmit() {
     add(params);
     const tokenKey = `token-balance-${address.value}-${tokenInTarget.value.address ?? ''}`;
 
-    toast.promise(bridgeApi.checkTransaction(tx.hash), {
+    toast.promise(evmApi.checkTransaction(tx.hash), {
       loading: t('sendTransaction'),
       success: () => {
         refreshNuxtData(tokenKey);
