@@ -13,8 +13,8 @@ export const betaTestnet = {
   },
   tokens: {
     bool: {
-      name: 'BOL',
-      symbol: 'tBOL',
+      name: 'DEF',
+      symbol: 'tDEF',
       decimals: 18,
       icon: 'https://bool.network/bool-orange.png',
       pool: '0x51C838f58babEd23CCaBEDFCA64a05EBa1Df0a34',
@@ -46,8 +46,8 @@ export const ultraLiquidTestnet = {
   },
   tokens: {
     bool: {
-      name: 'BOL',
-      symbol: 'tBOL',
+      name: 'DEF',
+      symbol: 'tDEF',
       decimals: 18,
       icon: 'https://bool.network/bool-orange.png',
       pool: '0x096441Dfb1d5B3099EAb240b6464087a15F6a503',

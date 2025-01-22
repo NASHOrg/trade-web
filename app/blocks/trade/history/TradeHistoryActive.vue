@@ -104,7 +104,7 @@ const datas = computed(() => {
     return {
       ...o,
       pair: pair,
-      pairLabel: pair.label,
+      pairLabel: pair?.label,
       price,
       qty,
       value,
