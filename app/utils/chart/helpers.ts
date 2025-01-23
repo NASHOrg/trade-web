@@ -146,7 +146,7 @@ export const defaultTradingViewConfig = {
     'create_volume_indicator_by_default',
     'popup_hints',
   ],
-  enabled_features: ['show_interval_dialog_on_key_press', 'items_favoriting'],
+  enabled_features: ['show_interval_dialog_on_key_press', 'items_favoriting', 'hide_left_toolbar_by_default'],
   interval: '1' as ResolutionString, // Default interval
   favorites: {
     intervals: ['1', '15', '1D'],
