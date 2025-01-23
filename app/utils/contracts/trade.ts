@@ -44,8 +44,8 @@ export class TradeApi extends BaseEvmApi {
       .getFunction('placeOrderBuyB')
       .populateTransaction(pay, amount);
     const signer = await provider.getSigner();
-    await signer.estimateGas(res);
-    return signer.sendTransaction(res);
+    const limit = await signer.estimateGas(res);
+    return signer.sendTransaction({ ...res, gasLimit: limit * 2n });
   }
 
   async createSellOrder(
@@ -65,8 +65,8 @@ export class TradeApi extends BaseEvmApi {
     }
     console.log(res);
     const signer = await provider.getSigner();
-    await signer.estimateGas(res);
-    return signer.sendTransaction(res);
+    const limit = await signer.estimateGas(res);
+    return signer.sendTransaction({ ...res, gasLimit: limit * 2n });
   }
 
   async cancelOrder(
