@@ -1,6 +1,5 @@
 .theme-dark:root {
-    --primary-color: #ef5a11;
-    --tv-color-platform-background: #121212;
+    --primary-color: #ef5a11; --tv-color-platform-background: #121212;
     --tv-color-pane-background: #121212;
     --tv-color-popup-background: #2e2e2e;
     --tv-color-toolbar-button-background-hover: #2e2e2e;
@@ -9,6 +8,8 @@
     --tv-color-toolbar-button-text-active-hover: var(--primary-color);
     --tv-color-popup-element-background-active: var(--primary-color);
     --tv-color-popup-element-background-hover: #444;
+    --tv-color-toolbar-toggle-button-background-active: var(--primary-color);
+    --tv-color-toolbar-toggle-button-background-active-hover: var(--primary-color);
     --themed-color-btn-brand-primary-default-bg: var(--primary-color);
     --themed-color-selection-bg: var(--primary-color);
     --themed-color-btn-brand-secondary-default-border: var(--primary-color);
@@ -28,6 +29,8 @@
     --themed-color-shadow-primary-neutral-extra-heavy: #2e2e2e;
     --themed-color-bg-primary: #2e2e2e;
     --themed-color-properties-dialog-tab-bg: #444;
+    --priceScaleModeButtons-background-activated: var(--primary-color);
+    --priceScaleModeButtons-background-activated-hover: var(--primary-color)
 }
 
 .theme-dark:root ::selection {
