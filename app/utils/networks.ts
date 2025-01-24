@@ -17,8 +17,8 @@ export const betaTestnet = {
       symbol: 'tDEF',
       decimals: 18,
       icon: 'https://bool.network/bool-orange.png',
-      pool: '0x51C838f58babEd23CCaBEDFCA64a05EBa1Df0a34',
-      poolId: 4,
+      pool: '0x693C4d63445Cd162d2C096037157b629f1C3a8DF',
+      poolId: 6,
       address: '',
     },
     usdc: {
@@ -34,7 +34,7 @@ export const betaTestnet = {
 export const ultraLiquidTestnet = {
   rpc: 'https://ultra-test-node-rpc.bool.network',
   chainId: 483,
-  symbol: 'tBOL',
+  symbol: 'tDEF',
   name: 'Ultra Liquid Testnet',
   value: 'ultra_liquid_testnet',
   explorer: 'https://ultra-test-explorer.bool.network',
@@ -50,8 +50,8 @@ export const ultraLiquidTestnet = {
       symbol: 'tDEF',
       decimals: 18,
       icon: 'https://bool.network/bool-orange.png',
-      pool: '0x096441Dfb1d5B3099EAb240b6464087a15F6a503',
-      poolId: 1,
+      pool: '0x67CfC1F935117fa53f599d0Bb9Ed3899C036C0Ec',
+      poolId: 2,
       address: '',
     },
     usdc: {
