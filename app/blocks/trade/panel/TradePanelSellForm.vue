@@ -18,7 +18,7 @@ const { network, tradeApi } = useNetworkConfig();
 const selectedPrice = useState<string>('selected-price');
 const { orderbook } = useOrderBook();
 
-const { data } = useNuxtData('order-book');
+const data = computed(() => orderbook.value?.latestPrice);
 
 const balanceKey = ref(0);
 const state = reactive<{
@@ -121,12 +121,12 @@ watch(() => currentPair.value.value, () => {
   state.quantity = undefined;
   state.total = undefined;
 });
-
+watch(currentPair, () => state.price = undefined);
 watch(
   data,
   () => {
     if (!state.price && data.value) {
-      state.price = formatAmount(data.value?.latestPrice, 5);
+      state.price = formatAmount(data.value, 5);
     }
   },
   {
