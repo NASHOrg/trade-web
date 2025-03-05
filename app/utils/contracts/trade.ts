@@ -3,9 +3,11 @@ import { Contract } from 'ethers';
 import BN from 'bignumber.js';
 import { BaseEvmApi } from './api';
 import { TradeABI, TradeNativeABI } from './abis/trade';
+import { OrderABI } from './abis/order';
 import { Order, OrderType } from './interfaces/order';
 import type { Token } from '~/types/common';
 
+const PAIR = '0x3c9a0f0c960a09d8ce662d8668efeeaeec3fc9fd058c789293207e8cbd504cd0';
 export class TradeApi extends BaseEvmApi {
   constructor({
     rpc,
@@ -29,6 +31,9 @@ export class TradeApi extends BaseEvmApi {
   readonly contractAddress: string;
 
   get contract() {
+    if (this.contractAddress === '0x000000000000000000000000000000000000044d') {
+      return new Contract(this.contractAddress, OrderABI, this.provider);
+    }
     // native token use TradeNativeABI
     if (this.tokenA.address) {
       return new Contract(this.contractAddress, TradeABI, this.provider);
@@ -40,9 +45,17 @@ export class TradeApi extends BaseEvmApi {
     provider: BrowserProvider,
     { amount, pay }: { amount: bigint; pay: bigint },
   ) {
-    const res = await this.contract
-      .getFunction('placeOrderBuyB')
-      .populateTransaction(pay, amount);
+    let res;
+    if (this.contractAddress === '0x000000000000000000000000000000000000044d') {
+      res = await this.contract
+        .getFunction('placeOrderBuyB')
+        .populateTransaction(PAIR, pay, amount);
+    }
+    else {
+      res = await this.contract
+        .getFunction('placeOrderBuyB')
+        .populateTransaction(pay, amount);
+    }
     const signer = await provider.getSigner();
     const limit = await signer.estimateGas(res);
     return signer.sendTransaction({ ...res, gasLimit: limit * 2n });
@@ -53,7 +66,12 @@ export class TradeApi extends BaseEvmApi {
     { amount, receive, isNative }: { amount: bigint; receive: bigint; isNative: boolean },
   ) {
     let res;
-    if (isNative) {
+    if (this.contractAddress === '0x000000000000000000000000000000000000044d') {
+      res = await this.contract
+        .getFunction('placeOrderSellB')
+        .populateTransaction(PAIR, receive, amount);
+    }
+    else if (isNative) {
       res = await this.contract
         .getFunction('placeOrderSellB')
         .populateTransaction(receive, { value: amount });
@@ -63,7 +81,6 @@ export class TradeApi extends BaseEvmApi {
         .getFunction('placeOrderSellB')
         .populateTransaction(receive, amount);
     }
-    console.log(res);
     const signer = await provider.getSigner();
     const limit = await signer.estimateGas(res);
     return signer.sendTransaction({ ...res, gasLimit: limit * 2n });
@@ -73,16 +90,31 @@ export class TradeApi extends BaseEvmApi {
     provider: BrowserProvider,
     { orderId, type }: { orderId: bigint; type: 'buy' | 'sell' },
   ) {
-    const res = await this.contract
-      .getFunction(type === 'buy' ? 'cancelOrderBuyB' : 'cancelOrderSellB')
-      .populateTransaction(orderId);
+    let res;
+    if (this.contractAddress === '0x000000000000000000000000000000000000044d') {
+      res = await this.contract
+        .getFunction(type === 'buy' ? 'cancelOrderBuyB' : 'cancelOrderSellB')
+        .populateTransaction(PAIR, orderId);
+    }
+    else {
+      res = await this.contract
+        .getFunction(type === 'buy' ? 'cancelOrderBuyB' : 'cancelOrderSellB')
+        .populateTransaction(orderId);
+    }
     const signer = await provider.getSigner();
     await signer.estimateGas(res);
     return signer.sendTransaction(res);
   }
 
   isTokenBApproved(address: string, amount: bigint) {
-    console.log(this.contractAddress);
+    if (this.contractAddress === '0x000000000000000000000000000000000000044d') {
+      return super.isApprove({
+        contract: this.tokenB.address!,
+        approvedAddress: address,
+        amount,
+        address,
+      });
+    }
     return super.isApprove({
       contract: this.tokenB.address!,
       approvedAddress: this.contractAddress,
@@ -91,7 +123,13 @@ export class TradeApi extends BaseEvmApi {
     });
   }
 
-  approveTokenB(provider: BrowserProvider) {
+  approveTokenB(provider: BrowserProvider, address: string) {
+    if (this.contractAddress === '0x000000000000000000000000000000000000044d') {
+      return super.approve(provider, {
+        contract: this.tokenB.address!,
+        approvedAddress: address,
+      });
+    }
     return super.approve(provider, {
       contract: this.tokenB.address!,
       approvedAddress: this.contractAddress,
@@ -99,6 +137,14 @@ export class TradeApi extends BaseEvmApi {
   }
 
   isTokenAApproved(address: string, amount: bigint) {
+    if (this.contractAddress === '0x000000000000000000000000000000000000044d') {
+      return super.isApprove({
+        contract: this.tokenA.address!,
+        approvedAddress: address,
+        amount,
+        address,
+      });
+    }
     return super.isApprove({
       contract: this.tokenA.address!,
       approvedAddress: this.contractAddress,
@@ -107,7 +153,13 @@ export class TradeApi extends BaseEvmApi {
     });
   }
 
-  approveTokenA(provider: BrowserProvider) {
+  approveTokenA(provider: BrowserProvider, address: string) {
+    if (this.contractAddress === '0x000000000000000000000000000000000000044d') {
+      return super.approve(provider, {
+        contract: this.tokenA.address!,
+        approvedAddress: address,
+      });
+    }
     return super.approve(provider, {
       contract: this.tokenA.address!,
       approvedAddress: this.contractAddress,

@@ -13,7 +13,8 @@ await callOnce(async () => {
       'Cache-Control': 'max-age=60',
     },
   }) as any;
-  pairList.value = data!.data;
+  const pairs = data!.data;
+  pairList.value = pairs;
 });
 
 watch([address, userToken], () => {

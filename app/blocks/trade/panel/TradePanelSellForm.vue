@@ -172,7 +172,7 @@ async function onSell() {
     if (!isNative) {
       const isApproved = await tradeApi().isTokenAApproved(address.value, amount);
       if (!isApproved) {
-        const res = await tradeApi().approveTokenA(provider);
+        const res = await tradeApi().approveTokenA(provider, address.value);
         await tradeApi().checkTransaction(res.hash);
       }
     }
@@ -214,6 +214,7 @@ async function onSell() {
     });
   }
   catch (error) {
+    console.log(error);
     handleJsonRpcError(error, toast);
   }
   finally {

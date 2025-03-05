@@ -176,7 +176,7 @@ async function onBuy() {
     const pay = tradeApi().calcValue(state.quantity, state.price);
     const isApproved = await tradeApi().isTokenBApproved(address.value, pay);
     if (!isApproved) {
-      const res = await tradeApi().approveTokenB(provider);
+      const res = await tradeApi().approveTokenB(provider, address.value);
       await tradeApi().checkTransaction(res.hash);
     }
     const tx = await tradeApi().createBuyOrder(provider, { amount, pay });
@@ -217,6 +217,7 @@ async function onBuy() {
     });
   }
   catch (error) {
+    console.log(error);
     handleJsonRpcError(error, toast);
   }
   finally {
