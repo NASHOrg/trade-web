@@ -20,6 +20,7 @@ export function useNetworkConfig() {
       label: pair.name,
       fee: '0.80%',
       price: pair.price,
+      pairId: pair.pairId,
       tokens: [
         {
           address: pair.tokenBAddress,
@@ -67,6 +68,7 @@ export function useNetworkConfig() {
         contract: currentPair.value.address,
         tokenA: currentPair.value.tokens[0]!,
         tokenB: currentPair.value.tokens[1]!,
+        pairId: currentPair.value.pairId,
       },
     ),
   };

@@ -617,6 +617,8 @@ export interface paths {
                                 status: number;
                                 /** @description 手续费 */
                                 fee: number;
+                                /** @description 叫价价格 */
+                                targetPrice: number;
                             }[];
                         };
                     };
@@ -655,6 +657,8 @@ export interface paths {
                             tokenBIcon: string;
                             /** 订单簿币价 */
                             price: string;
+                            /** 币对ID */
+                            "pairId	": string;
                         }[];
                         /** 是否失败 */
                         fail?: boolean;

@@ -7,28 +7,31 @@ import { OrderABI } from './abis/order';
 import { Order, OrderType } from './interfaces/order';
 import type { Token } from '~/types/common';
 
-const PAIR = '0x3c9a0f0c960a09d8ce662d8668efeeaeec3fc9fd058c789293207e8cbd504cd0';
 export class TradeApi extends BaseEvmApi {
   constructor({
     rpc,
     tokenA,
     tokenB,
+    pairId,
     contract,
   }: {
     rpc: string;
     tokenA: { address?: string; decimals: number };
     tokenB: { address?: string; decimals: number };
+    pairId?: string;
     contract: string;
   }) {
     super(rpc);
     this.contractAddress = contract;
     this.tokenA = tokenA;
     this.tokenB = tokenB;
+    this.pairId = pairId;
   }
 
   readonly tokenA;
   readonly tokenB;
   readonly contractAddress: string;
+  readonly pairId?: string;
 
   get contract() {
     if (this.contractAddress === '0x000000000000000000000000000000000000044d') {
@@ -49,7 +52,7 @@ export class TradeApi extends BaseEvmApi {
     if (this.contractAddress === '0x000000000000000000000000000000000000044d') {
       res = await this.contract
         .getFunction('placeOrderBuyB')
-        .populateTransaction(PAIR, pay, amount);
+        .populateTransaction(this.pairId, pay, amount);
     }
     else {
       res = await this.contract
@@ -69,7 +72,7 @@ export class TradeApi extends BaseEvmApi {
     if (this.contractAddress === '0x000000000000000000000000000000000000044d') {
       res = await this.contract
         .getFunction('placeOrderSellB')
-        .populateTransaction(PAIR, receive, amount);
+        .populateTransaction(this.pairId, receive, amount);
     }
     else if (isNative) {
       res = await this.contract
@@ -94,7 +97,7 @@ export class TradeApi extends BaseEvmApi {
     if (this.contractAddress === '0x000000000000000000000000000000000000044d') {
       res = await this.contract
         .getFunction(type === 'buy' ? 'cancelOrderBuyB' : 'cancelOrderSellB')
-        .populateTransaction(PAIR, orderId);
+        .populateTransaction(this.pairId, orderId);
     }
     else {
       res = await this.contract

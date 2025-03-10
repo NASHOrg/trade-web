@@ -151,7 +151,7 @@ async function onSell() {
     if (!address.value) {
       return open();
     }
-    if (orderbook.value.latestPrice) {
+    if (orderbook.value?.latestPrice) {
       if (Math.abs(Number(state.price) - orderbook.value.latestPrice) / orderbook.value.latestPrice > 0.8) {
         toast.error('Order price cannot be more than 80% away from the latest price');
         return;
