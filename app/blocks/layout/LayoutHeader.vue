@@ -51,7 +51,6 @@
       class="flex-inline"
     >
       <IconXbit />
-      <span>beta</span>
     </NuxtLink>
     <!-- <div class="hidden lg:flex space-x-[40px] items-center text-[20px]">
       <ULink
