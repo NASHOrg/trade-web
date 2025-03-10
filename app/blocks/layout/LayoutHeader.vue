@@ -46,8 +46,12 @@
   <div
     class="sticky w-full h-[46px] py-2.5 px-1 md:px-5 top-0 flex justify-between items-center z-50 backdrop-blur"
   >
-    <NuxtLink to="/trade">
+    <NuxtLink
+      to="/trade"
+      class="flex-inline"
+    >
       <IconXbit />
+      <span>beta</span>
     </NuxtLink>
     <!-- <div class="hidden lg:flex space-x-[40px] items-center text-[20px]">
       <ULink
